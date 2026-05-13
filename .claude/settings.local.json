@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:/Users/Carlt/.claude/projects/g--Meine-Ablage-Lausebengel-05-Code/memory\" \"g:/Meine Ablage/Lausebengel/05_Code/en/pages\")",
+      "Bash(curl -s -o /dev/null -w \"DE root: %{http_code}\\\\n\" http://localhost:8080/)",
+      "Bash(curl -s -o /dev/null -w \"EN root: %{http_code}\\\\n\" http://localhost:8080/en/)",
+      "Bash(curl -s -o /dev/null -w \"EN premium: %{http_code}\\\\n\" http://localhost:8080/en/pages/premium.html)",
+      "Bash(curl -s -o /dev/null -w \"DE home %{http_code}\\\\n\" http://localhost:8080/)",
+      "Bash(curl -s -o /dev/null -w \"EN home %{http_code}\\\\n\" http://localhost:8080/en/)",
+      "Bash(curl -s -o /dev/null -w \"DE premium %{http_code}\\\\n\" http://localhost:8080/pages/premium.html)",
+      "Bash(curl -s -o /dev/null -w \"EN premium %{http_code}\\\\n\" http://localhost:8080/en/pages/premium.html)",
+      "Bash(curl -s -o /dev/null -w \"Logo image %{http_code}\\\\n\" http://localhost:8080/assets/logo.png)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Carlt\\.claude\\projects\\g--Meine-Ablage-Lausebengel-05-Code"
+    ]
+  }
+}
