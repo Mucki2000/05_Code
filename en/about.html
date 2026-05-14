@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lausebengel — About</title>
+  <meta name="description" content="Lausebengel Edits — About us." />
+
+  <link rel="alternate" hreflang="de" href="../about.html" />
+  <link rel="alternate" hreflang="en" href="about.html" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    .page { min-height: 100vh; padding: 2.2vw 3vw 6vw; }
+
+    .nav {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      z-index: 5;
+    }
+    .nav__logo { display: block; height: 3.6vw; max-height: 64px; min-height: 28px; }
+    .nav__logo img { height: 100%; width: auto; display: block; }
+    .nav__links {
+      display: flex; align-items: center; gap: 2.2vw;
+      font-size: clamp(13px, 1.05vw, 18px);
+      letter-spacing: 0.01em;
+    }
+    .nav__links a { opacity: 0.9; transition: opacity 120ms ease; }
+    .nav__links a:hover { opacity: 1; }
+    .nav__links a.is-active { text-decoration: underline; text-underline-offset: 4px; }
+    .nav__lang { opacity: 0.4; padding: 0 0.2em; }
+    .nav__lang-link { font-size: 0.85em; opacity: 0.7; }
+    .nav__caret { display: inline-block; margin-left: 0.35em; font-size: 0.7em; transform: translateY(-2px); }
+
+    .nav__has-menu { position: relative; display: inline-flex; align-items: center; }
+    .nav__has-menu > a { cursor: pointer; }
+    .nav__menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: #000;
+      border: 1px solid rgba(255,255,255,0.12);
+      min-width: 220px;
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 140ms ease;
+      z-index: 20;
+    }
+    .nav__menu::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 0;
+      right: 0;
+      height: 10px;
+    }
+    .nav__has-menu:hover .nav__menu,
+    .nav__has-menu:focus-within .nav__menu {
+      opacity: 1; pointer-events: auto;
+    }
+    .nav__menu a {
+      display: block; padding: 10px 18px;
+      font-size: 0.92em; opacity: 0.8;
+      white-space: nowrap; letter-spacing: 0.01em;
+    }
+    .nav__menu a:hover { opacity: 1; background: rgba(255,255,255,0.05); }
+
+    .about {
+      max-width: 1400px;
+      margin: clamp(60px, 8vw, 160px) auto 0;
+      padding: 0 clamp(20px, 3vw, 60px);
+    }
+    .about__eyebrow {
+      font-size: clamp(12px, 0.9vw, 16px);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: clamp(20px, 2vw, 40px);
+    }
+
+    .crew {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 5vw, 100px);
+      margin-bottom: clamp(60px, 8vw, 140px);
+    }
+    .crew__member { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .crew__photo {
+      width: clamp(220px, 22vw, 440px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #0a0a0a;
+      margin-bottom: clamp(16px, 1.4vw, 28px);
+    }
+    .crew__photo img { width: 100%; height: 100%; object-fit: cover; }
+    .crew__name { font-size: clamp(20px, 1.7vw, 34px); font-weight: 500; }
+    .crew__role { font-size: clamp(13px, 1vw, 18px); opacity: 0.55; margin-top: 0.2em; letter-spacing: 0.05em; }
+
+    .contact { text-align: center; padding: clamp(40px, 4vw, 80px) 0; border-top: 1px solid rgba(255,255,255,0.08); }
+    .contact__label { font-size: clamp(12px, 0.9vw, 16px); letter-spacing: 0.4em; text-transform: uppercase; opacity: 0.5; margin-bottom: clamp(12px, 1vw, 20px); }
+    .contact__email {
+      font-size: clamp(22px, 2.6vw, 50px);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 4px;
+      transition: opacity 160ms ease, border-color 160ms ease;
+    }
+    .contact__email:hover { opacity: 0.75; border-color: rgba(255,255,255,0.6); }
+
+    @media (max-width: 720px) {
+      .page { padding: 5vw 5vw 10vw; }
+      .nav__logo { height: 32px; }
+      .nav__links { gap: 14px; font-size: 12px; }
+      .crew { grid-template-columns: 1fr; gap: 40px; }
+      .crew__photo { width: 65vw; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="page">
+
+    <header class="nav">
+      <a href="hero.html" class="nav__logo" aria-label="Lausebengel">
+        <img src="../assets/lausebengel-logo.png" alt="Lausebengel" />
+      </a>
+      <nav class="nav__links" aria-label="Main navigation">
+        <div class="nav__has-menu">
+          <a>Projects<span class="nav__caret">▾</span></a>
+          <div class="nav__menu" role="menu">
+            <a href="projects.html#universal" role="menuitem">Universal</a>
+            <a href="projects.html#prime"     role="menuitem">Prime Video</a>
+            <a href="projects.html#koechert"  role="menuitem">A.E. Köchert</a>
+            <a href="projects.html#audi"      role="menuitem">Audi Sport</a>
+            <a href="projects.html#kleine"    role="menuitem">Kleine Brüder</a>
+            <a href="projects.html#youtube"   role="menuitem">YouTube / Social</a>
+          </div>
+        </div>
+        <a href="hero.html">Home</a>
+        <a href="about.html" class="is-active">About</a>
+        <span class="nav__lang" aria-hidden="true">|</span>
+        <a href="../about.html" class="nav__lang-link" aria-label="Auf Deutsch wechseln">DE</a>
+      </nav>
+    </header>
+
+    <section class="about">
+      <p class="about__eyebrow">About us</p>
+
+      <div class="crew">
+        <div class="crew__member">
+          <div class="crew__photo">
+            <img src="../assets/Screenshot 2026-05-12 130034.png" alt="Damian Aschenbrenner" />
+          </div>
+          <p class="crew__name">Damian Aschenbrenner</p>
+          <p class="crew__role">Director / Founder</p>
+        </div>
+
+        <div class="crew__member">
+          <div class="crew__photo">
+            <img src="../assets/photo_5846211468326538391_y.jpg" alt="Mucki Trauttmansdorff" />
+          </div>
+          <p class="crew__name">Mucki Trauttmansdorff</p>
+          <p class="crew__role">Director / Founder</p>
+        </div>
+      </div>
+
+      <div class="contact">
+        <p class="contact__label">Contact</p>
+        <a class="contact__email" href="mailto:info@lausebengel.studio">info@lausebengel.studio</a>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>
