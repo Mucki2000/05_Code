@@ -123,6 +123,30 @@
       border: 1px dashed #1c1c1c;
     }
 
+    .sound-btn {
+      position: absolute;
+      bottom: clamp(12px, 1vw, 22px);
+      right: clamp(12px, 1vw, 22px);
+      z-index: 4;
+      width: clamp(40px, 2.8vw, 56px);
+      height: clamp(40px, 2.8vw, 56px);
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: clamp(16px, 1.3vw, 24px);
+      line-height: 1;
+      opacity: 0.85;
+      transition: background 160ms ease, opacity 160ms ease;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+    }
+    .sound-btn:hover { background: rgba(0,0,0,0.85); opacity: 1; }
+
     .project__thumbs {
       display: grid; grid-template-columns: repeat(3, 1fr);
       gap: clamp(12px, 1.4vw, 28px);
@@ -196,7 +220,7 @@
     <section id="universal" class="project">
       <p class="project__date">November 2024</p>
       <h2 class="project__title">Universal Music</h2>
-      <div class="project__hero" data-video="../assets/projects/Philippa_Kinsky_Website.mp4">
+      <div class="project__hero" data-video="../assets/projects/universal-hero.mp4" data-sound="true">
         <div class="project__placeholder">Main video</div>
       </div>
       <div class="project__thumbs">
@@ -210,7 +234,7 @@
     <section id="prime" class="project">
       <p class="project__date">Date</p>
       <h2 class="project__title">Prime Video</h2>
-      <div class="project__hero" data-video="../assets/projects/Amazon_Prime_Website.mp4">
+      <div class="project__hero" data-video="../assets/projects/Amazon_Prime_Website.mp4" data-sound="true">
         <div class="project__placeholder">Main video</div>
       </div>
       <div class="project__thumbs">
@@ -224,7 +248,7 @@
     <section id="koechert" class="project">
       <p class="project__date">Date</p>
       <h2 class="project__title">A.E. Köchert</h2>
-      <div class="project__hero" data-video="../assets/projects/A.E.Koechert_Website.mp4">
+      <div class="project__hero" data-video="../assets/projects/A.E.Koechert_Website.mp4" data-sound="true">
         <div class="project__placeholder">Main video</div>
       </div>
       <div class="project__thumbs">
@@ -238,7 +262,7 @@
     <section id="audi" class="project">
       <p class="project__date">Date</p>
       <h2 class="project__title">Audi Sport</h2>
-      <div class="project__hero" data-video="../assets/projects/Audi_Sport_Website.mp4">
+      <div class="project__hero" data-video="../assets/projects/Audi_Sport_Website.mp4" data-sound="true">
         <div class="project__placeholder">Main video</div>
       </div>
       <div class="project__thumbs">
@@ -252,7 +276,7 @@
     <section id="kleine" class="project">
       <p class="project__date">Date</p>
       <h2 class="project__title">Kleine Brüder</h2>
-      <div class="project__hero" data-video="../assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4">
+      <div class="project__hero" data-video="../assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-sound="true">
         <div class="project__placeholder">Main video</div>
       </div>
       <div class="project__thumbs">
@@ -266,7 +290,7 @@
     <section id="youtube" class="project">
       <p class="project__date">Ongoing</p>
       <h2 class="project__title">YouTube &amp; Social Media</h2>
-      <div class="project__hero" data-video="../assets/projects/youtube-hero.mp4">
+      <div class="project__hero" data-video="../assets/projects/Philippa_Kinsky_Website.mp4" data-sound="true">
         <div class="project__placeholder">Main video</div>
       </div>
       <div class="project__thumbs">
@@ -295,6 +319,22 @@
             v.setAttribute('playsinline', '');
             v.preload = 'auto';
             slot.appendChild(v);
+
+            if (slot.dataset.sound === 'true') {
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.className = 'sound-btn';
+              btn.setAttribute('aria-label', 'Sound on/off');
+              btn.textContent = '🔇';
+              btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                v.muted = !v.muted;
+                btn.textContent = v.muted ? '🔇' : '🔊';
+                if (!v.muted) v.play().catch(() => {});
+              });
+              slot.appendChild(btn);
+            }
           })
           .catch(() => {});
       });
