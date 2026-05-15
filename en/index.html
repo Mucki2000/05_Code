@@ -273,6 +273,7 @@
       backdrop-filter: blur(4px);
     }
     .sound-btn:hover { background: rgba(0,0,0,0.85); opacity: 1; }
+    .sound-btn svg { width: 54%; height: 54%; display: block; }
 
     /* ============ MOBILE ============ */
     @media (max-width: 720px) {
@@ -427,12 +428,14 @@
               btn.type = 'button';
               btn.className = 'sound-btn';
               btn.setAttribute('aria-label', 'Sound on/off');
-              btn.textContent = '🔇';
+              const ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>';
+              const ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 8a5 5 0 0 1 0 8"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>';
+              btn.innerHTML = ICON_OFF;
               btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 v.muted = !v.muted;
-                btn.textContent = v.muted ? '🔇' : '🔊';
+                btn.innerHTML = v.muted ? ICON_OFF : ICON_ON;
                 if (!v.muted) v.play().catch(() => {});
               });
               slot.appendChild(btn);
