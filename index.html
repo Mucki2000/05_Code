@@ -259,6 +259,31 @@
     .show-card:hover .show-card__label { opacity: 1; }
     .show-card:hover video { transform: scale(1.04); filter: brightness(0.7); }
 
+    /* Sound on/off toggle, bottom-right of a video slot */
+    .sound-btn {
+      position: absolute;
+      bottom: clamp(10px, 0.9vw, 18px);
+      right: clamp(10px, 0.9vw, 18px);
+      z-index: 4;
+      width: clamp(36px, 2.6vw, 50px);
+      height: clamp(36px, 2.6vw, 50px);
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: clamp(14px, 1.1vw, 20px);
+      line-height: 1;
+      opacity: 0.85;
+      transition: background 160ms ease, opacity 160ms ease;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+    }
+    .sound-btn:hover { background: rgba(0,0,0,0.85); opacity: 1; }
+
     /* ============ MOBILE ============ */
     @media (max-width: 720px) {
       .hero { padding: 5vw 5vw 8vw; }
@@ -338,29 +363,34 @@
        name on hover, and links to its section on the projects page. -->
   <section class="showcase" aria-label="Projekte">
     <a class="show-card" href="projects.html#universal"
-       data-video="assets/projects/Philippa_Kinsky_Website.mp4" data-loop="true">
+       data-video="assets/projects/universal-hero.mp4" data-loop="true" data-sound="true">
       <div class="show-card__placeholder">Universal</div>
       <span class="show-card__label">Universal Music</span>
     </a>
     <a class="show-card" href="projects.html#prime"
-       data-video="assets/projects/Amazon_Prime_Website.mp4" data-loop="true">
+       data-video="assets/projects/Amazon_Prime_Website.mp4" data-loop="true" data-sound="true">
       <div class="show-card__placeholder">Prime Video</div>
       <span class="show-card__label">Amazon Prime Video</span>
     </a>
     <a class="show-card" href="projects.html#koechert"
-       data-video="assets/projects/A.E.Koechert_Website.mp4" data-loop="true">
+       data-video="assets/projects/A.E.Koechert_Website.mp4" data-loop="true" data-sound="true">
       <div class="show-card__placeholder">A.E. Köchert</div>
       <span class="show-card__label">A.E. Köchert</span>
     </a>
     <a class="show-card" href="projects.html#audi"
-       data-video="assets/projects/Audi_Sport_Website.mp4" data-loop="true">
+       data-video="assets/projects/Audi_Sport_Website.mp4" data-loop="true" data-sound="true">
       <div class="show-card__placeholder">Audi Sport</div>
       <span class="show-card__label">Audi Sport</span>
     </a>
     <a class="show-card" href="projects.html#kleine"
-       data-video="assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-loop="true">
+       data-video="assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-loop="true" data-sound="true">
       <div class="show-card__placeholder">Kleine Brüder</div>
       <span class="show-card__label">Kleine Brüder</span>
+    </a>
+    <a class="show-card" href="projects.html#youtube"
+       data-video="assets/projects/Philippa_Kinsky_Website.mp4" data-loop="true" data-sound="true">
+      <div class="show-card__placeholder">Social Media</div>
+      <span class="show-card__label">Social Media</span>
     </a>
   </section>
 
@@ -411,6 +441,25 @@
             }
 
             slot.appendChild(v);
+
+            // Optional sound on/off toggle (bottom-right). Slots opt in with
+            // data-sound="true". Works inside <a> cards too (the click is
+            // captured so it doesn't follow the link).
+            if (slot.dataset.sound === 'true') {
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.className = 'sound-btn';
+              btn.setAttribute('aria-label', 'Ton an/aus');
+              btn.textContent = '🔇';
+              btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                v.muted = !v.muted;
+                btn.textContent = v.muted ? '🔇' : '🔊';
+                if (!v.muted) v.play().catch(() => {});
+              });
+              slot.appendChild(btn);
+            }
           })
           .catch(() => { /* keep placeholder */ });
       });
