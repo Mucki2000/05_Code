@@ -142,7 +142,20 @@
     .brands img {
       width: auto;
       object-fit: contain;
-      opacity: 0.95;
+      opacity: 0;
+      animation: brandFade 650ms ease forwards;
+    }
+    @keyframes brandFade {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 0.95; transform: translateY(0); }
+    }
+    .brands a:nth-child(1) img { animation-delay: 100ms; }
+    .brands a:nth-child(2) img { animation-delay: 200ms; }
+    .brands a:nth-child(3) img { animation-delay: 300ms; }
+    .brands a:nth-child(4) img { animation-delay: 400ms; }
+    .brands a:nth-child(5) img { animation-delay: 500ms; }
+    @media (prefers-reduced-motion: reduce) {
+      .brands img { animation: none; opacity: 0.95; }
     }
     /* Per-logo size tweaks: each logo's PNG has different amounts of whitespace,
        so heights are tuned so the optical sizes feel matched. */
@@ -159,8 +172,8 @@
     .wordmark {
       position: relative;
       margin: 1vw auto 0;
-      width: 62vw;
-      max-width: 1400px;
+      width: 74vw;
+      max-width: 1650px;
       aspect-ratio: 510 / 155;
       background: #000;
       display: flex;
@@ -187,94 +200,64 @@
       border: 1px dashed #1a1a1a;
     }
 
-    /* ============ LOWER ROW: sticker + clown video ============ */
-    .lower {
-      position: relative;
+    /* ============ VIDEO SHOWCASE (below the hero) ============ */
+    .showcase {
+      width: 100%;
+      max-width: 1700px;
+      margin: 0 auto;
+      padding: clamp(30px, 4vw, 80px) clamp(16px, 3vw, 60px) clamp(60px, 7vw, 140px);
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: end;
-      margin-top: 3vw;
-      gap: 2vw;
-      min-height: 26vw;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(14px, 1.4vw, 28px);
     }
-
-    /* Sticker: Lolli-Films-style "Check out our new project" callout.
-       Replace .sticker__title text + the link to point at your real project. */
-    .sticker {
-      align-self: center;
-      justify-self: start;
-      margin-left: 6vw;
-      width: clamp(220px, 19vw, 380px);
-      padding: clamp(14px, 1.4vw, 28px) clamp(20px, 2vw, 40px);
-      background: #000;
-      border: 2px solid #fff;
-      transform: rotate(-3deg);
-      color: #fff;
-      text-align: center;
-      font-family: "Permanent Marker", "Caveat", "Inter", system-ui, sans-serif;
-      line-height: 1.15;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-      text-decoration: none;
+    .show-card {
+      position: relative;
       display: block;
-    }
-    .sticker__eyebrow {
-      display: block;
-      font-size: clamp(12px, 0.95vw, 18px);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-bottom: clamp(6px, 0.6vw, 12px);
-    }
-    .sticker__rule {
-      border: 0;
-      border-top: 2px solid #fff;
-      margin: clamp(6px, 0.6vw, 12px) 0;
-    }
-    .sticker__title {
-      display: block;
-      font-size: clamp(18px, 1.6vw, 32px);
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-    }
-    .sticker__arrow {
-      position: absolute;
-      font-size: clamp(14px, 1.2vw, 22px);
-      pointer-events: none;
-      opacity: 0.9;
-    }
-    .sticker { position: relative; }
-    .sticker__arrow.tl { top: -1.4em; left: -0.3em; }
-    .sticker__arrow.tr { top: -1.4em; right: -0.3em; transform: scaleX(-1); }
-    .sticker__arrow.bl { bottom: -1.4em; left: -0.3em; transform: scaleY(-1); }
-    .sticker__arrow.br { bottom: -1.4em; right: -0.3em; transform: scale(-1, -1); }
-
-    /* Clown video (right). Tilted, rounded. */
-    .clown {
-      justify-self: end;
-      width: clamp(280px, 28vw, 560px);
-      aspect-ratio: 16 / 11;
-      border-radius: 8px;
+      aspect-ratio: 16 / 9;
+      border-radius: clamp(8px, 0.7vw, 16px);
       overflow: hidden;
-      background: #050505;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-      transform: rotate(2deg) translateY(-1vw);
+      background: #0a0a0a;
+      text-decoration: none;
+      color: #fff;
     }
-    .clown video,
-    .clown .clown__placeholder {
+    .show-card video,
+    .show-card__placeholder {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      z-index: 1;
+      transition: transform 450ms ease, filter 300ms ease;
     }
-    .clown__placeholder {
+    .show-card__placeholder {
       display: flex;
       align-items: center;
       justify-content: center;
       color: #2a2a2a;
       font-size: clamp(11px, 0.85vw, 16px);
-      letter-spacing: 0.35em;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       border: 1px dashed #1c1c1c;
     }
+    .show-card__label {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      padding: clamp(14px, 1.4vw, 30px);
+      font-size: clamp(16px, 1.4vw, 30px);
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 55%);
+      opacity: 0;
+      transition: opacity 260ms ease;
+      pointer-events: none;
+    }
+    .show-card:hover .show-card__label { opacity: 1; }
+    .show-card:hover video { transform: scale(1.04); filter: brightness(0.7); }
 
     /* ============ MOBILE ============ */
     @media (max-width: 720px) {
@@ -284,9 +267,7 @@
       .brands { flex-wrap: wrap; gap: 18px; margin-top: 10vw; }
       .brands img { height: 18px !important; }
       .wordmark { width: 92vw; margin-top: 12vw; aspect-ratio: 1.6 / 1; }
-      .lower { grid-template-columns: 1fr; min-height: 0; margin-top: 10vw; }
-      .sticker { margin-left: 0; justify-self: center; transform: rotate(-3deg); }
-      .clown { justify-self: center; width: 90vw; transform: rotate(2deg); }
+      .showcase { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -352,6 +333,37 @@
 
   </section>
 
+  <!-- ============ VIDEO SHOWCASE ============
+       Each card autoplays a muted looping preview, shows the production
+       name on hover, and links to its section on the projects page. -->
+  <section class="showcase" aria-label="Projekte">
+    <a class="show-card" href="projects.html#universal"
+       data-video="assets/projects/Philippa_Kinsky_Website.mp4" data-loop="true">
+      <div class="show-card__placeholder">Universal</div>
+      <span class="show-card__label">Universal Music</span>
+    </a>
+    <a class="show-card" href="projects.html#prime"
+       data-video="assets/projects/Amazon_Prime_Website.mp4" data-loop="true">
+      <div class="show-card__placeholder">Prime Video</div>
+      <span class="show-card__label">Amazon Prime Video</span>
+    </a>
+    <a class="show-card" href="projects.html#koechert"
+       data-video="assets/projects/A.E.Koechert_Website.mp4" data-loop="true">
+      <div class="show-card__placeholder">A.E. Köchert</div>
+      <span class="show-card__label">A.E. Köchert</span>
+    </a>
+    <a class="show-card" href="projects.html#audi"
+       data-video="assets/projects/Audi_Sport_Website.mp4" data-loop="true">
+      <div class="show-card__placeholder">Audi Sport</div>
+      <span class="show-card__label">Audi Sport</span>
+    </a>
+    <a class="show-card" href="projects.html#kleine"
+       data-video="assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-loop="true">
+      <div class="show-card__placeholder">Kleine Brüder</div>
+      <span class="show-card__label">Kleine Brüder</span>
+    </a>
+  </section>
+
   <script>
     // For each slot with [data-video], probe the file. If it exists, swap the
     // placeholder for an autoplaying <video>.
@@ -370,7 +382,7 @@
         fetch(src, { method: 'HEAD' })
           .then((res) => {
             if (!res.ok) return;
-            const placeholder = slot.querySelector('.wordmark__placeholder, .clown__placeholder');
+            const placeholder = slot.querySelector('.wordmark__placeholder, .show-card__placeholder');
             if (placeholder) placeholder.remove();
 
             const v = document.createElement('video');
