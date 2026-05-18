@@ -306,6 +306,18 @@
   <script>
     (function () {
       const slots = document.querySelectorAll('[data-video]');
+
+      // Only play the video(s) currently in view; pause the rest.
+      const io = ('IntersectionObserver' in window)
+        ? new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              const vid = entry.target;
+              if (entry.isIntersecting) vid.play().catch(() => {});
+              else vid.pause();
+            });
+          }, { threshold: 0.25 })
+        : null;
+
       slots.forEach((slot) => {
         const src = slot.dataset.video;
         if (!src) return;
@@ -320,6 +332,7 @@
             v.setAttribute('playsinline', '');
             v.preload = 'auto';
             slot.appendChild(v);
+            if (io) io.observe(v);
 
             if (slot.dataset.sound === 'true') {
               const btn = document.createElement('button');
