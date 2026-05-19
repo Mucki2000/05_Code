@@ -112,8 +112,12 @@
       margin-bottom: clamp(16px, 1.4vw, 28px);
     }
     .crew__photo img { width: 100%; height: 100%; object-fit: cover; }
-    .crew__name { font-size: clamp(20px, 1.7vw, 34px); font-weight: 500; letter-spacing: 0.01em; }
-    .crew__role { font-size: clamp(13px, 1vw, 18px); opacity: 0.55; margin-top: 0.2em; letter-spacing: 0.05em; }
+    .crew__tag {
+      width: clamp(240px, 26vw, 460px);
+      height: auto;
+      margin-top: clamp(6px, 1vw, 16px);
+      filter: drop-shadow(0 10px 28px rgba(0,0,0,0.6));
+    }
 
     .contact {
       text-align: center;
@@ -179,16 +183,16 @@
           <div class="crew__photo">
             <img src="assets/Screenshot 2026-05-12 130034.png" alt="Damian Aschenbrenner" />
           </div>
-          <p class="crew__name">Damian Aschenbrenner</p>
-          <p class="crew__role">Managing Director / Producer</p>
+          <img class="crew__tag" src="assets/projects/STICKERS/DAMIAN_TAG.png"
+               alt="Damian Aschenbrenner — Managing Director / Producer" />
         </div>
 
         <div class="crew__member">
           <div class="crew__photo">
             <img src="assets/photo_5846211468326538391_y.jpg" alt="Mucki Trauttmansdorff" />
           </div>
-          <p class="crew__name">Mucki Trauttmansdorff</p>
-          <p class="crew__role">Managing Director / Producer</p>
+          <img class="crew__tag" src="assets/projects/STICKERS/MUCKI_TAG.png"
+               alt="Mucki Trauttmansdorff — Managing Director / Producer" />
         </div>
       </div>
 
