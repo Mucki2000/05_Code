@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lausebengel — Hero</title>
-  <meta name="description" content="Lausebengel Edits — Hero." />
+  <title>Lausebengel</title>
+  <meta name="description" content="Lausebengel Edits — Video-Editing & Social Media." />
+
+  <link rel="icon" type="image/png" href="Logos/Lausebengel_transparent.png" />
+  <link rel="alternate" hreflang="de" href="index.html" />
+  <link rel="alternate" hreflang="en" href="en/index.html" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,48 +17,34 @@
   <style>
     /* ============ RESET ============ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+    html { overflow-x: hidden; scroll-behavior: smooth; }
     body {
       background: #000;
       color: #fff;
       font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
       font-weight: 400;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
     }
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
 
-    /* ============ PAGE / HERO ============ */
-    .hero {
-      position: relative;
-      width: 100vw;
-      min-height: 100vh;
-      background: #000;
-      overflow: hidden;
-      padding: 2.2vw 3vw 4vw;
-    }
-
-    /* ============ TOP NAV ============ */
+    /* ============ STICKY TOP NAV ============ */
     .nav {
-      position: relative;
+      position: sticky;
+      top: 0;
+      z-index: 50;
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      z-index: 5;
+      padding: clamp(12px, 2vw, 26px) clamp(16px, 3vw, 48px);
+      background: rgba(0,0,0,0.92);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    .nav__logo {
-      display: block;
-      height: 3.6vw;
-      max-height: 64px;
-      min-height: 28px;
-    }
-    .nav__logo img {
-      height: 100%;
-      width: auto;
-      display: block;
-    }
+    .nav__logo { display: block; height: 3.6vw; max-height: 64px; min-height: 28px; }
+    .nav__logo img { height: 100%; width: auto; display: block; }
     .nav__links {
       display: flex;
       align-items: center;
@@ -63,25 +53,14 @@
       font-weight: 400;
       letter-spacing: 0.01em;
     }
-    .nav__links a {
-      opacity: 0.9;
-      transition: opacity 120ms ease;
-    }
+    .nav__links a { opacity: 0.9; transition: opacity 120ms ease; }
     .nav__links a:hover { opacity: 1; }
-    .nav__links a.is-active {
-      text-decoration: underline;
-      text-underline-offset: 4px;
-    }
+    .nav__links a.is-active { text-decoration: underline; text-underline-offset: 4px; }
     .nav__lang { opacity: 0.4; padding: 0 0.2em; }
     .nav__lang-link { font-size: 0.85em; opacity: 0.7; }
-    .nav__caret {
-      display: inline-block;
-      margin-left: 0.35em;
-      font-size: 0.7em;
-      transform: translateY(-2px);
-    }
+    .nav__caret { display: inline-block; margin-left: 0.35em; font-size: 0.7em; transform: translateY(-2px); }
 
-    /* Dropdown for Projekte / Projects */
+    /* Dropdown for Projekte */
     .nav__has-menu { position: relative; display: inline-flex; align-items: center; }
     .nav__has-menu > a { cursor: pointer; }
     .nav__menu {
@@ -97,23 +76,15 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 140ms ease;
-      z-index: 20;
+      z-index: 60;
     }
-    /* Invisible hover bridge: keeps the menu open while the cursor crosses
-       the 10px visual gap between trigger and menu. */
     .nav__menu::before {
       content: '';
       position: absolute;
-      top: -10px;
-      left: 0;
-      right: 0;
-      height: 10px;
+      top: -10px; left: 0; right: 0; height: 10px;
     }
     .nav__has-menu:hover .nav__menu,
-    .nav__has-menu:focus-within .nav__menu {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .nav__has-menu:focus-within .nav__menu { opacity: 1; pointer-events: auto; }
     .nav__menu a {
       display: block;
       padding: 10px 18px;
@@ -124,13 +95,22 @@
     }
     .nav__menu a:hover { opacity: 1; background: rgba(255,255,255,0.05); }
 
-    /* ============ BRAND LOGO ROW ============ */
+    /* ============ HERO ============ */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(20px, 3vw, 60px) clamp(16px, 3vw, 48px) clamp(40px, 5vw, 90px);
+    }
+
     .brands {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: clamp(36px, 5vw, 100px);
-      margin-top: 3vw;
     }
     .brands a {
       display: inline-flex;
@@ -157,21 +137,16 @@
     @media (prefers-reduced-motion: reduce) {
       .brands img { animation: none; opacity: 0.95; }
     }
-    /* Per-logo size tweaks: each logo's PNG has different amounts of whitespace,
-       so heights are tuned so the optical sizes feel matched. */
-    .brands .b-universal   { height: clamp(40px, 4vw,  82px); filter: invert(1); }
-    .brands .b-prime       { height: clamp(28px, 2.8vw, 56px); }
-    .brands .b-koechert    { height: clamp(30px, 3.0vw, 60px); }
-    .brands .b-audi        { height: clamp(50px, 5.2vw, 110px); filter: invert(1); }
-    .brands .b-kleine      { height: clamp(56px, 5.4vw, 110px); mix-blend-mode: screen; }
+    .brands .b-universal { height: clamp(40px, 4vw,  82px); filter: invert(1); }
+    .brands .b-prime     { height: clamp(28px, 2.8vw, 56px); }
+    .brands .b-koechert  { height: clamp(30px, 3.0vw, 60px); }
+    .brands .b-audi      { height: clamp(50px, 5.2vw, 110px); filter: invert(1); }
+    .brands .b-kleine    { height: clamp(56px, 5.4vw, 110px); mix-blend-mode: screen; }
 
-    /* ============ CENTER VIDEO (replaces "Lolli Films" wordmark) ============ */
-    /* Slot aspect (~3.3:1) is tuned to the logo region inside the source video,
-       not the full 16:9 frame, so `object-fit: cover` crops away the empty
-       black borders and the wordmark fills the slot like Lolli Films does. */
+    /* Center animated wordmark */
     .wordmark {
       position: relative;
-      margin: 1vw auto 0;
+      margin: clamp(20px, 3vw, 60px) auto 0;
       width: 74vw;
       max-width: 1650px;
       aspect-ratio: 510 / 155;
@@ -200,26 +175,44 @@
       border: 1px dashed #1a1a1a;
     }
 
-    /* ============ VIDEO SHOWCASE (below the hero) ============ */
-    .showcase {
+    /* ============ PROJECTS (single-page section) ============ */
+    .projects {
       width: 100%;
       max-width: 1700px;
       margin: 0 auto;
-      padding: clamp(30px, 4vw, 80px) clamp(16px, 3vw, 60px) clamp(60px, 7vw, 140px);
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: clamp(14px, 1.4vw, 28px);
+      padding: clamp(20px, 3vw, 60px) clamp(16px, 3vw, 60px) clamp(70px, 8vw, 150px);
+      scroll-margin-top: 90px;
+    }
+    .projects__head {
+      text-align: center;
+      margin-bottom: clamp(28px, 4vw, 70px);
+    }
+    .projects__eyebrow {
+      font-size: clamp(12px, 0.9vw, 16px);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      opacity: 0.55;
+    }
+    /* Masonry columns adapt to mixed portrait + landscape clips. */
+    .grid {
+      column-count: 3;
+      column-gap: clamp(14px, 1.4vw, 28px);
     }
     .show-card {
       position: relative;
       display: block;
+      width: 100%;
+      margin: 0 0 clamp(14px, 1.4vw, 28px);
+      break-inside: avoid;
+      -webkit-column-break-inside: avoid;
       aspect-ratio: 16 / 9;
       border-radius: clamp(8px, 0.7vw, 16px);
       overflow: hidden;
       background: #0a0a0a;
-      text-decoration: none;
       color: #fff;
+      scroll-margin-top: 100px;
     }
+    .show-card.is-portrait { aspect-ratio: 9 / 16; }
     .show-card video,
     .show-card__placeholder {
       position: absolute;
@@ -259,155 +252,125 @@
     .show-card:hover .show-card__label { opacity: 1; }
     .show-card:hover video { transform: scale(1.04); filter: brightness(0.7); }
 
-    /* Sound on/off toggle, bottom-right of a video slot */
-    .sound-btn {
-      position: absolute;
-      bottom: clamp(10px, 0.9vw, 18px);
-      right: clamp(10px, 0.9vw, 18px);
-      z-index: 4;
-      width: clamp(36px, 2.6vw, 50px);
-      height: clamp(36px, 2.6vw, 50px);
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.35);
-      background: rgba(0,0,0,0.55);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: clamp(14px, 1.1vw, 20px);
-      line-height: 1;
-      opacity: 0.85;
-      transition: background 160ms ease, opacity 160ms ease;
-      -webkit-backdrop-filter: blur(4px);
-      backdrop-filter: blur(4px);
-    }
-    .sound-btn:hover { background: rgba(0,0,0,0.85); opacity: 1; }
-    .sound-btn svg { width: 54%; height: 54%; display: block; }
-
     /* ============ MOBILE ============ */
+    @media (max-width: 980px) {
+      .grid { column-count: 2; }
+    }
     @media (max-width: 720px) {
-      .hero { padding: 5vw 5vw 8vw; }
       .nav__logo { height: 32px; }
       .nav__links { gap: 14px; font-size: 12px; }
-      .brands { flex-wrap: wrap; gap: 18px; margin-top: 10vw; }
+      .brands { flex-wrap: wrap; gap: 18px; }
       .brands img { height: 18px !important; }
-      .wordmark { width: 92vw; margin-top: 12vw; aspect-ratio: 1.6 / 1; }
-      .showcase { grid-template-columns: 1fr; }
+      .wordmark { width: 92vw; aspect-ratio: 1.6 / 1; }
+      .grid { column-count: 1; }
     }
   </style>
 </head>
 <body>
 
-  <section class="hero">
+  <!-- ============ STICKY TOP NAV ============ -->
+  <header class="nav">
+    <a href="index.html" class="nav__logo" aria-label="Lausebengel">
+      <img src="assets/lausebengel-logo.png" alt="Lausebengel" />
+    </a>
 
-    <!-- ============ TOP NAV ============ -->
-    <header class="nav">
-      <!-- Top-left logo: last frame of the WhatsApp video, tight-cropped. -->
-      <a href="index.html" class="nav__logo" aria-label="Lausebengel">
-        <img src="assets/lausebengel-logo.png" alt="Lausebengel" />
-      </a>
-
-      <nav class="nav__links" aria-label="Hauptnavigation">
-        <div class="nav__has-menu">
-          <a>Projekte<span class="nav__caret">▾</span></a>
-          <div class="nav__menu" role="menu">
-            <a href="projects.html#universal" role="menuitem">Universal</a>
-            <a href="projects.html#prime"     role="menuitem">Prime Video</a>
-            <a href="projects.html#koechert"  role="menuitem">A.E. Köchert</a>
-            <a href="projects.html#audi"      role="menuitem">Audi Sport</a>
-            <a href="projects.html#kleine"    role="menuitem">Kleine Brüder</a>
-            <a href="projects.html#youtube"   role="menuitem">YouTube / Social</a>
-          </div>
+    <nav class="nav__links" aria-label="Hauptnavigation">
+      <div class="nav__has-menu">
+        <a>Projekte<span class="nav__caret">▾</span></a>
+        <div class="nav__menu" role="menu">
+          <a href="#universal" role="menuitem">Universal</a>
+          <a href="#prime"     role="menuitem">Prime Video</a>
+          <a href="#koechert"  role="menuitem">A.E. Köchert</a>
+          <a href="#audi"      role="menuitem">Audi Sport</a>
+          <a href="#kleine"    role="menuitem">Kleine Brüder</a>
+          <a href="#youtube"   role="menuitem">YouTube / Social</a>
         </div>
-        <a href="index.html" class="is-active">Start</a>
-        <a href="about.html">Über uns</a>
-        <span class="nav__lang" aria-hidden="true">|</span>
-        <a href="en/index.html" class="nav__lang-link" aria-label="Switch to English">EN</a>
-      </nav>
-    </header>
+      </div>
+      <a href="#top" class="is-active">Start</a>
+      <a href="about.html">Über uns</a>
+      <span class="nav__lang" aria-hidden="true">|</span>
+      <a href="en/index.html" class="nav__lang-link" aria-label="Switch to English">EN</a>
+    </nav>
+  </header>
 
-    <!-- ============ BRAND LOGOS ============
-         Each <a href="…"> points to the project page for that client.
-         Replace the placeholder hrefs ("#project-…") with the real URLs.   -->
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
     <div class="brands" aria-label="Kunden">
-      <a href="projects.html#universal" aria-label="Projekt Universal">
+      <a href="#universal" aria-label="Projekt Universal">
         <img class="b-universal" src="Logos/Universal-Logo-1997.png" alt="Universal" />
       </a>
-      <a href="projects.html#prime" aria-label="Projekt Prime Video">
-        <img class="b-prime"     src="Logos/prime-video-horizontal-logo-white-dec-2024.png" alt="Prime Video" />
+      <a href="#prime" aria-label="Projekt Prime Video">
+        <img class="b-prime" src="Logos/prime-video-horizontal-logo-white-dec-2024.png" alt="Prime Video" />
       </a>
-      <a href="projects.html#koechert" aria-label="Projekt A.E. Köchert">
-        <img class="b-koechert"  src="Logos/Koechert-Logo.webp" alt="A.E. Köchert" />
+      <a href="#koechert" aria-label="Projekt A.E. Köchert">
+        <img class="b-koechert" src="Logos/Koechert-Logo.webp" alt="A.E. Köchert" />
       </a>
-      <a href="projects.html#audi" aria-label="Projekt Audi Sport">
-        <img class="b-audi"      src="Logos/Audi.png" alt="Audi Sport" />
+      <a href="#audi" aria-label="Projekt Audi Sport">
+        <img class="b-audi" src="Logos/Audi.png" alt="Audi Sport" />
       </a>
-      <a href="projects.html#kleine" aria-label="Projekt Kleine Brüder">
-        <img class="b-kleine"    src="Logos/Kleine brüder.jpg" alt="Kleine Brüder" />
+      <a href="#kleine" aria-label="Projekt Kleine Brüder">
+        <img class="b-kleine" src="Logos/Kleine brüder.jpg" alt="Kleine Brüder" />
       </a>
     </div>
 
-    <!-- ============ CENTER VIDEO (the big wordmark slot) ============ -->
-    <!-- Drop a file at assets/hero-video-main.mp4 and it will autoplay here. -->
     <div class="wordmark"
          data-video="assets/LP_Animation_4k.mp4"
          data-rate="0.85"
          data-label="Hauptvideo">
       <div class="wordmark__placeholder">Hauptvideo</div>
     </div>
-
   </section>
 
-  <!-- ============ VIDEO SHOWCASE ============
-       Each card autoplays a muted looping preview, shows the production
-       name on hover, and links to its section on the projects page. -->
-  <section class="showcase" aria-label="Projekte">
-    <a class="show-card" href="projects.html#universal"
-       data-video="assets/projects/universal-hero.mp4" data-loop="true" data-sound="true">
-      <div class="show-card__placeholder">Universal</div>
-      <span class="show-card__label">Universal Music</span>
-    </a>
-    <a class="show-card" href="projects.html#prime"
-       data-video="assets/projects/Amazon_Prime_Website.mp4" data-loop="true" data-sound="true">
-      <div class="show-card__placeholder">Prime Video</div>
-      <span class="show-card__label">Amazon Prime Video</span>
-    </a>
-    <a class="show-card" href="projects.html#koechert"
-       data-video="assets/projects/A.E.Koechert_Website.mp4" data-loop="true" data-sound="true">
-      <div class="show-card__placeholder">A.E. Köchert</div>
-      <span class="show-card__label">A.E. Köchert</span>
-    </a>
-    <a class="show-card" href="projects.html#audi"
-       data-video="assets/projects/Audi_Sport_Website.mp4" data-loop="true" data-sound="true">
-      <div class="show-card__placeholder">Audi Sport</div>
-      <span class="show-card__label">Audi Sport</span>
-    </a>
-    <a class="show-card" href="projects.html#kleine"
-       data-video="assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-loop="true" data-sound="true">
-      <div class="show-card__placeholder">Kleine Brüder</div>
-      <span class="show-card__label">Kleine Brüder</span>
-    </a>
-    <a class="show-card" href="projects.html#youtube"
-       data-video="assets/projects/Philippa_Kinsky_Website.mp4" data-loop="true" data-sound="true">
-      <div class="show-card__placeholder">Social Media</div>
-      <span class="show-card__label">Social Media</span>
-    </a>
+  <!-- ============ PROJECTS (directly below the hero) ============ -->
+  <section class="projects" id="projects" aria-label="Projekte">
+    <div class="projects__head">
+      <p class="projects__eyebrow">Projekte</p>
+    </div>
+
+    <div class="grid">
+      <a class="show-card" id="universal" href="#universal"
+         data-video="assets/projects/universal-hero.mp4" data-loop="true">
+        <div class="show-card__placeholder">Universal</div>
+        <span class="show-card__label">Universal Music</span>
+      </a>
+      <a class="show-card" id="prime" href="#prime"
+         data-video="assets/projects/Amazon_Prime_Website.mp4" data-loop="true">
+        <div class="show-card__placeholder">Prime Video</div>
+        <span class="show-card__label">Amazon Prime Video</span>
+      </a>
+      <a class="show-card" id="koechert" href="#koechert"
+         data-video="assets/projects/A.E.Koechert_Website.mp4" data-loop="true">
+        <div class="show-card__placeholder">A.E. Köchert</div>
+        <span class="show-card__label">A.E. Köchert</span>
+      </a>
+      <a class="show-card" id="audi" href="#audi"
+         data-video="assets/projects/Audi_Sport_Website.mp4" data-loop="true">
+        <div class="show-card__placeholder">Audi Sport</div>
+        <span class="show-card__label">Audi Sport</span>
+      </a>
+      <a class="show-card" id="kleine" href="#kleine"
+         data-video="assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-loop="true">
+        <div class="show-card__placeholder">Kleine Brüder</div>
+        <span class="show-card__label">Kleine Brüder</span>
+      </a>
+      <a class="show-card" id="youtube" href="#youtube"
+         data-video="assets/projects/Philippa_Kinsky_Website.mp4" data-loop="true">
+        <div class="show-card__placeholder">Social Media</div>
+        <span class="show-card__label">Social Media</span>
+      </a>
+    </div>
   </section>
 
   <script>
-    // For each slot with [data-video], probe the file. If it exists, swap the
-    // placeholder for an autoplaying <video>.
-    //
-    // Per-slot options via data-attributes:
-    //   data-loop="true"       → loop the video (default: false, plays once and holds last frame)
-    //   data-rate="0.7"        → playback speed multiplier (default: 1.0)
+    // Probe each [data-video] slot. If the file exists, swap the placeholder
+    // for a muted autoplaying <video>.
+    //   data-loop="true" → loop
+    //   data-rate="0.85" → playback speed multiplier (default 1.0)
     (function () {
       const slots = document.querySelectorAll('[data-video]');
 
-      // Only play the video(s) currently in view; pause the rest. Fewer
-      // simultaneous decodes keeps the playing clip in A/V sync and saves
-      // bandwidth. Falls back to plain autoplay if unsupported.
+      // Only play the video(s) currently in view; pause the rest. Keeps the
+      // active clip in A/V sync and avoids many simultaneous decodes.
       const io = ('IntersectionObserver' in window)
         ? new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
@@ -439,13 +402,16 @@
             v.preload = 'auto';
             if (shouldLoop) v.loop = true;
 
-            v.addEventListener('loadedmetadata', () => { v.playbackRate = rate; });
-            // Belt-and-suspenders: re-apply rate after play starts (some browsers
-            // reset it on play()).
+            v.addEventListener('loadedmetadata', () => {
+              v.playbackRate = rate;
+              // Auto-orientation: tag portrait clips so the card switches to a
+              // tall aspect ratio instead of cropping them.
+              if (slot.classList.contains('show-card') && v.videoHeight > v.videoWidth) {
+                slot.classList.add('is-portrait');
+              }
+            });
             v.addEventListener('play', () => { v.playbackRate = rate; });
 
-            // When the video reaches the end and we're not looping, hold on the
-            // very last frame (some browsers re-show the poster/empty otherwise).
             if (!shouldLoop) {
               v.addEventListener('ended', () => {
                 try {
@@ -457,27 +423,6 @@
 
             slot.appendChild(v);
             if (io) io.observe(v);
-
-            // Optional sound on/off toggle (bottom-right). Slots opt in with
-            // data-sound="true". Works inside <a> cards too (the click is
-            // captured so it doesn't follow the link).
-            if (slot.dataset.sound === 'true') {
-              const btn = document.createElement('button');
-              btn.type = 'button';
-              btn.className = 'sound-btn';
-              btn.setAttribute('aria-label', 'Ton an/aus');
-              const ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>';
-              const ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 8a5 5 0 0 1 0 8"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>';
-              btn.innerHTML = ICON_OFF;
-              btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                v.muted = !v.muted;
-                btn.innerHTML = v.muted ? ICON_OFF : ICON_ON;
-                if (!v.muted) v.play().catch(() => {});
-              });
-              slot.appendChild(btn);
-            }
           })
           .catch(() => { /* keep placeholder */ });
       });
