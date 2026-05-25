@@ -1,0 +1,13 @@
+# Windows / Google Drive Müll
+desktop.ini
+Thumbs.db
+ehthumbs.db
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+
+# Verschachtelter Junk-Ordner (kaputtes inneres Repo)
+/05_Code/

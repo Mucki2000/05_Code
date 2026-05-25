@@ -129,10 +129,10 @@
     @media (prefers-reduced-motion: reduce) {
       .brands img { animation: none; opacity: 0.95; }
     }
-    .brands .b-universal { height: clamp(40px, 4vw,  82px); filter: invert(1); }
-    .brands .b-prime     { height: clamp(28px, 2.8vw, 56px); }
-    .brands .b-koechert  { height: clamp(30px, 3.0vw, 60px); }
-    .brands .b-audi      { height: clamp(50px, 5.2vw, 110px); filter: invert(1); }
+    .brands .b-universal { height: clamp(52px, 5.2vw, 104px); filter: invert(1); }
+    .brands .b-prime     { height: clamp(22px, 2.1vw, 42px); }
+    .brands .b-koechert  { height: clamp(24px, 2.4vw, 48px); }
+    .brands .b-audi      { height: clamp(60px, 6.2vw, 128px); filter: invert(1); }
     .brands .b-kleine    { height: clamp(56px, 5.4vw, 110px); mix-blend-mode: screen; }
 
     .wordmark {
@@ -166,37 +166,37 @@
       max-width: 1500px;
       margin: 0 auto;
       padding: clamp(20px, 3vw, 50px) clamp(16px, 4vw, 70px) clamp(60px, 9vw, 160px);
-    }
-    .proj {
-      scroll-margin-top: 90px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: clamp(50px, 8vw, 140px) 0;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      gap: clamp(44px, 7vw, 110px);
     }
-    .projects > .proj:first-child { border-top: 0; padding-top: clamp(20px, 3vw, 50px); }
+    .proj { scroll-margin-top: 90px; }
+
     .proj__sticker {
-      width: clamp(260px, 44vw, 720px);
+      display: block;
+      width: clamp(180px, 22vw, 380px);
       height: auto;
-      margin-bottom: clamp(22px, 3.4vw, 60px);
+      margin: 0 auto clamp(-34px, -1.8vw, -22px);
+      position: relative;
+      z-index: 3;
+      pointer-events: none;
       filter: drop-shadow(0 10px 34px rgba(0,0,0,0.65));
     }
     .proj:nth-child(odd)  .proj__sticker { transform: rotate(-1.6deg); }
     .proj:nth-child(even) .proj__sticker { transform: rotate(1.6deg); }
+
     .proj__media {
       position: relative;
       width: 100%;
-      max-width: 1100px;
       aspect-ratio: 16 / 9;
-      border-radius: clamp(10px, 1vw, 22px);
+      border-radius: clamp(10px, 1vw, 18px);
       overflow: hidden;
       background: #0a0a0a;
     }
     .proj__media.is-portrait {
       aspect-ratio: 9 / 16;
-      max-width: min(440px, 78vw);
+      max-width: 360px;
+      margin-inline: auto;
     }
     .proj__media video,
     .proj__placeholder {
@@ -218,14 +218,66 @@
       border: 1px dashed #1c1c1c;
     }
 
+    .proj__info {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 6px;
+      padding: clamp(16px, 2vw, 32px);
+      text-align: left;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 42%, rgba(0,0,0,0) 78%);
+      opacity: 0;
+      transition: opacity 240ms ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .proj__media:hover .proj__info,
+    .proj__media:focus-within .proj__info { opacity: 1; }
+    .proj__type {
+      font-size: clamp(11px, 0.85vw, 14px);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      opacity: 0.7;
+    }
+    .proj__info h3 {
+      font-size: clamp(18px, 1.6vw, 28px);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .proj__info p {
+      font-size: clamp(13px, 1vw, 16px);
+      font-weight: 300;
+      opacity: 0.85;
+      max-width: 48ch;
+    }
+
+    .proj-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(28px, 4vw, 64px);
+    }
+
+    .proj--featured .proj__sticker { width: clamp(240px, 34vw, 560px); }
+    .proj__collage {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(12px, 1.4vw, 22px);
+    }
+    .proj__collage > .proj__media:first-child { grid-column: 1 / -1; }
+
     @media (max-width: 720px) {
       .nav__logo { height: 32px; }
       .nav__links { gap: 14px; font-size: 12px; }
       .brands { flex-wrap: wrap; gap: 18px; }
       .brands img { height: 18px !important; }
       .wordmark { width: 92vw; aspect-ratio: 1.6 / 1; }
-      .proj__sticker { width: 80vw; }
+      .proj-grid { grid-template-columns: 1fr; }
+      .proj__collage { grid-template-columns: 1fr; }
+      .proj__sticker { width: clamp(180px, 56vw, 320px); }
       .proj__media.is-portrait { max-width: 86vw; }
+      .proj__info { opacity: 1; }
     }
   </style>
 </head>
@@ -284,48 +336,97 @@
 
   <section class="projects" id="projects" aria-label="Projects">
 
-    <article class="proj" id="prime">
+    <!-- Featured: Gerry Star / Grimme-Preis campaign (multiple clips) -->
+    <article class="proj proj--featured" id="prime">
       <img class="proj__sticker" src="../assets/projects/STICKERS/GRIMME_PREIS_WINNER.png"
            alt="Social Media Campaign for Grimme-Preis Winner (Gerry Star)" />
-      <div class="proj__media" data-video="../assets/projects/Amazon_Prime_Website.mp4" data-loop="true">
-        <div class="proj__placeholder">Prime Video</div>
+      <div class="proj__collage">
+        <div class="proj__media" data-video="../assets/projects/Amazon_Prime_Website.mp4" data-loop="true">
+          <div class="proj__placeholder">Gerry Star</div>
+          <div class="proj__info">
+            <span class="proj__type">Amazon Prime · Social Media</span>
+            <h3>Gerry Star</h3>
+            <p>Project description coming soon …</p>
+          </div>
+        </div>
+        <div class="proj__media" data-video="../assets/projects/gerry-star-2.mp4" data-loop="true" data-optional="true">
+          <div class="proj__placeholder">Clip coming</div>
+        </div>
+        <div class="proj__media" data-video="../assets/projects/gerry-star-3.mp4" data-loop="true" data-optional="true">
+          <div class="proj__placeholder">Clip coming</div>
+        </div>
+        <div class="proj__media" data-video="../assets/projects/gerry-star-4.mp4" data-loop="true" data-optional="true">
+          <div class="proj__placeholder">Clip coming</div>
+        </div>
+        <div class="proj__media" data-video="../assets/projects/gerry-star-5.mp4" data-loop="true" data-optional="true">
+          <div class="proj__placeholder">Clip coming</div>
+        </div>
       </div>
     </article>
 
-    <article class="proj" id="audi">
-      <img class="proj__sticker" src="../assets/projects/STICKERS/AUDI_SPORT_HELL.png" alt="Audi Sport" />
-      <div class="proj__media" data-video="../assets/projects/Audi_Sport_Website.mp4" data-loop="true">
-        <div class="proj__placeholder">Audi Sport</div>
-      </div>
-    </article>
+    <div class="proj-grid">
 
-    <article class="proj" id="universal">
-      <img class="proj__sticker" src="../assets/projects/STICKERS/UNIVERSAL_HELL.png" alt="Universal Music" />
-      <div class="proj__media" data-video="../assets/projects/universal-hero.mp4" data-loop="true">
-        <div class="proj__placeholder">Universal — coming soon</div>
-      </div>
-    </article>
+      <article class="proj" id="audi">
+        <img class="proj__sticker" src="../assets/projects/STICKERS/AUDI_SPORT_HELL.png" alt="Audi Sport" />
+        <div class="proj__media" data-video="../assets/projects/Audi_Sport_Website.mp4" data-loop="true">
+          <div class="proj__placeholder">Audi Sport</div>
+          <div class="proj__info">
+            <span class="proj__type">Social Media</span>
+            <h3>Audi Sport</h3>
+            <p>Project description coming soon …</p>
+          </div>
+        </div>
+      </article>
 
-    <article class="proj" id="koechert">
-      <img class="proj__sticker" src="../assets/projects/STICKERS/A-E-KOECHERT_HELL.png" alt="A.E. Köchert" />
-      <div class="proj__media" data-video="../assets/projects/A.E.Koechert_Website.mp4" data-loop="true">
-        <div class="proj__placeholder">A.E. Köchert</div>
-      </div>
-    </article>
+      <article class="proj" id="universal">
+        <img class="proj__sticker" src="../assets/projects/STICKERS/UNIVERSAL_HELL.png" alt="Universal Music" />
+        <div class="proj__media" data-video="../assets/projects/universal-hero.mp4" data-loop="true">
+          <div class="proj__placeholder">Universal — coming soon</div>
+          <div class="proj__info">
+            <span class="proj__type">Music</span>
+            <h3>Universal Music</h3>
+            <p>Project description coming soon …</p>
+          </div>
+        </div>
+      </article>
 
-    <article class="proj" id="kleine">
-      <img class="proj__sticker" src="../assets/projects/STICKERS/KLEINE_BR%C3%9CDER_HELL.png" alt="Kleine Brüder" />
-      <div class="proj__media" data-video="../assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-loop="true">
-        <div class="proj__placeholder">Kleine Brüder</div>
-      </div>
-    </article>
+      <article class="proj" id="koechert">
+        <img class="proj__sticker" src="../assets/projects/STICKERS/A-E-KOECHERT_HELL.png" alt="A.E. Köchert" />
+        <div class="proj__media" data-video="../assets/projects/A.E.Koechert_Website.mp4" data-loop="true">
+          <div class="proj__placeholder">A.E. Köchert</div>
+          <div class="proj__info">
+            <span class="proj__type">Brand</span>
+            <h3>A.E. Köchert</h3>
+            <p>Project description coming soon …</p>
+          </div>
+        </div>
+      </article>
 
-    <article class="proj" id="youtube">
-      <img class="proj__sticker" src="../assets/projects/STICKERS/GERRY_STAR_HELL.png" alt="Gerry Star — Social Media" />
-      <div class="proj__media" data-video="../assets/projects/Philippa_Kinsky_Website.mp4" data-loop="true">
-        <div class="proj__placeholder">Social Media</div>
-      </div>
-    </article>
+      <article class="proj" id="kleine">
+        <img class="proj__sticker" src="../assets/projects/STICKERS/KLEINE_BR%C3%9CDER_HELL.png" alt="Kleine Brüder" />
+        <div class="proj__media" data-video="../assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-loop="true">
+          <div class="proj__placeholder">Kleine Brüder</div>
+          <div class="proj__info">
+            <span class="proj__type">Short Film</span>
+            <h3>Kleine Brüder</h3>
+            <p>Project description coming soon …</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="proj" id="youtube">
+        <img class="proj__sticker" src="../assets/projects/STICKERS/GERRY_STAR_HELL.png" alt="Gerry Star — Social Media" />
+        <div class="proj__media" data-video="../assets/projects/Philippa_Kinsky_Website.mp4" data-loop="true">
+          <div class="proj__placeholder">Social Media</div>
+          <div class="proj__info">
+            <span class="proj__type">Social Media</span>
+            <h3>Gerry Star</h3>
+            <p>Project description coming soon …</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
 
   </section>
 
@@ -351,7 +452,7 @@
 
         fetch(src, { method: 'HEAD' })
           .then((res) => {
-            if (!res.ok) return;
+            if (!res.ok) { if (slot.dataset.optional === 'true') slot.remove(); return; }
             const placeholder = slot.querySelector('.wordmark__placeholder, .proj__placeholder');
             if (placeholder) placeholder.remove();
 
@@ -384,7 +485,7 @@
             slot.appendChild(v);
             if (io) io.observe(v);
           })
-          .catch(() => {});
+          .catch(() => { if (slot.dataset.optional === 'true') slot.remove(); });
       });
     })();
   </script>
