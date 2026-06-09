@@ -161,6 +161,26 @@
       border: 1px dashed #1a1a1a;
     }
 
+    .tagline {
+      text-align: center;
+      margin: clamp(22px, 3vw, 56px) auto 0;
+      padding: 0 clamp(16px, 3vw, 40px);
+      max-width: 760px;
+    }
+    .tagline__kicker {
+      font-size: clamp(11px, 1vw, 16px);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-bottom: clamp(10px, 1vw, 16px);
+    }
+    .tagline__body {
+      font-size: clamp(13px, 1.05vw, 18px);
+      font-weight: 300;
+      opacity: 0.6;
+      line-height: 1.55;
+    }
+
     .projects {
       width: 100%;
       max-width: 1500px;
@@ -195,6 +215,14 @@
       object-fit: cover;
       display: block;
     }
+    .proj__hover-video {
+      opacity: 0;
+      transition: opacity 280ms ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .proj__media:hover .proj__hover-video,
+    .proj__media:focus-within .proj__hover-video { opacity: 1; }
     .proj__placeholder {
       display: flex;
       align-items: center;
@@ -320,6 +348,11 @@
          data-label="Main video">
       <div class="wordmark__placeholder">Main video</div>
     </div>
+
+    <div class="tagline">
+      <p class="tagline__kicker">High-End Editing &amp; Social Production</p>
+      <p class="tagline__body">Built by young film nerds, trying to bring intimacy and a Gen-Z sensibility to film &amp; television.</p>
+    </div>
   </section>
 
   <section class="projects" id="projects" aria-label="Projects">
@@ -354,6 +387,8 @@
       <article class="proj" id="euphorie">
         <div class="proj__media">
           <img class="proj__still" src="../assets/projects/Euphorie_RTL%2B.jpeg" alt="Euphorie (RTL+)" />
+          <video class="proj__hover-video" src="../assets/projects/Euphorie_Video.mov"
+                 muted loop playsinline preload="metadata"></video>
           <div class="proj__info">
             <span class="proj__type">RTL+ · Series</span>
             <h3>Euphorie</h3>
@@ -481,6 +516,18 @@
             if (io) io.observe(v);
           })
           .catch(() => { if (slot.dataset.optional === 'true') slot.remove(); });
+      });
+    })();
+
+    (function () {
+      document.querySelectorAll('.proj__hover-video').forEach((vid) => {
+        const tile = vid.closest('.proj__media');
+        if (!tile) return;
+        const start = () => { vid.play().catch(() => {}); };
+        const stop  = () => { vid.pause(); vid.currentTime = 0; };
+        tile.addEventListener('mouseenter', start);
+        tile.addEventListener('mouseleave', stop);
+        tile.addEventListener('touchstart', start, { passive: true });
       });
     })();
   </script>
