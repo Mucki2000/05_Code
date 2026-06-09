@@ -232,6 +232,14 @@
       object-fit: cover;
       display: block;
     }
+    .proj__hover-video {
+      opacity: 0;
+      transition: opacity 280ms ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .proj__media:hover .proj__hover-video,
+    .proj__media:focus-within .proj__hover-video { opacity: 1; }
     .proj__placeholder {
       display: flex;
       align-items: center;
@@ -403,6 +411,8 @@
       <article class="proj" id="euphorie">
         <div class="proj__media">
           <img class="proj__still" src="assets/projects/Euphorie_RTL%2B.jpeg" alt="Euphorie (RTL+)" />
+          <video class="proj__hover-video" src="assets/projects/Euphorie_Video.mov"
+                 muted loop playsinline preload="metadata"></video>
           <div class="proj__info">
             <span class="proj__type">RTL+ · Serie</span>
             <h3>Euphorie</h3>
@@ -538,6 +548,19 @@
             if (io) io.observe(v);
           })
           .catch(() => { if (slot.dataset.optional === 'true') slot.remove(); });
+      });
+    })();
+
+    // Hover-to-play videos that sit on top of a static poster image.
+    (function () {
+      document.querySelectorAll('.proj__hover-video').forEach((vid) => {
+        const tile = vid.closest('.proj__media');
+        if (!tile) return;
+        const start = () => { vid.play().catch(() => {}); };
+        const stop  = () => { vid.pause(); vid.currentTime = 0; };
+        tile.addEventListener('mouseenter', start);
+        tile.addEventListener('mouseleave', stop);
+        tile.addEventListener('touchstart', start, { passive: true });
       });
     })();
   </script>
