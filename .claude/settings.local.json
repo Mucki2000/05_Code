@@ -9,7 +9,8 @@
       "Bash(curl -s -o /dev/null -w \"EN home %{http_code}\\\\n\" http://localhost:8080/en/)",
       "Bash(curl -s -o /dev/null -w \"DE premium %{http_code}\\\\n\" http://localhost:8080/pages/premium.html)",
       "Bash(curl -s -o /dev/null -w \"EN premium %{http_code}\\\\n\" http://localhost:8080/en/pages/premium.html)",
-      "Bash(curl -s -o /dev/null -w \"Logo image %{http_code}\\\\n\" http://localhost:8080/assets/logo.png)"
+      "Bash(curl -s -o /dev/null -w \"Logo image %{http_code}\\\\n\" http://localhost:8080/assets/logo.png)",
+      "Bash(git commit -m ' *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\Carlt\\.claude\\projects\\g--Meine-Ablage-Lausebengel-05-Code"
