@@ -172,19 +172,6 @@
     }
     .proj { scroll-margin-top: 90px; }
 
-    .proj__sticker {
-      display: block;
-      width: clamp(180px, 22vw, 380px);
-      height: auto;
-      margin: 0 auto clamp(-34px, -1.8vw, -22px);
-      position: relative;
-      z-index: 3;
-      pointer-events: none;
-      filter: drop-shadow(0 10px 34px rgba(0,0,0,0.65));
-    }
-    .proj:nth-child(odd)  .proj__sticker { transform: rotate(-1.6deg); }
-    .proj:nth-child(even) .proj__sticker { transform: rotate(1.6deg); }
-
     .proj__media {
       position: relative;
       width: 100%;
@@ -199,6 +186,7 @@
       margin-inline: auto;
     }
     .proj__media video,
+    .proj__still,
     .proj__placeholder {
       position: absolute;
       inset: 0;
@@ -259,7 +247,6 @@
       gap: clamp(28px, 4vw, 64px);
     }
 
-    .proj--featured .proj__sticker { width: clamp(240px, 34vw, 560px); }
     .proj__collage {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -275,7 +262,6 @@
       .wordmark { width: 92vw; aspect-ratio: 1.6 / 1; }
       .proj-grid { grid-template-columns: 1fr; }
       .proj__collage { grid-template-columns: 1fr; }
-      .proj__sticker { width: clamp(180px, 56vw, 320px); }
       .proj__media.is-portrait { max-width: 86vw; }
       .proj__info { opacity: 1; }
     }
@@ -297,7 +283,8 @@
           <a href="#universal" role="menuitem">Universal</a>
           <a href="#koechert"  role="menuitem">A.E. Köchert</a>
           <a href="#kleine"    role="menuitem">Kleine Brüder</a>
-          <a href="#youtube"   role="menuitem">YouTube / Social</a>
+          <a href="#euphorie"  role="menuitem">Euphorie (RTL+)</a>
+          <a href="#philippa"  role="menuitem">Philippa Kinsky</a>
         </div>
       </div>
       <a href="#top" class="is-active">Home</a>
@@ -338,15 +325,12 @@
 
     <!-- Featured: Gerry Star / Grimme-Preis campaign (multiple clips) -->
     <article class="proj proj--featured" id="prime">
-      <img class="proj__sticker" src="../assets/projects/STICKERS/GRIMME_PREIS_WINNER.png"
-           alt="Social Media Campaign for Grimme-Preis Winner (Gerry Star)" />
       <div class="proj__collage">
         <div class="proj__media" data-video="../assets/projects/Amazon_Prime_Website.mp4" data-loop="true">
           <div class="proj__placeholder">Gerry Star</div>
           <div class="proj__info">
             <span class="proj__type">Amazon Prime · Social Media</span>
             <h3>Gerry Star</h3>
-            <p>Project description coming soon …</p>
           </div>
         </div>
         <div class="proj__media" data-video="../assets/projects/gerry-star-2.mp4" data-loop="true" data-optional="true">
@@ -367,61 +351,61 @@
     <div class="proj-grid">
 
       <article class="proj" id="audi">
-        <img class="proj__sticker" src="../assets/projects/STICKERS/AUDI_SPORT_HELL.png" alt="Audi Sport" />
         <div class="proj__media" data-video="../assets/projects/Audi_Sport_Website.mp4" data-loop="true">
           <div class="proj__placeholder">Audi Sport</div>
           <div class="proj__info">
             <span class="proj__type">Social Media</span>
             <h3>Audi Sport</h3>
-            <p>Project description coming soon …</p>
           </div>
         </div>
       </article>
 
       <article class="proj" id="universal">
-        <img class="proj__sticker" src="../assets/projects/STICKERS/UNIVERSAL_HELL.png" alt="Universal Music" />
         <div class="proj__media" data-video="../assets/projects/universal-hero.mp4" data-loop="true">
-          <div class="proj__placeholder">Universal — coming soon</div>
+          <div class="proj__placeholder">Universal, coming soon</div>
           <div class="proj__info">
             <span class="proj__type">Music</span>
             <h3>Universal Music</h3>
-            <p>Project description coming soon …</p>
           </div>
         </div>
       </article>
 
       <article class="proj" id="koechert">
-        <img class="proj__sticker" src="../assets/projects/STICKERS/A-E-KOECHERT_HELL.png" alt="A.E. Köchert" />
         <div class="proj__media" data-video="../assets/projects/A.E.Koechert_Website.mp4" data-loop="true">
           <div class="proj__placeholder">A.E. Köchert</div>
           <div class="proj__info">
             <span class="proj__type">Brand</span>
             <h3>A.E. Köchert</h3>
-            <p>Project description coming soon …</p>
           </div>
         </div>
       </article>
 
       <article class="proj" id="kleine">
-        <img class="proj__sticker" src="../assets/projects/STICKERS/KLEINE_BR%C3%9CDER_HELL.png" alt="Kleine Brüder" />
         <div class="proj__media" data-video="../assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-loop="true">
           <div class="proj__placeholder">Kleine Brüder</div>
           <div class="proj__info">
             <span class="proj__type">Short Film</span>
             <h3>Kleine Brüder</h3>
-            <p>Project description coming soon …</p>
           </div>
         </div>
       </article>
 
-      <article class="proj" id="youtube">
-        <img class="proj__sticker" src="../assets/projects/STICKERS/GERRY_STAR_HELL.png" alt="Gerry Star — Social Media" />
-        <div class="proj__media" data-video="../assets/projects/Philippa_Kinsky_Website.mp4" data-loop="true">
-          <div class="proj__placeholder">Social Media</div>
+      <article class="proj" id="euphorie">
+        <div class="proj__media">
+          <img class="proj__still" src="../assets/projects/Euphorie_RTL%2B.jpeg" alt="Euphorie (RTL+)" />
           <div class="proj__info">
-            <span class="proj__type">Social Media</span>
-            <h3>Gerry Star</h3>
-            <p>Project description coming soon …</p>
+            <span class="proj__type">RTL+ · Series</span>
+            <h3>Euphorie</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="proj" id="philippa">
+        <div class="proj__media" data-video="../assets/projects/Philippa_Kinsky_Unabh%C3%A4ngige%20K%C3%BCnstlerin.mp4" data-loop="true">
+          <div class="proj__placeholder">Philippa Kinsky</div>
+          <div class="proj__info">
+            <span class="proj__type">Independent Artist</span>
+            <h3>Philippa Kinsky</h3>
           </div>
         </div>
       </article>

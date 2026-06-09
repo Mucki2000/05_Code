@@ -98,13 +98,13 @@
     }
     .crew {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(30px, 5vw, 100px);
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(30px, 4vw, 80px);
       margin-bottom: clamp(60px, 8vw, 140px);
     }
     .crew__member { display: flex; flex-direction: column; align-items: center; text-align: center; }
     .crew__photo {
-      width: clamp(220px, 22vw, 440px);
+      width: clamp(180px, 18vw, 340px);
       aspect-ratio: 1 / 1;
       border-radius: 50%;
       overflow: hidden;
@@ -112,11 +112,18 @@
       margin-bottom: clamp(16px, 1.4vw, 28px);
     }
     .crew__photo img { width: 100%; height: 100%; object-fit: cover; }
-    .crew__tag {
-      width: clamp(240px, 26vw, 460px);
-      height: auto;
-      margin-top: clamp(6px, 1vw, 16px);
-      filter: drop-shadow(0 10px 28px rgba(0,0,0,0.6));
+    .crew__name {
+      font-size: clamp(18px, 1.5vw, 26px);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      margin-top: clamp(6px, 0.8vw, 12px);
+    }
+    .crew__role {
+      font-size: clamp(12px, 0.95vw, 16px);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-top: clamp(4px, 0.5vw, 8px);
     }
 
     .contact {
@@ -141,10 +148,13 @@
     }
     .contact__email:hover { opacity: 0.75; border-color: rgba(255,255,255,0.6); }
 
+    @media (max-width: 960px) {
+      .crew { grid-template-columns: 1fr; gap: 40px; }
+      .crew__photo { width: 55vw; }
+    }
     @media (max-width: 720px) {
       .nav__logo { height: 32px; }
       .nav__links { gap: 14px; font-size: 12px; }
-      .crew { grid-template-columns: 1fr; gap: 40px; }
       .crew__photo { width: 65vw; }
     }
   </style>
@@ -164,7 +174,8 @@
           <a href="index.html#koechert"  role="menuitem">A.E. Köchert</a>
           <a href="index.html#audi"      role="menuitem">Audi Sport</a>
           <a href="index.html#kleine"    role="menuitem">Kleine Brüder</a>
-          <a href="index.html#youtube"   role="menuitem">YouTube / Social</a>
+          <a href="index.html#euphorie"  role="menuitem">Euphorie (RTL+)</a>
+          <a href="index.html#philippa"  role="menuitem">Philippa Kinsky</a>
         </div>
       </div>
       <a href="index.html">Start</a>
@@ -183,16 +194,24 @@
           <div class="crew__photo">
             <img src="assets/Screenshot 2026-05-12 130034.png" alt="Damian Aschenbrenner" />
           </div>
-          <img class="crew__tag" src="assets/projects/STICKERS/Damian_Tag_Neu.png"
-               alt="Damian Aschenbrenner — Managing Director / Producer" />
+          <h3 class="crew__name">Damian Aschenbrenner</h3>
+          <p class="crew__role">Managing Director / Producer</p>
         </div>
 
         <div class="crew__member">
           <div class="crew__photo">
             <img src="assets/photo_5846211468326538391_y.jpg" alt="Mucki Trauttmansdorff" />
           </div>
-          <img class="crew__tag" src="assets/projects/STICKERS/Mucki_Tag_NEU.png"
-               alt="Mucki Trauttmansdorff — Managing Director / Producer" />
+          <h3 class="crew__name">Mucki Trauttmansdorff</h3>
+          <p class="crew__role">Managing Director / Producer</p>
+        </div>
+
+        <div class="crew__member">
+          <div class="crew__photo">
+            <img src="assets/Maksim%20Farkas.jpeg" alt="Maksim Farkas" />
+          </div>
+          <h3 class="crew__name">Maksim Farkas</h3>
+          <p class="crew__role">International Sales / Director of Social Media Producing</p>
         </div>
       </div>
 
