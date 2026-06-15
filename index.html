@@ -139,8 +139,8 @@
     }
     .brands .b-universal { height: clamp(52px, 5.2vw, 104px); filter: invert(1); }
     .brands .b-prime     { height: clamp(22px, 2.1vw, 42px); }
-    .brands .b-koechert  { height: clamp(24px, 2.4vw, 48px); }
-    .brands .b-audi      { height: clamp(60px, 6.2vw, 128px); filter: invert(1); }
+    .brands .b-koechert  { height: clamp(18px, 1.8vw, 36px); }
+    .brands .b-audi      { height: clamp(78px, 8vw, 165px); filter: invert(1); }
     .brands .b-kleine    { height: clamp(56px, 5.4vw, 110px); mix-blend-mode: screen; }
 
     /* Center animated wordmark */
@@ -302,12 +302,8 @@
     }
     .proj__collage > .proj__media:first-child { grid-column: 1 / -1; }
 
-    /* Per-tile size adjustments */
-    .proj-grid > .proj { align-self: center; }
-    #audi .proj__media { aspect-ratio: 4 / 3; }
-    #koechert .proj__media { aspect-ratio: 16 / 5; }
-    #koechert .proj__media video { object-position: center 20%; }
-    #philippa .proj__media video { object-position: center 20%; }
+    /* Per-tile video framing */
+    #philippa .proj__media video { object-position: center 0%; }
 
     /* ============ MOBILE ============ */
     @media (max-width: 720px) {
