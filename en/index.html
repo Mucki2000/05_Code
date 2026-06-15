@@ -283,9 +283,11 @@
     .proj__collage > .proj__media:first-child { grid-column: 1 / -1; }
 
     /* Per-tile size adjustments */
-    #audi .proj__media { aspect-ratio: 16 / 10.4; }
-    #koechert .proj__media { aspect-ratio: 16 / 7.6; }
-    #philippa .proj__media video { object-position: center 35%; }
+    .proj-grid > .proj { align-self: center; }
+    #audi .proj__media { aspect-ratio: 4 / 3; }
+    #koechert .proj__media { aspect-ratio: 16 / 5; }
+    #koechert .proj__media video { object-position: center 20%; }
+    #philippa .proj__media video { object-position: center 20%; }
 
     @media (max-width: 720px) {
       .nav__logo { height: 32px; }
