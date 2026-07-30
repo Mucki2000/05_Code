@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lausebengel — Current Projects</title>
+  <meta name="description" content="Lausebengel — Current projects." />
+  <meta name="robots" content="noindex" />
+
+  <link rel="icon" type="image/png" href="Logos/Lausebengel_transparent.png" />
+
+  <script>
+    // Access requires the password entered on the start page.
+    if (sessionStorage.getItem('lb-current') !== '1') location.replace('index.html');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============ RESET ============ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { overflow-x: hidden; scroll-behavior: smooth; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ============ STICKY TOP NAV ============ */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: clamp(12px, 2vw, 26px) clamp(16px, 3vw, 48px);
+      background: rgba(0,0,0,0.92);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav__logo { display: block; height: 3.6vw; max-height: 64px; min-height: 28px; }
+    .nav__logo img { height: 100%; width: auto; display: block; }
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: 2.2vw;
+      font-size: clamp(13px, 1.05vw, 18px);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+    .nav__links a { opacity: 0.9; transition: opacity 120ms ease; }
+    .nav__links a:hover { opacity: 1; }
+    .nav__links a.is-active { text-decoration: underline; text-underline-offset: 4px; }
+    .nav__lang { opacity: 0.4; padding: 0 0.2em; }
+    .nav__lang-link { font-size: 0.85em; opacity: 0.7; }
+    .nav__caret { display: inline-block; margin-left: 0.35em; font-size: 0.7em; transform: translateY(-2px); }
+
+    /* Dropdown for Projekte */
+    .nav__has-menu { position: relative; display: inline-flex; align-items: center; }
+    .nav__has-menu > a { cursor: pointer; }
+    .nav__menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: #000;
+      border: 1px solid rgba(255,255,255,0.12);
+      min-width: 220px;
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 140ms ease;
+      z-index: 60;
+    }
+    .nav__menu::before {
+      content: '';
+      position: absolute;
+      top: -10px; left: 0; right: 0; height: 10px;
+    }
+    .nav__has-menu:hover .nav__menu,
+    .nav__has-menu:focus-within .nav__menu { opacity: 1; pointer-events: auto; }
+    .nav__menu a {
+      display: block;
+      padding: 10px 18px;
+      font-size: 0.92em;
+      opacity: 0.8;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+    .nav__menu a:hover { opacity: 1; background: rgba(255,255,255,0.05); }
+
+    /* ============ HERO ============ */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(20px, 3vw, 60px) clamp(16px, 3vw, 48px) clamp(40px, 5vw, 90px);
+    }
+
+    .brands {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(36px, 5vw, 100px);
+    }
+    .brands a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+    .brands a:hover { opacity: 0.75; transform: translateY(-1px); }
+    .brands img {
+      width: auto;
+      object-fit: contain;
+      opacity: 0;
+      animation: brandFade 650ms ease forwards;
+    }
+    @keyframes brandFade {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 0.95; transform: translateY(0); }
+    }
+    .brands a:nth-child(1) img { animation-delay: 100ms; }
+    .brands a:nth-child(2) img { animation-delay: 200ms; }
+    .brands a:nth-child(3) img { animation-delay: 300ms; }
+    .brands a:nth-child(4) img { animation-delay: 400ms; }
+    .brands a:nth-child(5) img { animation-delay: 500ms; }
+    @media (prefers-reduced-motion: reduce) {
+      .brands img { animation: none; opacity: 0.95; }
+    }
+    .brands .b-universal { height: clamp(52px, 5.2vw, 104px); filter: invert(1); }
+    .brands .b-prime     { height: clamp(22px, 2.1vw, 42px); }
+    .brands .b-constantin { height: clamp(88px, 8.5vw, 140px); mix-blend-mode: screen; }
+    .brands .b-mk2        { height: clamp(30px, 3vw, 60px); filter: brightness(0) invert(1); }
+    .brands .b-kleine    { height: clamp(56px, 5.4vw, 110px); mix-blend-mode: screen; }
+    .brands .b-fifa      { height: clamp(48px, 4.8vw, 96px); filter: brightness(0) invert(1); }
+
+    /* ============ CURRENT PROJECTS ============ */
+    .projects--current { gap: clamp(18px, 2.5vw, 36px); padding-bottom: 0; }
+    .current-label {
+      text-align: center;
+      font-size: clamp(12px, 1vw, 18px);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+    .proj__media--poster {
+      aspect-ratio: 2 / 3;
+      max-width: min(420px, 80vw);
+      margin-inline: auto;
+    }
+
+    /* Center animated wordmark */
+    .wordmark {
+      position: relative;
+      margin: clamp(20px, 3vw, 60px) auto 0;
+      width: 74vw;
+      max-width: 1650px;
+      aspect-ratio: 510 / 155;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .wordmark video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .wordmark__placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      font-size: clamp(14px, 1.1vw, 20px);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      border: 1px dashed #1a1a1a;
+    }
+
+    /* Tagline under the wordmark animation */
+    .tagline {
+      text-align: center;
+      margin: clamp(22px, 3vw, 56px) auto 0;
+      padding: 0 clamp(16px, 3vw, 40px);
+      max-width: 760px;
+    }
+    .tagline__kicker {
+      font-size: clamp(11px, 1vw, 16px);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-bottom: clamp(10px, 1vw, 16px);
+    }
+    .tagline__body {
+      font-size: clamp(13px, 1.05vw, 18px);
+      font-weight: 300;
+      opacity: 0.6;
+      line-height: 1.55;
+    }
+
+    /* ============ PROJECTS ============ */
+    .projects {
+      width: 100%;
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: clamp(20px, 3vw, 50px) clamp(16px, 4vw, 70px) clamp(60px, 9vw, 160px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(44px, 7vw, 110px);
+    }
+    .proj { scroll-margin-top: 90px; }
+
+    /* Media tile */
+    .proj__media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: clamp(10px, 1vw, 18px);
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+    .proj__media.is-portrait {
+      aspect-ratio: 9 / 16;
+      max-width: 360px;
+      margin-inline: auto;
+    }
+    .proj__media video,
+    .proj__still,
+    .proj__placeholder {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .proj__hover-video {
+      opacity: 0;
+      transition: opacity 280ms ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .proj__media:hover .proj__hover-video,
+    .proj__media:focus-within .proj__hover-video { opacity: 1; }
+    .proj__placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2a2a2a;
+      font-size: clamp(11px, 0.9vw, 16px);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      border: 1px dashed #1c1c1c;
+    }
+
+    /* Hover / focus info overlay */
+    .proj__info {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 6px;
+      padding: clamp(16px, 2vw, 32px);
+      text-align: left;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 42%, rgba(0,0,0,0) 78%);
+      opacity: 0;
+      transition: opacity 240ms ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .proj__media:hover .proj__info,
+    .proj__media:focus-within .proj__info { opacity: 1; }
+    .proj__type {
+      font-size: clamp(11px, 0.85vw, 14px);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      opacity: 0.7;
+    }
+    .proj__info h3 {
+      font-size: clamp(18px, 1.6vw, 28px);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .proj__info p {
+      font-size: clamp(13px, 1vw, 16px);
+      font-weight: 300;
+      opacity: 0.85;
+      max-width: 48ch;
+    }
+
+    /* Two-column grid for the standard projects */
+    .proj-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(28px, 4vw, 64px);
+    }
+
+    /* Featured project: multi-video collage */
+    .proj__collage {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(12px, 1.4vw, 22px);
+    }
+    .proj__collage > .proj__media:first-child { grid-column: 1 / -1; }
+
+    /* Per-tile video framing */
+    #philippa .proj__media video { object-position: center 0%; }
+
+    /* ============ MOBILE ============ */
+    @media (max-width: 720px) {
+      .nav__logo { height: 32px; }
+      .nav__links { gap: 14px; font-size: 12px; }
+      .brands { flex-wrap: wrap; gap: 18px; }
+      .brands img { height: 18px !important; }
+      .wordmark { width: 92vw; aspect-ratio: 1.6 / 1; }
+      .proj-grid { grid-template-columns: 1fr; }
+      .proj__collage { grid-template-columns: 1fr; }
+      .proj__media.is-portrait { max-width: 86vw; }
+      .proj__info { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ STICKY TOP NAV ============ -->
+  <header class="nav">
+    <a href="index.html" class="nav__logo" aria-label="Lausebengel">
+      <img src="assets/lausebengel-logo.png" alt="Lausebengel" />
+    </a>
+
+    <nav class="nav__links" aria-label="Main navigation">
+      <div class="nav__has-menu">
+        <a>Projects<span class="nav__caret">▾</span></a>
+        <div class="nav__menu" role="menu">
+          <a href="#prime"     role="menuitem">Prime Video</a>
+          <a href="#backrooms" role="menuitem">Backrooms</a>
+          <a href="#denoche"   role="menuitem">De Noche</a>
+          <a href="#euphorie"  role="menuitem">Euphorie (RTL+)</a>
+          <a href="#audi"      role="menuitem">Audi Sport</a>
+          <a href="#universal" role="menuitem">Universal</a>
+          <a href="#boris"     role="menuitem">Boris Brejcha</a>
+          <a href="#koechert"  role="menuitem">A.E. Köchert</a>
+          <a href="#kleine"    role="menuitem">Kleine Brüder</a>
+          <a href="#philippa"  role="menuitem">Philippa Kinsky</a>
+        </div>
+      </div>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <div class="brands" aria-label="Clients">
+      <a href="#universal" aria-label="Universal project">
+        <img class="b-universal" src="Logos/Universal-Logo-1997.png" alt="Universal" />
+      </a>
+      <a href="#prime" aria-label="Prime Video project">
+        <img class="b-prime" src="Logos/prime-video-horizontal-logo-white-dec-2024.png" alt="Prime Video" />
+      </a>
+      <a aria-label="Constantin Film">
+        <img class="b-constantin" src="Logos/constantin_film.jpg" alt="Constantin Film" />
+      </a>
+      <a href="#denoche" aria-label="De Noche project">
+        <img class="b-mk2" src="Logos/mk2-films.png" alt="mk2 Films" />
+      </a>
+      <a aria-label="FIFA">
+        <img class="b-fifa" src="Logos/FIFA.png" alt="FIFA" />
+      </a>
+    </div>
+
+    <div class="wordmark"
+         data-video="assets/LP_Animation_4k.mp4"
+         data-rate="0.85"
+         data-label="Main video">
+      <div class="wordmark__placeholder">Main video</div>
+    </div>
+
+    <div class="tagline">
+      <p class="tagline__kicker">Production &amp; High-End Editing</p>
+      <p class="tagline__body">Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Rooted in a distinctly Gen&nbsp;Z sensibility, we champion original voices and ambitious stories built to travel.</p>
+    </div>
+  </section>
+
+  <!-- ============ CURRENT PROJECTS ============ -->
+  <section class="projects projects--current" id="current" aria-label="Current projects">
+    <p class="current-label">Current Projects</p>
+
+    <article class="proj" id="backrooms">
+      <div class="proj__media proj__media--poster">
+        <img class="proj__still" src="assets/projects/Backrooms.jpg" alt="Backrooms" />
+        <div class="proj__info">
+          <span class="proj__type">Constantin Film</span>
+          <h3>Backrooms</h3>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ============ PROJECTS (per-project blocks, directly below hero) ============ -->
+  <section class="projects" id="projects" aria-label="Projects">
+
+    <!-- Featured: Gerry Star / Grimme-Preis campaign (multiple clips) -->
+    <article class="proj proj--featured" id="prime">
+      <div class="proj__collage">
+        <div class="proj__media" data-video="assets/projects/Amazon_Prime_Website.mp4" data-loop="true">
+          <div class="proj__placeholder">Gerry Star</div>
+          <div class="proj__info">
+            <span class="proj__type">Amazon Prime · Social Media</span>
+            <h3>Gerry Star</h3>
+          </div>
+        </div>
+        <div class="proj__media" data-video="assets/projects/gerry-star-2.mp4" data-loop="true" data-optional="true">
+          <div class="proj__placeholder">Clip coming</div>
+        </div>
+        <div class="proj__media" data-video="assets/projects/gerry-star-3.mp4" data-loop="true" data-optional="true">
+          <div class="proj__placeholder">Clip coming</div>
+        </div>
+        <div class="proj__media" data-video="assets/projects/gerry-star-4.mp4" data-loop="true" data-optional="true">
+          <div class="proj__placeholder">Clip coming</div>
+        </div>
+        <div class="proj__media" data-video="assets/projects/gerry-star-5.mp4" data-loop="true" data-optional="true">
+          <div class="proj__placeholder">Clip coming</div>
+        </div>
+      </div>
+    </article>
+
+    <div class="proj-grid">
+
+      <article class="proj" id="denoche">
+        <div class="proj__media">
+          <img class="proj__still" src="assets/projects/mk2%20social%20media%20campaign.webp" alt="De Noche — Pedro Pascal" />
+          <div class="proj__info">
+            <span class="proj__type">Social Media Production</span>
+            <h3>De Noche</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="proj" id="euphorie">
+        <div class="proj__media">
+          <img class="proj__still" src="assets/projects/Euphorie_RTL%2B.jpeg" alt="Euphorie (RTL+)" />
+          <video class="proj__hover-video" src="assets/projects/Euphorie_Video.mov"
+                 muted loop playsinline preload="metadata"></video>
+          <div class="proj__info">
+            <span class="proj__type">Social Media and Content Production</span>
+            <h3>Euphorie</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="proj" id="audi">
+        <div class="proj__media" data-video="assets/projects/Audi_Sport_Website.mp4" data-loop="true">
+          <div class="proj__placeholder">Audi Sport</div>
+          <div class="proj__info">
+            <span class="proj__type">Social Media</span>
+            <h3>Audi Sport</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="proj" id="universal">
+        <div class="proj__media">
+          <img class="proj__still" src="assets/projects/Universal.jpeg" alt="Universal Music" />
+          <div class="proj__info">
+            <span class="proj__type">Music</span>
+            <h3>Universal Music</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="proj" id="boris">
+        <div class="proj__media">
+          <img class="proj__still" src="assets/projects/Boris.jpeg" alt="Boris Brejcha" />
+          <div class="proj__info">
+            <span class="proj__type">Music</span>
+            <h3>Boris Brejcha</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="proj" id="koechert">
+        <div class="proj__media" data-video="assets/projects/A.E.Koechert_Website.mp4" data-loop="true">
+          <div class="proj__placeholder">A.E. Köchert</div>
+          <div class="proj__info">
+            <span class="proj__type">Brand</span>
+            <h3>A.E. Köchert</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="proj" id="kleine">
+        <div class="proj__media" data-video="assets/projects/Michael%20Short%20%28KF%29_KLEINE_DA.mp4" data-loop="true">
+          <div class="proj__placeholder">Kleine Brüder</div>
+          <div class="proj__info">
+            <span class="proj__type">Short Form</span>
+            <h3>Kleine Brüder</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="proj" id="philippa">
+        <div class="proj__media" data-video="assets/projects/Philippa_Kinsky_Unabh%C3%A4ngige%20K%C3%BCnstlerin.mp4" data-loop="true">
+          <div class="proj__placeholder">Philippa Kinsky</div>
+          <div class="proj__info">
+            <span class="proj__type">Independent Artist</span>
+            <h3>Philippa Kinsky</h3>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+  </section>
+
+  <script>
+    // Probe each [data-video] slot. If the file exists, swap the placeholder
+    // for a muted autoplaying <video>.
+    //   data-loop="true" → loop
+    //   data-rate="0.85" → playback speed multiplier (default 1.0)
+    (function () {
+      const slots = document.querySelectorAll('[data-video]');
+
+      // Only play the video(s) currently in view; pause the rest. Keeps the
+      // active clip in A/V sync and avoids many simultaneous decodes.
+      const io = ('IntersectionObserver' in window)
+        ? new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              const vid = entry.target;
+              if (entry.isIntersecting) vid.play().catch(() => {});
+              else vid.pause();
+            });
+          }, { threshold: 0.25 })
+        : null;
+
+      slots.forEach((slot) => {
+        const src = slot.dataset.video;
+        if (!src) return;
+        const shouldLoop = slot.dataset.loop === 'true';
+        const rate = parseFloat(slot.dataset.rate) || 1.0;
+
+        fetch(src, { method: 'HEAD' })
+          .then((res) => {
+            if (!res.ok) { if (slot.dataset.optional === 'true') slot.remove(); return; }
+            const placeholder = slot.querySelector('.wordmark__placeholder, .proj__placeholder');
+            if (placeholder) placeholder.remove();
+
+            const v = document.createElement('video');
+            v.src = src;
+            v.muted = true;
+            v.autoplay = true;
+            v.playsInline = true;
+            v.setAttribute('playsinline', '');
+            v.preload = 'auto';
+            if (shouldLoop) v.loop = true;
+
+            v.addEventListener('loadedmetadata', () => {
+              v.playbackRate = rate;
+              // Auto-orientation: tag portrait clips so the frame switches to
+              // a tall aspect ratio instead of cropping them.
+              if (slot.classList.contains('proj__media') && v.videoHeight > v.videoWidth) {
+                slot.classList.add('is-portrait');
+              }
+            });
+            v.addEventListener('play', () => { v.playbackRate = rate; });
+
+            if (!shouldLoop) {
+              v.addEventListener('ended', () => {
+                try {
+                  v.pause();
+                  v.currentTime = Math.max(0, v.duration - 0.02);
+                } catch (_) { /* ignore */ }
+              });
+            }
+
+            slot.appendChild(v);
+            if (io) io.observe(v);
+          })
+          .catch(() => { if (slot.dataset.optional === 'true') slot.remove(); });
+      });
+    })();
+
+    // Hover-to-play videos that sit on top of a static poster image.
+    (function () {
+      document.querySelectorAll('.proj__hover-video').forEach((vid) => {
+        const tile = vid.closest('.proj__media');
+        if (!tile) return;
+        const start = () => { vid.play().catch(() => {}); };
+        const stop  = () => { vid.pause(); vid.currentTime = 0; };
+        tile.addEventListener('mouseenter', start);
+        tile.addEventListener('mouseleave', stop);
+        tile.addEventListener('touchstart', start, { passive: true });
+      });
+    })();
+  </script>
+
+</body>
+</html>

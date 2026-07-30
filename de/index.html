@@ -196,6 +196,57 @@
       line-height: 1.55;
     }
 
+    /* Current-projects button + password modal */
+    .hero__cta { text-align: center; margin-top: clamp(18px, 2vw, 32px); }
+    .cta-current {
+      font: inherit;
+      font-size: clamp(11px, 0.95vw, 15px);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #fff;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.35);
+      padding: 0.9em 1.8em;
+      cursor: pointer;
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+    .cta-current:hover { background: #fff; color: #000; border-color: #fff; }
+    .pw-modal {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.82);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    }
+    .pw-modal[hidden] { display: none; }
+    .pw-modal__box {
+      background: #000;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: clamp(24px, 3vw, 44px);
+      width: min(360px, 86vw);
+      text-align: center;
+    }
+    .pw-modal__label {
+      font-size: 12px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 16px;
+    }
+    .pw-modal__input {
+      width: 100%;
+      padding: 10px 12px;
+      background: #111;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
+      font: inherit;
+      text-align: center;
+      letter-spacing: 0.1em;
+      outline: none;
+    }
+    .pw-modal__input:focus { border-color: rgba(255,255,255,0.6); }
+    .pw-modal__error { color: #f66; font-size: 12px; margin-top: 10px; }
+    .pw-modal__actions { margin-top: 18px; }
+
     /* ============ PROJECTS ============ */
     .projects {
       width: 100%;
@@ -380,7 +431,23 @@
       <p class="tagline__kicker">Eigenproduktion &amp; High-End Editing</p>
       <p class="tagline__body">Lausebengel ist ein Produktions- und High-End-Editing-Studio, gebaut von und für eine neue Generation von Filmemachern. Mit einem klaren Gen-Z-Gespür stehen wir für originelle Stimmen und ambitionierte Geschichten, die um die Welt reisen.</p>
     </div>
+
+    <div class="hero__cta">
+      <button type="button" class="cta-current" id="currentProjectsBtn">Current Projects</button>
+    </div>
   </section>
+
+  <!-- Passwortschutz für die Current-Projects-Seite -->
+  <div class="pw-modal" id="pwModal" hidden>
+    <div class="pw-modal__box">
+      <p class="pw-modal__label">Passwort</p>
+      <input type="password" id="pwInput" class="pw-modal__input" autocomplete="off" />
+      <p class="pw-modal__error" id="pwError" hidden>Falsches Passwort</p>
+      <div class="pw-modal__actions">
+        <button type="button" class="cta-current" id="pwSubmit">Öffnen</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ============ PROJECTS (per-project blocks, directly below hero) ============ -->
   <section class="projects" id="projects" aria-label="Projekte">
@@ -563,6 +630,45 @@
           })
           .catch(() => { if (slot.dataset.optional === 'true') slot.remove(); });
       });
+    })();
+
+    // Password gate: unlocks the current-projects page. Only the SHA-256
+    // hash of the password is stored here.
+    (function () {
+      const HASH = '2638b0b33909bd647264eb703f05ba6fe7953a59e216ead5976abdfb30f40bb8';
+      const TARGET = '../current.html';
+      const modal = document.getElementById('pwModal');
+      const input = document.getElementById('pwInput');
+      const error = document.getElementById('pwError');
+
+      async function sha256Hex(text) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+        return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      async function submit() {
+        if (!input.value) return;
+        let ok = false;
+        try { ok = (await sha256Hex(input.value)) === HASH; } catch (_) { ok = false; }
+        if (ok) {
+          sessionStorage.setItem('lb-current', '1');
+          window.location.href = TARGET;
+        } else {
+          error.hidden = false;
+          input.select();
+        }
+      }
+
+      document.getElementById('currentProjectsBtn').addEventListener('click', () => {
+        modal.hidden = false;
+        error.hidden = true;
+        input.value = '';
+        input.focus();
+      });
+      document.getElementById('pwSubmit').addEventListener('click', submit);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.hidden = true; });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal.hidden = true; });
     })();
 
     // Hover-to-play videos that sit on top of a static poster image.
