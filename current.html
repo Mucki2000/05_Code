@@ -146,7 +146,7 @@
     .brands .b-constantin { height: clamp(88px, 8.5vw, 140px); mix-blend-mode: screen; }
     .brands .b-mk2        { height: clamp(30px, 3vw, 60px); filter: brightness(0) invert(1); }
     .brands .b-kleine    { height: clamp(56px, 5.4vw, 110px); mix-blend-mode: screen; }
-    .brands .b-fifa      { height: clamp(48px, 4.8vw, 96px); filter: brightness(0) invert(1); }
+    .brands .b-fifa      { height: clamp(26px, 2.5vw, 50px); filter: brightness(0) invert(1); }
 
     /* ============ CURRENT PROJECTS ============ */
     .projects--current { gap: clamp(18px, 2.5vw, 36px); padding-bottom: 0; }
@@ -157,10 +157,24 @@
       text-transform: uppercase;
       opacity: 0.7;
     }
-    .proj__media--poster {
-      aspect-ratio: 2 / 3;
-      max-width: min(420px, 80vw);
-      margin-inline: auto;
+    /* Left: portrait Backrooms poster. Right: FIFA + Ailiens stacked to fill
+       the same height. */
+    .current-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(12px, 1.4vw, 22px);
+    }
+    #backrooms .proj__media { aspect-ratio: 2 / 3; }
+    .current-grid__stack {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 1.4vw, 22px);
+    }
+    .current-grid__stack .proj { flex: 1; display: flex; }
+    .current-grid__stack .proj__media { flex: 1; aspect-ratio: auto; }
+    @media (max-width: 720px) {
+      .current-grid { grid-template-columns: 1fr; }
+      .current-grid__stack .proj__media { aspect-ratio: 16 / 9; }
     }
 
     /* Center animated wordmark */
@@ -353,6 +367,8 @@
         <div class="nav__menu" role="menu">
           <a href="#prime"     role="menuitem">Prime Video</a>
           <a href="#backrooms" role="menuitem">Backrooms</a>
+          <a href="#fifa"      role="menuitem">FIFA Opening Banquet</a>
+          <a href="#aliens"    role="menuitem">Ailiens in Lebin</a>
           <a href="#denoche"   role="menuitem">De Noche</a>
           <a href="#euphorie"  role="menuitem">Euphorie (RTL+)</a>
           <a href="#audi"      role="menuitem">Audi Sport</a>
@@ -405,15 +421,39 @@
   <section class="projects projects--current" id="current" aria-label="Current projects">
     <p class="current-label">Current Projects</p>
 
-    <article class="proj" id="backrooms">
-      <div class="proj__media proj__media--poster">
-        <img class="proj__still" src="assets/projects/Backrooms.jpg" alt="Backrooms" />
-        <div class="proj__info">
-          <span class="proj__type">Constantin Film</span>
-          <h3>Backrooms</h3>
+    <div class="current-grid">
+      <article class="proj" id="backrooms">
+        <div class="proj__media">
+          <img class="proj__still" src="assets/projects/Backrooms.jpg" alt="Backrooms" />
+          <div class="proj__info">
+            <span class="proj__type">Feature Film</span>
+            <h3>Backrooms</h3>
+          </div>
         </div>
+      </article>
+
+      <div class="current-grid__stack">
+        <article class="proj" id="fifa">
+          <div class="proj__media">
+            <img class="proj__still" src="assets/projects/FIFA%20Opening%20Banquet.avif" alt="FIFA Opening Banquet" />
+            <div class="proj__info">
+              <span class="proj__type">Social Media</span>
+              <h3>FIFA Opening Banquet</h3>
+            </div>
+          </div>
+        </article>
+
+        <article class="proj" id="aliens">
+          <div class="proj__media">
+            <img class="proj__still" src="assets/projects/Ailiens%20in%20Lebin.jpg" alt="Ailiens in Lebin" />
+            <div class="proj__info">
+              <span class="proj__type">Constantin Film</span>
+              <h3>Ailiens in Lebin</h3>
+            </div>
+          </div>
+        </article>
       </div>
-    </article>
+    </div>
   </section>
 
   <!-- ============ PROJECTS (per-project blocks, directly below hero) ============ -->
