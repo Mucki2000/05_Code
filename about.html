@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lausebengel — Über uns</title>
-  <meta name="description" content="Lausebengel Edits — Über uns." />
+  <title>Lausebengel — About Us</title>
+  <meta name="description" content="Lausebengel — About us." />
 
   <link rel="icon" type="image/png" href="Logos/Lausebengel_transparent.png" />
-  <link rel="alternate" hreflang="de" href="about.html" />
-  <link rel="alternate" hreflang="en" href="en/about.html" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -115,6 +113,7 @@
       opacity: 0.6;
       line-height: 1.55;
     }
+    .tagline__body + .tagline__kicker { margin: clamp(14px, 1.4vw, 24px) 0 0; }
     .crew {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -179,11 +178,13 @@
     <a href="index.html" class="nav__logo" aria-label="Lausebengel">
       <img src="assets/lausebengel-logo.png" alt="Lausebengel" />
     </a>
-    <nav class="nav__links" aria-label="Hauptnavigation">
+    <nav class="nav__links" aria-label="Main navigation">
       <div class="nav__has-menu">
-        <a>Projekte<span class="nav__caret">▾</span></a>
+        <a>Projects<span class="nav__caret">▾</span></a>
         <div class="nav__menu" role="menu">
           <a href="index.html#prime"     role="menuitem">Prime Video</a>
+          <a href="index.html#denoche"   role="menuitem">De Noche</a>
+          <a href="index.html#backrooms" role="menuitem">Backrooms</a>
           <a href="index.html#euphorie"  role="menuitem">Euphorie (RTL+)</a>
           <a href="index.html#audi"      role="menuitem">Audi Sport</a>
           <a href="index.html#universal" role="menuitem">Universal</a>
@@ -193,21 +194,19 @@
           <a href="index.html#philippa"  role="menuitem">Philippa Kinsky</a>
         </div>
       </div>
-      <a href="index.html">Start</a>
-      <a href="about.html" class="is-active">Über uns</a>
-      <span class="nav__lang" aria-hidden="true">|</span>
-      <a href="en/about.html" class="nav__lang-link" aria-label="Switch to English">EN</a>
+      <a href="index.html">Home</a>
+      <a href="about.html" class="is-active">About</a>
     </nav>
   </header>
 
   <main>
     <section class="about">
       <div class="tagline">
-        <p class="tagline__kicker">Eigenproduktion &amp; High-End Editing</p>
-        <p class="tagline__body">Gebaut von Filmnerds, die ein wenig Nahbarkeit und GenZ an Film und Fernsehen bringen wollen.</p>
+        <p class="tagline__body">Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Rooted in a distinctly Gen&nbsp;Z sensibility, we champion original voices and ambitious stories built to travel.</p>
+        <p class="tagline__kicker">On-Set Content Production. Social Media Strategy. Editing.</p>
       </div>
 
-      <p class="about__eyebrow">Über uns</p>
+      <p class="about__eyebrow">About us</p>
 
       <div class="crew">
         <div class="crew__member">
@@ -230,8 +229,8 @@
           <div class="crew__photo">
             <img src="assets/Maksim%20Farkas.jpeg" alt="Maksim Farkas" />
           </div>
-          <img class="crew__tag" src="assets/projects/STICKERS/Maksim_Tag.png"
-               alt="Maksim Farkas, International Sales / Director of Social Media Producing" />
+          <img class="crew__tag" src="assets/projects/STICKERS/Maksim_Tag.png?v=2"
+               alt="Maksim Farkas, Producer / Film Relations" />
         </div>
 
         <div class="crew__member">
@@ -252,7 +251,7 @@
       </div>
 
       <div class="contact">
-        <p class="contact__label">Kontakt</p>
+        <p class="contact__label">Contact</p>
         <a class="contact__email" href="mailto:info@lausebengel.studio">info@lausebengel.studio</a>
       </div>
     </section>
