@@ -149,14 +149,34 @@
     .brands .b-fifa      { height: clamp(26px, 2.5vw, 50px); filter: brightness(0) invert(1); }
 
     /* ============ CURRENT PROJECTS ============ */
-    .projects--current { gap: clamp(18px, 2.5vw, 36px); padding-bottom: 0; }
-    .current-label {
-      text-align: center;
-      font-size: clamp(12px, 1vw, 18px);
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      opacity: 0.7;
+    /* Compact hero: static wordmark + "Current Projects" sticker on the
+       left, tagline on the right, tiles directly below. */
+    .hero--current { min-height: 0; }
+    .cp-hero {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      align-items: center;
+      gap: clamp(24px, 4vw, 80px);
+      width: min(1400px, 100%);
+      margin: clamp(16px, 2vw, 40px) auto 0;
     }
+    .cp-mark {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(10px, 1vw, 18px);
+    }
+    .cp-mark__logo {
+      width: min(100%, 620px);
+      aspect-ratio: 852 / 290;
+      object-fit: cover;
+    }
+    .cp-mark__sub { width: min(62%, 400px); }
+    .tagline--cp { margin: 0; justify-self: center; }
+    @media (max-width: 720px) {
+      .cp-hero { grid-template-columns: 1fr; gap: 16px; }
+    }
+    .projects--current { gap: clamp(18px, 2.5vw, 36px); padding-bottom: 0; }
     /* Left: portrait Backrooms poster. Right: FIFA + Ailiens stacked to fill
        the same height. */
     .current-grid {
@@ -385,7 +405,7 @@
   </header>
 
   <!-- ============ HERO ============ -->
-  <section class="hero" id="top">
+  <section class="hero hero--current" id="top">
     <div class="brands" aria-label="Clients">
       <a href="#universal" aria-label="Universal project">
         <img class="b-universal" src="Logos/Universal-Logo-1997.png" alt="Universal" />
@@ -404,29 +424,26 @@
       </a>
     </div>
 
-    <div class="wordmark"
-         data-video="assets/LP_Animation_4k.mp4"
-         data-rate="0.85"
-         data-label="Main video">
-      <div class="wordmark__placeholder">Main video</div>
-    </div>
-
-    <div class="tagline">
-      <p class="tagline__kicker">Production &amp; High-End Editing</p>
-      <p class="tagline__body">Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Rooted in a distinctly Gen&nbsp;Z sensibility, we champion original voices and ambitious stories built to travel.</p>
+    <div class="cp-hero">
+      <div class="cp-mark">
+        <img class="cp-mark__logo" src="assets/lausebengel-logo-full.png" alt="Lausebengel" />
+        <img class="cp-mark__sub" src="assets/projects/STICKERS/Current%20Projects%20and%20Logo.png" alt="Current Projects" />
+      </div>
+      <div class="tagline tagline--cp">
+        <p class="tagline__kicker">Production &amp; High-End Editing</p>
+        <p class="tagline__body">Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Rooted in a distinctly Gen&nbsp;Z sensibility, we champion original voices and ambitious stories built to travel.</p>
+      </div>
     </div>
   </section>
 
   <!-- ============ CURRENT PROJECTS ============ -->
   <section class="projects projects--current" id="current" aria-label="Current projects">
-    <p class="current-label">Current Projects</p>
-
     <div class="current-grid">
       <article class="proj" id="backrooms">
         <div class="proj__media">
           <img class="proj__still" src="assets/projects/Backrooms.jpg" alt="Backrooms" />
           <div class="proj__info">
-            <span class="proj__type">Feature Film</span>
+            <span class="proj__type">German Market Social Media Campaign</span>
             <h3>Backrooms</h3>
           </div>
         </div>
