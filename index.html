@@ -211,6 +211,14 @@
       transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
     }
     .cta-current:hover { background: #fff; color: #000; border-color: #fff; }
+    .cta-current--img { background: transparent; border: 0; padding: 0; }
+    .cta-current--img:hover { background: transparent; }
+    .cta-current--img img {
+      width: min(300px, 64vw);
+      display: block;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+    .cta-current--img:hover img { opacity: 0.8; transform: translateY(-1px); }
     .pw-modal {
       position: fixed; inset: 0; z-index: 100;
       display: flex; align-items: center; justify-content: center;
@@ -433,7 +441,9 @@
     </div>
 
     <div class="hero__cta">
-      <button type="button" class="cta-current" id="currentProjectsBtn">Current Projects</button>
+      <button type="button" class="cta-current cta-current--img" id="currentProjectsBtn" aria-label="Current Projects">
+        <img src="assets/current-projects-button.png" alt="Current Projects" />
+      </button>
     </div>
   </section>
 

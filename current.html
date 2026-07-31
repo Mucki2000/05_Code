@@ -164,14 +164,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(10px, 1vw, 18px);
+      gap: clamp(6px, 0.8vw, 12px);
     }
-    .cp-mark__logo {
-      width: min(100%, 620px);
-      aspect-ratio: 852 / 290;
-      object-fit: cover;
-    }
-    .cp-mark__sub { width: min(62%, 400px); }
+    .cp-mark .wordmark { width: 100%; max-width: none; margin: 0; }
+    .cp-mark__sub { width: min(66%, 430px); }
     .tagline--cp { margin: 0; justify-self: center; }
     @media (max-width: 720px) {
       .cp-hero { grid-template-columns: 1fr; gap: 16px; }
@@ -426,7 +422,12 @@
 
     <div class="cp-hero">
       <div class="cp-mark">
-        <img class="cp-mark__logo" src="assets/lausebengel-logo-full.png" alt="Lausebengel" />
+        <div class="wordmark"
+             data-video="assets/LP_Animation_4k.mp4"
+             data-rate="0.85"
+             data-label="Main video">
+          <div class="wordmark__placeholder">Main video</div>
+        </div>
         <img class="cp-mark__sub" src="assets/projects/STICKERS/Current%20Projects%20and%20Logo.png" alt="Current Projects" />
       </div>
       <div class="tagline tagline--cp">
