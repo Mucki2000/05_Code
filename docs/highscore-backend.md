@@ -29,6 +29,7 @@ Zum Prüfen kann man die URL mit `?game=bricks` im Browser öffnen; sie liefert
 - Das Sheet bekommt ein Blatt `scores` mit den Spalten game, name, score, at.
   Jede Zeile ist ein gespeicherter Punktestand; Löschen einer Zeile entfernt
   den Eintrag (Schummler aufräumen).
+- Das Script behält je Spiel nur die besten 40 Zeilen und löscht schwächere automatisch.
 - Die Seite zeigt je Spiel die besten zehn. Namen werden auf 12 Zeichen
   (A-Z, 0-9, Leerzeichen, . - _, Umlaute) gekürzt, Punkte auf ganze Zahlen.
 - Fällt der Dienst aus, zeigt die Seite die lokale Liste und meldet beim

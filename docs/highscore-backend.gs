@@ -12,6 +12,7 @@ var GAMES = ['bricks', 'flappy'];
 var MAX_ENTRIES = 10;
 var MAX_NAME = 12;
 var MAX_SCORE = 1000000;
+var KEEP_PER_GAME = 40;      // rows per game kept in the sheet; the weakest beyond that are deleted
 
 function sheet_() {
   var ss = SpreadsheetApp.getActive();
@@ -46,6 +47,20 @@ function top_(game) {
   return list.slice(0, MAX_ENTRIES);
 }
 
+// Keep only the best KEEP_PER_GAME rows of a game (ties: older stays).
+function prune_(sh, game) {
+  var values = sh.getDataRange().getValues();
+  var rows = [];
+  for (var i = 1; i < values.length; i++) {
+    if (String(values[i][0]) !== game) continue;
+    rows.push({ row: i + 1, score: Math.floor(Number(values[i][2]) || 0), at: Number(values[i][3]) || 0 });
+  }
+  if (rows.length <= KEEP_PER_GAME) return;
+  rows.sort(function (a, b) { return (b.score - a.score) || (a.at - b.at); });
+  var doomed = rows.slice(KEEP_PER_GAME).map(function (r) { return r.row; }).sort(function (a, b) { return b - a; });
+  for (var j = 0; j < doomed.length; j++) sh.deleteRow(doomed[j]);   // bottom-up so row numbers stay valid
+}
+
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
@@ -67,7 +82,9 @@ function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(5000);
   try {
-    sheet_().appendRow([game, name, score, at]);
+    var sh = sheet_();
+    sh.appendRow([game, name, score, at]);
+    prune_(sh, game);
     var list = top_(game);
     var rank = 0;
     for (var i = 0; i < list.length; i++) {
