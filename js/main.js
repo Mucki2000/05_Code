@@ -2,7 +2,7 @@ import { POWER, SIGNAL, BATTERY, ANTENNA, ICONS } from './icons.js';
 import { progressAt } from './loader.js';
 import { createGame, step, render } from './game.js';
 import { formatStatus } from './clock.js';
-import { APPS, DESKTOP, CURRENT_PASSWORD_HASH } from './apps.js';
+import { APPS, DESKTOP, CURRENT_PASSWORD_HASH, landingHtml } from './apps.js';
 import { parseHash } from './router.js';
 import { sha256Hex, isUnlocked, markUnlocked } from './gate.js';
 
@@ -13,10 +13,13 @@ const dateEl = $('date'), timeEl = $('time'), ampmEl = $('ampm');
 const canvas = $('game'), fill = $('fill'), pct = $('pct'), score = $('score'), skip = $('skip');
 const home = $('home'), label = $('label'), app = $('app');
 const device = document.querySelector('.phone__device'), screenEl = $('screen');
+const splash = $('splash');
 
-export const STATES = ['off', 'boot', 'enter', 'home', 'app'];
+export const STATES = ['off', 'splash', 'boot', 'enter', 'home', 'app'];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const BOOT_MS = reduced ? 1500 : 6000;
+const BOOT_MS = reduced ? 1500 : 4500;
+const SPLASH_MS = reduced ? 700 : 2000;          // jump (1100 ms) + hold
+const SPLASH_OUT_MS = reduced ? 0 : 220;         // three-frame blink-off
 
 const APP_LIST = APPS;
 
@@ -28,10 +31,41 @@ signal.insertAdjacentHTML('afterbegin', SIGNAL);
 battery.innerHTML = BATTERY;
 glyph.innerHTML = ANTENNA + SIGNAL;
 photo.addEventListener('error', () => phone.classList.add('no-photo'));
-power.addEventListener('click', startBoot);
+power.addEventListener('click', startSplash);
+
+/* ---------- SPLASH (logo jumps in, then the boot) ---------- */
+function startSplash() {
+  if (phone.dataset.state === 'splash') return;
+  splash.classList.remove('is-out');
+  setState('splash');
+  let done = false;
+  let outTimer = null, holdTimer = null;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    clearTimeout(holdTimer);
+    clearTimeout(outTimer);
+    window.removeEventListener('keydown', onKey);
+    splash.removeEventListener('click', onClick);
+    splash.classList.remove('is-out');          // a later dev-aid run starts clean
+    startBoot();
+  };
+  // Escape or a click on the splash skips straight to the boot. Listeners added
+  // to the same target during dispatch do not see the current event, so the
+  // boot's own Escape handler is not triggered by the same key press.
+  const onKey = (e) => { if (e.key === 'Escape') finish(); };
+  const onClick = () => finish();
+  window.addEventListener('keydown', onKey);
+  splash.addEventListener('click', onClick);
+  holdTimer = setTimeout(() => {
+    splash.classList.add('is-out');
+    outTimer = setTimeout(finish, SPLASH_OUT_MS);
+  }, SPLASH_MS);
+}
 
 /* ---------- BOOT ---------- */
 function startBoot() {
+  renderHome();                                   // the landing images load during the boot game
   setState('boot');
   const ctx = canvas.getContext ? canvas.getContext('2d') : null;
   const g = createGame(canvas.width, canvas.height);
@@ -168,7 +202,9 @@ function zoomIn() {
   let done = false;
   const finish = () => { if (done) return; done = true; finishEnter(ghost); };
   ghost.addEventListener('transitionend', (e) => { if (e.propertyName === 'opacity') finish(); });
-  setTimeout(finish, 1000);                       // fallback if the event never fires
+  // Fallback if transitionend never fires. 900 ms ride + margin: a slow first
+  // frame (the desk paints filtered logos in two layers) delays the start.
+  setTimeout(finish, 1400);
   requestAnimationFrame(() => {
     stage.style.transform = target;
     ghost.classList.add('is-fading');
@@ -196,8 +232,11 @@ function iconStyle(x, y, mx, my) {
   return `--x: ${x}%; --y: ${y}%; --mx: ${mx}%; --my: ${my}%`;
 }
 
+// The landing (logos, wordmark, kicker, tagline) is the desktop's centre piece.
+// Decorative for navigation: pointer-events none (CSS), not focusable, and not
+// part of `icons`, so hover/keyboard order only ever sees the five icons.
 function renderHome() {
-  home.innerHTML = DESKTOP.map((entry) => {
+  home.innerHTML = `<div class="desk" aria-label="Lausebengel">${landingHtml()}</div>` + DESKTOP.map((entry) => {
     if (entry.type === 'folder') {
       return `<button class="icon" type="button" data-folder="${entry.id}" aria-haspopup="dialog" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}">${ICONS[entry.icon]}<span>${entry.label}</span></button>`;
     }
@@ -244,7 +283,7 @@ function openFolder(id) {
   win.className = 'folder';
   win.setAttribute('role', 'dialog');
   win.setAttribute('aria-label', entry.label);
-  win.style.cssText = `--x: ${entry.x}%; --y: ${entry.y}%`;
+  win.style.cssText = '--x: 50%; --y: 50%';                  // centred over the landing
   win.innerHTML = `
     <div class="folder__bar"><span>${entry.label}</span><button class="folder__close" type="button" aria-label="Schließen">X</button></div>
     <div class="folder__items">${entry.items.map((appId) => {
@@ -321,8 +360,10 @@ function closeApp() {
   }
 }
 
+// 'home' is a known hash (router.js) but has no panel: it means the desktop.
 function showApp(id) {
   if (stopBricks) { stopBricks(); stopBricks = null; }
+  if (id === 'home') id = null;
   if (!id) {
     app.classList.remove('is-open');
     select(selected);
@@ -482,8 +523,8 @@ function initVideos(root) {
 
 window.addEventListener('hashchange', () => {
   const id = parseHash(location.hash);
-  if (id === null) pushedHash = false;
-  if (['off', 'boot', 'enter'].includes(phone.dataset.state)) { pendingApp = id; return; }
+  if (id === null || id === 'home') pushedHash = false;     // both mean "desktop"
+  if (['off', 'splash', 'boot', 'enter'].includes(phone.dataset.state)) { pendingApp = id; return; }
   showApp(id);
 });
 window.addEventListener('keydown', (e) => {
@@ -509,7 +550,8 @@ let booted = false;
 try { booted = sessionStorage.getItem('lb-booted') === '1'; } catch (_) { /* private mode */ }
 
 if (requested === 'boot') startBoot();
-else if (requested === 'zoom') { setState('boot'); setTimeout(zoomIn, 50); }
+else if (requested === 'splash') startSplash();
+else if (requested === 'zoom') { renderHome(); setState('boot'); setTimeout(zoomIn, 50); }
 else if (requested === 'home' || requested === 'app' || booted || initial) {
   renderHome();
   layout();

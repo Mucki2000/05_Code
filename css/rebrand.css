@@ -67,6 +67,22 @@ a { color: inherit; }
 .power:hover svg, .power:focus-visible svg { animation-duration: 0.9s; }
 @keyframes pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
 
+/* Splash (logo jumps in before the boot) */
+.splash { position: absolute; inset: 0; background: #000; display: grid; place-items: center; overflow: hidden; }
+.splash__mark { width: min(72%, 720px); height: auto; user-select: none; -webkit-user-drag: none; transform-origin: 50% 100%; }
+[data-state="splash"] .splash__mark { animation: splash-jump 1100ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes splash-jump {
+  0%   { transform: translateY(215%) scale(0.85, 1.15); }   /* fully below the LCD edge */
+  38%  { transform: translateY(-14%) scale(1.06, 0.94); }
+  55%  { transform: translateY(5%)   scale(0.96, 1.04); }
+  72%  { transform: translateY(-4%)  scale(1.02, 0.98); }
+  86%  { transform: translateY(1.5%) scale(0.99, 1.01); }
+  100% { transform: none; }
+}
+/* steps(3, end): a retro three-frame blink-off instead of a smooth fade. */
+.splash.is-out .splash__mark { animation: splash-out 220ms steps(3, end) forwards; }
+@keyframes splash-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+
 /* Boot */
 .boot { position: absolute; inset: 0; background: #000; }
 #game { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
@@ -126,6 +142,9 @@ a { color: inherit; }
 [data-mode="photo"] .icon { font-size: 0.85cqw; }
 [data-mode="photo"] .icon svg { width: 6cqw; }
 [data-mode="photo"] .status, [data-mode="photo"] .label { font-size: 1cqw; }
+/* 2px at the 1440x900 window. A px border is 2.7x taller in the zoom miniature,
+   which would shift the centred desk against the real layer at the hand-over. */
+[data-mode="photo"] .label { border-top-width: 0.19cqw; }
 [data-mode="photo"] .folder { min-width: 52cqw; box-shadow: 0.6cqw 0.6cqw 0 var(--navy); }
 [data-mode="photo"] .folder__bar { font-size: 0.85cqw; }
 [data-mode="photo"] .folder__items { gap: 2cqw; padding: 2.5cqw 2cqw; }
@@ -135,11 +154,12 @@ a { color: inherit; }
 [data-mode="photo"][data-state="app"] :is(.icon, .folder__bar) { font-size: max(8px, 0.85cqw); }
 
 /* ============ STATE VISIBILITY ============ */
-[data-state="off"] .boot, [data-state="off"] .screen { display: none; }
-[data-state="boot"] .power, [data-state="boot"] .screen { display: none; }
-[data-state="enter"] .power, [data-state="enter"] .boot { display: none; }
-[data-state="home"] .power, [data-state="home"] .boot,
-[data-state="app"] .power, [data-state="app"] .boot { display: none; }
+[data-state="off"] .splash, [data-state="off"] .boot, [data-state="off"] .screen { display: none; }
+[data-state="splash"] .power, [data-state="splash"] .boot, [data-state="splash"] .screen { display: none; }
+[data-state="boot"] .power, [data-state="boot"] .splash, [data-state="boot"] .screen { display: none; }
+[data-state="enter"] .power, [data-state="enter"] .splash, [data-state="enter"] .boot { display: none; }
+[data-state="home"] .power, [data-state="home"] .splash, [data-state="home"] .boot,
+[data-state="app"] .power, [data-state="app"] .splash, [data-state="app"] .boot { display: none; }
 
 /* Inside the phone. Two modes, set by layout() in main.js:
    - fill  (mobile / portrait): the LCD is the viewport, framed by a thin case border.
@@ -217,6 +237,8 @@ a { color: inherit; }
   color: var(--navy); text-transform: uppercase; white-space: nowrap;
 }
 .icon svg { width: min(6cqw, 72px); height: auto; }
+/* The folder label is long and its icon sits at the LCD edge: two lines. */
+.icon[data-folder] span { white-space: normal; max-width: 13ch; text-align: center; }
 .icon.is-selected { border-color: var(--navy); }
 .icon:hover { border-color: var(--case); }
 .icon:focus-visible { outline: 2px dashed var(--navy); outline-offset: 2px; }
@@ -276,7 +298,8 @@ a { color: inherit; }
 
 /* Landing (HOME app) */
 .landing { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.2em; }
-.landing__mark { width: min(70%, 520px); filter: invert(1); mix-blend-mode: multiply; }
+/* aspect-ratio (510x154 png): the desk's height is known before the image arrives. */
+.landing__mark { width: min(70%, 520px); aspect-ratio: auto 510 / 154; filter: invert(1); mix-blend-mode: multiply; }
 .landing__kicker { font-family: var(--pixel); font-size: 0.45em; letter-spacing: 0.12em; }
 .landing__body { max-width: 60ch; }
 .logos { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5em 2.5em; margin-top: 1em; }
@@ -286,6 +309,26 @@ a { color: inherit; }
 .logos img.is-large { height: clamp(34px, 4vw, 66px); }
 .logos img.is-wide { height: clamp(30px, 3.6vw, 58px); }
 .landing > .logos { margin-top: 0; margin-bottom: 1.5em; }
+
+/* Landing on the desktop (increment 9): the centre piece of #home, the app
+   icons around it. Everything in cqw (no px caps) so the zoom miniature and
+   the real layout share one scale in photo mode. Overrides the panel-sized
+   .landing/.logos rules above (same or higher specificity, later). */
+.desk {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  gap: 2.2cqw; padding: 2.4cqw 4cqw 2cqw;   /* content starts right under the status bar (owner: "muss weiter hoch") */
+  text-align: center;
+  pointer-events: none; user-select: none;
+}
+.desk .logos { margin: 0; gap: 1.2cqw 3.2cqw; }
+.desk .logos img { height: 3.1cqw; }
+.desk .logos img.is-large { height: 4.7cqw; }
+.desk .logos img.is-wide { height: 3.4cqw; }
+.desk .landing { gap: 1.6cqw; }
+.desk .landing__mark { width: 34cqw; }
+.desk .landing__kicker { font-size: 0.95cqw; line-height: 1.6; }   /* explicit: 'normal' rounds at miniature sizes */
+.desk .landing__body { font-family: var(--body); font-size: 2cqw; line-height: 1.25; max-width: 44cqw; }
 
 /* Password gate (CURRENT app) */
 .gate { display: flex; flex-direction: column; align-items: center; gap: 1em; max-width: 36ch; margin: 2em auto; text-align: center; }
@@ -371,18 +414,39 @@ a { color: inherit; }
 /* ============ RESPONSIVE ============ */
 @media (max-width: 720px) {
   .status__date { display: none; }
-  [data-state="home"] .icon, [data-state="app"] .icon { left: var(--mx); top: var(--my); font-size: 9px; }
-  [data-state="home"] .icon svg, [data-state="app"] .icon svg { width: 16vw; }
-  [data-state="home"] .folder, [data-state="app"] .folder { left: 50%; top: 50%; min-width: 88%; }
-  [data-state="home"] .folder__close, [data-state="app"] .folder__close { min-height: 20px; }
+  /* Everything below is scoped to #lcd and to enter/home/app: the zoom's ghost
+     clone (no id) keeps the proportional desktop layout in its miniature, and
+     the real layer already has the mobile layout while it fades in. */
+  :is([data-state="enter"], [data-state="home"], [data-state="app"]) #lcd .icon { left: var(--mx); top: var(--my); font-size: 9px; }
+  :is([data-state="enter"], [data-state="home"], [data-state="app"]) #lcd .icon svg { width: 16vw; }
+  :is([data-state="home"], [data-state="app"]) #lcd .folder { left: 50%; top: 50%; min-width: 88%; }
+  :is([data-state="home"], [data-state="app"]) #lcd .folder__close { min-height: 20px; }
+  /* Landing in the top part, icons (my 68/88 %) in the bottom part. */
+  #lcd .desk { justify-content: flex-start; padding: 5% 6% 0; gap: 14px; height: 56%; }
+  #lcd .desk .landing { gap: 14px; }
+  #lcd .desk .logos { gap: 8px 18px; }
+  #lcd .desk .logos img { height: 16px; }
+  #lcd .desk .logos img.is-large { height: 24px; }
+  #lcd .desk .logos img.is-wide { height: 22px; }
+  #lcd .desk .landing__mark { width: 62%; }
+  #lcd .desk .landing__kicker { font-size: 7px; line-height: 1.6; }
+  #lcd .desk .landing__body { font-size: 17px; max-width: 34ch; }
   .tile__media.is-portrait { max-width: 100%; }
   .crew__member { width: 40%; }
   .app__content { font-size: 18px; }
+}
+/* Narrow phones: the six logos stay on one row. */
+@media (max-width: 420px) {
+  #lcd .desk .logos { gap: 8px 12px; }
+  #lcd .desk .logos img { height: 14px; }
+  #lcd .desk .logos img.is-large { height: 21px; }
+  #lcd .desk .logos img.is-wide { height: 19px; }
 }
 
 /* ============ REDUCED MOTION ============ */
 @media (prefers-reduced-motion: reduce) {
   .power svg { animation: none; opacity: 1; }
+  [data-state="splash"] .splash__mark, .splash.is-out .splash__mark { animation: none; }
   .phone__stage { transition: opacity 150ms linear; }
   .lcd--ghost { transition: none; }
   [data-state="enter"] #lcd, [data-state="enter"] .frame { animation: none; }
