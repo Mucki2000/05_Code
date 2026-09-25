@@ -4,10 +4,10 @@
   --lcd: #c7d2d6;
   --navy: #1c2e5c;
   --pink: #e8368f;
-  --lcd-left: 13.9%;
-  --lcd-top: 20.8%;
-  --lcd-w: 71.3%;
-  --lcd-h: 29.6%;
+  --lcd-left: 14.06%;
+  --lcd-top: 20.96%;
+  --lcd-w: 71.09%;
+  --lcd-h: 29.43%;
   --frame: clamp(6px, 1.2vw, 14px);
   --pixel: "Press Start 2P", monospace;
   --body: "VT323", monospace;
