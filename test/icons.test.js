@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pixelSvg, ICONS, POWER, SIGNAL } from '../js/icons.js';
+import { pixelSvg, ICONS, POWER, SIGNAL, BATTERY, ANTENNA } from '../js/icons.js';
 
 test('pixelSvg turns a 2x2 map into rects', () => {
   const svg = pixelSvg(['#.', '.g']);
@@ -21,4 +21,14 @@ test('every app icon is a 16x16 map', () => {
 test('power and signal symbols exist', () => {
   assert.match(POWER, /viewBox="0 0 16 16"/);
   assert.match(SIGNAL, /<svg/);
+});
+
+test('battery and antenna status glyphs are crisp currentColor pixel art', () => {
+  for (const g of [BATTERY, ANTENNA]) {
+    assert.match(g, /shape-rendering="crispEdges"/);
+    assert.match(g, /fill="currentColor"/);
+    assert.doesNotMatch(g, /fill="#/);
+  }
+  assert.match(BATTERY, /viewBox="0 0 10 6"/);
+  assert.match(ANTENNA, /viewBox="0 0 5 6"/);
 });

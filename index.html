@@ -32,9 +32,13 @@
 
           <div class="screen" id="screen">
             <header class="status">
-              <span class="status__left" id="signal"></span>
-              <span class="status__center"><span class="status__date" id="date"></span><span class="status__time" id="time"></span></span>
+              <span class="status__left" id="signal"><span class="status__battery" id="battery"></span></span>
+              <span class="status__center">
+                <span class="status__date" id="date"></span>
+                <span class="status__time"><span id="time"></span><span class="status__ampm" id="ampm"></span></span>
+              </span>
               <span class="status__right">GPRS <span class="status__glyph" id="glyph"></span></span>
+              <span class="status__rule" aria-hidden="true"></span>
             </header>
             <div class="body">
               <main class="home" id="home" aria-label="Apps"></main>

@@ -223,3 +223,27 @@ export const SIGNAL =
   '<rect x="6" y="1" width="1" height="5" fill="currentColor"/>' +
   '<rect x="8" y="0" width="1" height="6" fill="currentColor"/>' +
   '</svg>';
+
+// Battery: outline with a 1-px nub on the right, three filled cells inside.
+export const BATTERY =
+  '<svg viewBox="0 0 10 6" shape-rendering="crispEdges" aria-hidden="true">' +
+  '<rect x="0" y="0" width="9" height="1" fill="currentColor"/>' +
+  '<rect x="0" y="5" width="9" height="1" fill="currentColor"/>' +
+  '<rect x="0" y="1" width="1" height="4" fill="currentColor"/>' +
+  '<rect x="8" y="1" width="1" height="4" fill="currentColor"/>' +
+  '<rect x="9" y="2" width="1" height="2" fill="currentColor"/>' +
+  '<rect x="2" y="2" width="1" height="2" fill="currentColor"/>' +
+  '<rect x="4" y="2" width="1" height="2" fill="currentColor"/>' +
+  '<rect x="6" y="2" width="1" height="2" fill="currentColor"/>' +
+  '</svg>';
+
+// GPRS antenna: a small Y-shaped mast with a dot on top (BlackBerry 7290).
+export const ANTENNA =
+  '<svg viewBox="0 0 5 6" shape-rendering="crispEdges" aria-hidden="true">' +
+  '<rect x="2" y="0" width="1" height="1" fill="currentColor"/>' +
+  '<rect x="0" y="1" width="1" height="1" fill="currentColor"/>' +
+  '<rect x="4" y="1" width="1" height="1" fill="currentColor"/>' +
+  '<rect x="1" y="2" width="1" height="1" fill="currentColor"/>' +
+  '<rect x="3" y="2" width="1" height="1" fill="currentColor"/>' +
+  '<rect x="2" y="3" width="1" height="3" fill="currentColor"/>' +
+  '</svg>';

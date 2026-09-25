@@ -110,7 +110,7 @@ export const APPS = [
   },
   {
     id: 'bricks', label: 'BRICKS', icon: 'bricks',
-    render: () => '<div class="bricks"><div class="bricks__hud"><span id="bricks-score">SCORE 0</span></div><canvas id="bricks-canvas" width="160" height="100"></canvas><p class="bricks__hint">MOVE THE MOUSE OR USE ← → · CLICK TO RESTART</p></div>',
+    render: () => '<div class="bricks"><div class="bricks__hud"><span id="bricks-score">SCORE 0</span></div><canvas id="bricks-canvas" width="160" height="100"></canvas><p class="bricks__hint">MOVE THE MOUSE OR USE THE ARROW KEYS · CLICK TO RESTART</p></div>',
   },
 ];
 

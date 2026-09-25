@@ -1,4 +1,4 @@
-import { POWER, SIGNAL, ICONS } from './icons.js';
+import { POWER, SIGNAL, BATTERY, ANTENNA, ICONS } from './icons.js';
 import { progressAt } from './loader.js';
 import { createGame, step, render } from './game.js';
 import { formatStatus } from './clock.js';
@@ -8,7 +8,8 @@ import { sha256Hex, isUnlocked, markUnlocked } from './gate.js';
 
 const $ = (id) => document.getElementById(id);
 const phone = $('phone'), stage = $('stage'), photo = $('photo'), lcd = $('lcd'), frame = $('frame');
-const power = $('power'), signal = $('signal'), dateEl = $('date'), timeEl = $('time'), glyph = $('glyph');
+const power = $('power'), signal = $('signal'), battery = $('battery'), glyph = $('glyph');
+const dateEl = $('date'), timeEl = $('time'), ampmEl = $('ampm');
 const canvas = $('game'), fill = $('fill'), pct = $('pct'), score = $('score'), skip = $('skip');
 const home = $('home'), label = $('label'), app = $('app');
 const device = document.querySelector('.phone__device'), screenEl = $('screen');
@@ -24,7 +25,8 @@ function setState(s) { phone.dataset.state = s; }
 /* ---------- OFF ---------- */
 power.innerHTML = POWER;
 signal.insertAdjacentHTML('afterbegin', SIGNAL);
-glyph.insertAdjacentHTML('afterbegin', SIGNAL);
+battery.innerHTML = BATTERY;
+glyph.innerHTML = ANTENNA + SIGNAL;
 photo.addEventListener('error', () => phone.classList.add('no-photo'));
 power.addEventListener('click', startBoot);
 
@@ -72,19 +74,73 @@ function startBoot() {
   requestAnimationFrame(frame);
 }
 
+/* ---------- LAYOUT (fill vs photo mode) ---------- */
+// Photo aspect of phone.png; the LCD fractions live in css/rebrand.css.
+const PHOTO_W = 1024, PHOTO_H = 1536;
+
+function lcdFractions() {
+  const css = getComputedStyle(document.documentElement);
+  const frac = (name) => parseFloat(css.getPropertyValue(name)) / 100;
+  return { fl: frac('--lcd-left'), ft: frac('--lcd-top'), fw: frac('--lcd-w'), fh: frac('--lcd-h') };
+}
+
+// Decides the inside-mode and, in photo mode, the LCD window + stage transform.
+// photo: landscape desktop, the zoomed photo stays around the LCD (the stage
+//        transform is the frame and is never cleared while in photo mode).
+// fill:  mobile / portrait, the LCD is the viewport with the thin case frame.
+// Returns { mode, transform }; applies the transform unless apply === false
+// (zoomIn applies it inside a rAF so the CSS transition animates it).
+function layout(apply = true) {
+  const vw = innerWidth, vh = innerHeight;
+  const mode = vw > 720 && vh > 500 && vw > vh ? 'photo' : 'fill';   // landscape phones (vh <= 500) keep the fill layout
+  phone.dataset.mode = mode;
+  // The real LCD must not live under the (transformed) stage: a transformed
+  // ancestor is the containing block of position:fixed. zoomIn does this
+  // before the transform starts; the direct-start paths reach it from here.
+  if (lcd.parentNode !== phone) phone.insertBefore(lcd, frame);
+  if (mode === 'fill') {
+    if (apply) stage.style.transform = '';
+    return { mode, transform: '' };
+  }
+  const { fl, ft, fw, fh } = lcdFractions();
+  const A = (fw * PHOTO_W) / (fh * PHOTO_H);                 // LCD aspect, about 1.606
+  const W = Math.min(0.86 * vw, 0.74 * vh * A);
+  const H = W / A;
+  const cx = vw / 2, cy = 0.48 * vh;                          // window centre, a bit above the middle
+  phone.style.setProperty('--win-x', Math.round(cx - W / 2) + 'px');
+  phone.style.setProperty('--win-y', Math.round(cy - H / 2) + 'px');
+  phone.style.setProperty('--win-w', Math.round(W) + 'px');
+  phone.style.setProperty('--win-h', Math.round(H) + 'px');
+  // Untransformed device layout (offset* ignores transforms), centred in the stage.
+  const ow = device.offsetWidth, oh = device.offsetHeight;
+  const rcx = (vw - ow) / 2 + ow * (fl + fw / 2);
+  const rcy = (vh - oh) / 2 + oh * (ft + fh / 2);
+  const s = W / (ow * fw);
+  const ox = vw / 2, oy = vh / 2;                             // transform-origin 50% 50%
+  const tx = cx - ox - s * (rcx - ox), ty = cy - oy - s * (rcy - oy);
+  const transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+  if (apply) stage.style.transform = transform;
+  return { mode, transform };
+}
+
+window.addEventListener('resize', () => {
+  if (phone.dataset.state === 'home' || phone.dataset.state === 'app') layout();
+});
+
 /* ---------- ZOOM (cross-fade "enter") ---------- */
 function zoomIn() {
   renderHome();
   select(0);
   setState('enter');
   // Graduate the real LCD out of the stage before the stage gets an active
-  // transform/opacity of its own: a transformed/faded ancestor would become
-  // the containing block for #lcd's position:fixed and would also mute its
-  // opacity, dragging the real layer along with the photo instead of letting
-  // it sit still, already in its final layout, underneath the fading ghost.
+  // transform of its own: a transformed ancestor would become the containing
+  // block for #lcd's position:fixed, dragging the real layer along with the
+  // photo instead of letting it sit still, already in its final layout,
+  // underneath the fading ghost.
   phone.insertBefore(lcd, frame);
   if (reduced) {
-    stage.style.opacity = '0';
+    const { mode } = layout();
+    if (mode === 'fill') stage.style.opacity = '0';
     setTimeout(() => finishEnter(null), 150);
     return;
   }
@@ -97,28 +153,35 @@ function zoomIn() {
   ghost.appendChild(clone);
   device.appendChild(ghost);
 
-  const r = ghost.getBoundingClientRect();
-  const vw = innerWidth, vh = innerHeight;
-  const portrait = vh > vw;
-  const scale = portrait ? Math.min(vw / r.width, vh / r.height) : Math.max(vw / r.width, vh / r.height);
-  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-  const tx = -scale * (cx - vw / 2), ty = -scale * (cy - vh / 2);
+  const { mode, transform } = layout(false);
+  let target = transform;
+  if (mode === 'fill') {
+    // The LCD fills the viewport: scale the ghost's rect up to cover it.
+    const r = ghost.getBoundingClientRect();
+    const vw = innerWidth, vh = innerHeight;
+    const portrait = vh > vw;
+    const scale = portrait ? Math.min(vw / r.width, vh / r.height) : Math.max(vw / r.width, vh / r.height);
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const tx = -scale * (cx - vw / 2), ty = -scale * (cy - vh / 2);
+    target = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  }
   let done = false;
   const finish = () => { if (done) return; done = true; finishEnter(ghost); };
-  stage.addEventListener('transitionend', (e) => { if (e.target === stage && e.propertyName === 'opacity') finish(); }, { once: true });
+  ghost.addEventListener('transitionend', (e) => { if (e.propertyName === 'opacity') finish(); });
   setTimeout(finish, 1000);                       // fallback if the event never fires
   requestAnimationFrame(() => {
-    stage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-    stage.style.opacity = '0';
+    stage.style.transform = target;
+    ghost.classList.add('is-fading');
   });
 }
 
 function finishEnter(ghost) {
   if (ghost) ghost.remove();
-  stage.style.transform = '';
+  if (phone.dataset.mode !== 'photo') stage.style.transform = '';   // photo mode: the transform is the frame
   stage.style.opacity = '';
   try { sessionStorage.setItem('lb-booted', '1'); } catch (_) { /* private mode */ }
   setState('home');
+  layout();                                                          // the viewport may have changed during the zoom
   select(0);
   if (pendingApp) { const p = pendingApp; pendingApp = null; showApp(p); }
 }
@@ -429,9 +492,10 @@ window.addEventListener('keydown', (e) => {
 
 /* ---------- CLOCK ---------- */
 function tickClock() {
-  const { date, time } = formatStatus(new Date());
+  const { date, time, ampm } = formatStatus(new Date());
   dateEl.textContent = date;
   timeEl.textContent = time;
+  ampmEl.textContent = ampm;
 }
 tickClock();
 setInterval(tickClock, 30000);
@@ -448,6 +512,7 @@ if (requested === 'boot') startBoot();
 else if (requested === 'zoom') { setState('boot'); setTimeout(zoomIn, 50); }
 else if (requested === 'home' || requested === 'app' || booted || initial) {
   renderHome();
+  layout();
   setState('home');
   select(0);
   if (requested === 'home' && requestedFolder) openFolder(requestedFolder);
