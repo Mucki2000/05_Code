@@ -327,10 +327,10 @@ a { color: inherit; }
   text-align: center;
   pointer-events: none; user-select: none;
 }
-.desk .logos { margin: 0; gap: 1.2cqw 3.2cqw; }
+.desk .logos { margin: 0; width: 84cqw; flex-wrap: nowrap; justify-content: space-between; gap: 1.2cqw 2cqw; }   /* spread over the whole width (cqw: the landing box is shrink-wrapped) */
 .desk .logos img { height: 3.1cqw; }
 .desk .logos img.is-large { height: 4.7cqw; }
-.desk .logos img.is-wide { height: 3.4cqw; }
+.desk .logos img.is-wide { height: 2.8cqw; }
 .desk .landing { gap: 1.6cqw; }
 .desk .landing__mark { width: 34cqw; }
 .desk .landing__kicker { font-size: 0.95cqw; line-height: 1.6; }   /* explicit: 'normal' rounds at miniature sizes */
@@ -451,7 +451,7 @@ a { color: inherit; }
   /* Landing in the top part, icons (my 68/88 %) in the bottom part. */
   #lcd .desk { justify-content: flex-start; padding: 5% 6% 0; gap: 14px; height: 56%; }
   #lcd .desk .landing { gap: 14px; }
-  #lcd .desk .logos { gap: 8px 18px; }
+  #lcd .desk .logos { width: 100%; flex-wrap: wrap; justify-content: center; gap: 8px 18px; }
   #lcd .desk .logos img { height: 16px; }
   #lcd .desk .logos img.is-large { height: 24px; }
   #lcd .desk .logos img.is-wide { height: 22px; }
