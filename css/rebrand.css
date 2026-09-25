@@ -1,0 +1,392 @@
+/* ============ TOKENS ============ */
+:root {
+  --case: #72add6;
+  --lcd: #c7d2d6;
+  --navy: #1c2e5c;
+  --pink: #e8368f;
+  --lcd-left: 13.9%;
+  --lcd-top: 20.8%;
+  --lcd-w: 71.3%;
+  --lcd-h: 29.6%;
+  --frame: clamp(6px, 1.2vw, 14px);
+  --pixel: "Press Start 2P", monospace;
+  --body: "VT323", monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #000; color: var(--navy); font-family: var(--body); }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+
+/* ============ PHONE (OFF / BOOT / ZOOM) ============ */
+#phone { position: fixed; inset: 0; overflow: hidden; }
+.phone__stage {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  transform-origin: 50% 50%;
+  transition: transform 900ms cubic-bezier(0.65, 0, 0.35, 1), opacity 150ms linear;
+}
+.phone__device {
+  position: relative;
+  width: min(94vw, calc(92vh * 1024 / 1536));
+  width: min(94vw, calc(92svh * 1024 / 1536));
+  aspect-ratio: 1024 / 1536;
+  background: var(--case);
+  border-radius: 9% / 6%;
+}
+.phone__img { width: 100%; height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; }
+.no-photo .phone__img { display: none; }
+.lcd {
+  position: absolute;
+  left: var(--lcd-left); top: var(--lcd-top);
+  width: var(--lcd-w); height: var(--lcd-h);
+  background: #000;
+  overflow: hidden;
+  container-type: inline-size;
+}
+.lcd::after {
+  content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+/* Power button */
+.power {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  color: var(--case);
+}
+.power svg {
+  width: 22%; height: auto;
+  filter: drop-shadow(0 0 6px var(--case)) drop-shadow(0 0 14px rgba(114, 173, 214, 0.6));
+  animation: pulse 2.4s ease-in-out infinite;
+}
+.power:hover svg, .power:focus-visible svg { animation-duration: 0.9s; }
+@keyframes pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+
+/* Boot */
+.boot { position: absolute; inset: 0; background: #000; }
+#game { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.boot__hud {
+  position: absolute; top: 3%; left: 3%; right: 3%;
+  display: flex; justify-content: space-between;
+  color: #fff; font-family: var(--pixel); font-size: clamp(6px, 0.9vw, 10px);
+  pointer-events: none;
+}
+.boot__bar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: max(5%, 14px);
+  background: #222; padding: 0;
+}
+.boot__fill { display: block; height: 100%; width: 0; background: var(--case); }
+
+/* Screen (HOME / APP) */
+.screen {
+  position: absolute; inset: 0;
+  background: var(--lcd);
+  display: flex; flex-direction: column;
+}
+.status {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: end;
+  background: #b7c6d0; color: var(--navy);
+  font-family: var(--pixel); font-size: min(1cqw, 12px);
+  padding: 0.5em 1em 0;
+}
+/* Fourth grid item under the whole row: the 7290's bar that fades out to the right. */
+.status__rule {
+  grid-column: 1 / -1; height: 0.5em; margin-top: 0.35em;
+  background: linear-gradient(90deg, var(--navy) 0%, var(--navy) 45%, rgba(28, 46, 92, 0.55) 75%, rgba(28, 46, 92, 0) 100%);
+}
+.status__left { justify-self: start; display: inline-flex; align-items: center; gap: 0.5em; }
+.status__right { justify-self: end; display: inline-flex; align-items: center; gap: 0.5em; }
+.status__center { display: flex; flex-direction: column; align-items: center; gap: 0.25em; }
+.status__time { font-size: 2.1em; line-height: 1; display: inline-flex; align-items: baseline; gap: 0.15em; }
+.status__ampm { font-size: 0.4em; }
+.status__glyph { display: inline-flex; gap: 0.3em; align-items: center; }
+.status svg { height: 1em; width: auto; }
+.status__battery svg { height: 0.75em; }
+.body { position: relative; flex: 1; overflow: hidden; }
+.label {
+  font-family: var(--pixel); font-size: min(1cqw, 12px);
+  text-align: center; padding: 0.8em; border-top: 2px solid var(--navy);
+  min-height: 2.6em;
+}
+
+/* Inside the phone the LCD is the viewport: enforce readable minimums.
+   The pure cqw sizes above stay for the zoom miniature. */
+[data-state="home"] :is(.status, .label),
+[data-state="app"] :is(.status, .label) { font-size: clamp(8px, 1cqw, 12px); }
+[data-state="home"] .icon, [data-state="app"] .icon { font-size: clamp(8px, 0.85cqw, 11px); }
+[data-state="home"] .folder__bar, [data-state="app"] .folder__bar { font-size: clamp(8px, 0.85cqw, 11px); }
+/* Photo mode: the LCD is a window in the phone photo, not the viewport. No px
+   caps, so the zoom miniature (ghost) and the real layout share one scale;
+   the 8px floors only bite on small windows. */
+[data-mode="photo"] .icon { font-size: 0.85cqw; }
+[data-mode="photo"] .icon svg { width: 6cqw; }
+[data-mode="photo"] .status, [data-mode="photo"] .label { font-size: 1cqw; }
+[data-mode="photo"] .folder { min-width: 52cqw; box-shadow: 0.6cqw 0.6cqw 0 var(--navy); }
+[data-mode="photo"] .folder__bar { font-size: 0.85cqw; }
+[data-mode="photo"] .folder__items { gap: 2cqw; padding: 2.5cqw 2cqw; }
+[data-mode="photo"][data-state="home"] :is(.status, .label),
+[data-mode="photo"][data-state="app"] :is(.status, .label) { font-size: max(8px, 1cqw); }
+[data-mode="photo"][data-state="home"] :is(.icon, .folder__bar),
+[data-mode="photo"][data-state="app"] :is(.icon, .folder__bar) { font-size: max(8px, 0.85cqw); }
+
+/* ============ STATE VISIBILITY ============ */
+[data-state="off"] .boot, [data-state="off"] .screen { display: none; }
+[data-state="boot"] .power, [data-state="boot"] .screen { display: none; }
+[data-state="enter"] .power, [data-state="enter"] .boot { display: none; }
+[data-state="home"] .power, [data-state="home"] .boot,
+[data-state="app"] .power, [data-state="app"] .boot { display: none; }
+
+/* Inside the phone. Two modes, set by layout() in main.js:
+   - fill  (mobile / portrait): the LCD is the viewport, framed by a thin case border.
+   - photo (landscape desktop): the stage stays zoomed so the photo's LCD region
+     becomes a window; the real #lcd sits exactly on it (--win-*). The stage
+     transform IS the frame and is never cleared in photo mode. */
+.frame { display: none; }
+[data-mode="fill"][data-state="home"] .phone__img, [data-mode="fill"][data-state="app"] .phone__img { display: none; }
+[data-mode="fill"][data-state="home"] .phone__device, [data-mode="fill"][data-state="app"] .phone__device,
+[data-mode="fill"][data-state="enter"] .phone__device { background: none; }
+[data-mode="fill"][data-state="home"] .phone__stage, [data-mode="fill"][data-state="app"] .phone__stage { transform: none !important; transition: none; }
+[data-mode="photo"][data-state="home"] .phone__stage, [data-mode="photo"][data-state="app"] .phone__stage { transition: none; }
+/* Scoped by id (not .lcd) so the cloned .lcd--ghost keeps its small,
+   photo-embedded geometry instead of also jumping to the fixed layout. */
+[data-state="home"] #lcd, [data-state="app"] #lcd,
+[data-state="enter"] #lcd {
+  position: fixed; z-index: 5;
+  left: var(--frame); right: var(--frame); top: var(--frame);
+  bottom: calc(var(--frame) * 3);
+  width: auto; height: auto;
+  background: var(--lcd);
+}
+[data-mode="photo"][data-state="home"] #lcd, [data-mode="photo"][data-state="app"] #lcd,
+[data-mode="photo"][data-state="enter"] #lcd {
+  left: var(--win-x); top: var(--win-y); width: var(--win-w); height: var(--win-h);
+  right: auto; bottom: auto;
+}
+.lcd--ghost { pointer-events: none; transition: opacity 380ms ease-in 520ms; }
+.lcd--ghost.is-fading { opacity: 0; }
+/* Photo mode: ghost and real layer share the same geometry, so a short linear
+   dissolve at the end of the ride is enough and the real layer never shows
+   as a translucent rectangle while the phone is still growing. */
+[data-mode="photo"] .lcd--ghost { transition: opacity 300ms linear 600ms; }
+[data-mode="fill"][data-state="home"] .frame, [data-mode="fill"][data-state="app"] .frame,
+[data-mode="fill"][data-state="enter"] .frame {
+  display: block; position: fixed; inset: 0; z-index: 10; pointer-events: none;
+  border: var(--frame) solid var(--case);
+  border-bottom-width: calc(var(--frame) * 3);
+}
+[data-mode="fill"][data-state="enter"] #lcd, [data-mode="fill"][data-state="enter"] .frame {
+  animation: enter-in 380ms ease-out 520ms both;
+}
+/* While the zoom runs the real layer is (nearly) invisible: hover must go to nothing. */
+[data-state="enter"] #lcd { pointer-events: none; }
+@keyframes enter-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+[data-mode="photo"][data-state="enter"] #lcd {
+  animation: enter-in-photo 300ms linear 600ms both;
+}
+@keyframes enter-in-photo {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.frame__mark {
+  position: absolute; left: 50%; bottom: calc(var(--frame) * -3);
+  height: calc(var(--frame) * 2.2); width: auto;
+  transform: translateX(-50%);
+  mix-blend-mode: screen;
+}
+[data-state="enter"] .screen,
+[data-state="home"] .screen, [data-state="app"] .screen { animation: fade-in 200ms ease-out; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ============ HOME DESKTOP ============ */
+.home { position: absolute; inset: 0; }
+.icon {
+  position: absolute; left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.9em;
+  padding: 0.8em 0.6em;
+  border: 2px solid transparent;
+  font-family: var(--pixel); font-size: min(0.85cqw, 11px);
+  color: var(--navy); text-transform: uppercase; white-space: nowrap;
+}
+.icon svg { width: min(6cqw, 72px); height: auto; }
+.icon.is-selected { border-color: var(--navy); }
+.icon:hover { border-color: var(--case); }
+.icon:focus-visible { outline: 2px dashed var(--navy); outline-offset: 2px; }
+.folder {
+  position: absolute; left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%);
+  min-width: min(52cqw, 640px);
+  background: var(--lcd);
+  border: 2px solid var(--navy);
+  box-shadow: min(0.6cqw, 8px) min(0.6cqw, 8px) 0 var(--navy);
+  z-index: 3;
+}
+.folder__bar {
+  display: flex; justify-content: space-between; align-items: center; gap: 1em;
+  background: var(--navy); color: var(--lcd);
+  font-family: var(--pixel); font-size: min(0.85cqw, 11px);
+  padding: 0.6em 0.8em;
+}
+.folder__close { color: inherit; padding: 0 0.4em; border: 1px solid currentColor; }
+.folder__items {
+  position: relative;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: min(2cqw, 28px);
+  padding: min(2.5cqw, 32px) min(2cqw, 24px);
+}
+.folder__items .icon { position: static; transform: none; }
+
+/* ============ APP PANEL ============ */
+.app {
+  position: absolute; inset: 0;
+  z-index: 4;
+  display: flex; flex-direction: column;
+  background: var(--lcd);
+  transform: translateX(100%);
+  transition: transform 200ms ease-out;
+}
+.app.is-open { transform: none; }
+.app__bar {
+  display: flex; align-items: center; gap: 1.5em;
+  padding: 0.8em 1em;
+  border-bottom: 2px solid var(--navy);
+  font-family: var(--pixel); font-size: clamp(8px, 1vw, 12px);
+}
+.app__back { padding: 0.4em 0.6em; border: 2px solid var(--navy); }
+.app__back:hover { background: var(--navy); color: var(--lcd); }
+.app__bar h2 { font-size: inherit; font-weight: normal; }
+.app__content {
+  flex: 1; overflow-y: auto;
+  padding: clamp(14px, 2.5vw, 40px);
+  font-size: clamp(18px, 1.6vw, 24px); line-height: 1.25;
+}
+
+/* Text blocks */
+.intro, .text p { max-width: 60ch; margin-bottom: 1em; }
+.kicker { font-family: var(--pixel); font-size: 0.45em; letter-spacing: 0.1em; }
+.text a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Landing (HOME app) */
+.landing { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.2em; }
+.landing__mark { width: min(70%, 520px); filter: invert(1); mix-blend-mode: multiply; }
+.landing__kicker { font-family: var(--pixel); font-size: 0.45em; letter-spacing: 0.12em; }
+.landing__body { max-width: 60ch; }
+.logos { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5em 2.5em; margin-top: 1em; }
+.logos li { display: flex; align-items: center; }
+.logos img { height: clamp(22px, 2.6vw, 44px); width: auto; filter: invert(1) grayscale(1); mix-blend-mode: multiply; }
+.logos img.is-dark { filter: grayscale(1); }
+.logos img.is-large { height: clamp(34px, 4vw, 66px); }
+.logos img.is-wide { height: clamp(30px, 3.6vw, 58px); }
+.landing > .logos { margin-top: 0; margin-bottom: 1.5em; }
+
+/* Password gate (CURRENT app) */
+.gate { display: flex; flex-direction: column; align-items: center; gap: 1em; max-width: 36ch; margin: 2em auto; text-align: center; }
+.gate__title { font-family: var(--pixel); font-size: 0.55em; letter-spacing: 0.1em; }
+.gate__label { font-family: var(--pixel); font-size: 0.4em; letter-spacing: 0.2em; }
+.gate__input {
+  width: 100%; padding: 0.4em 0.6em;
+  font: inherit; color: var(--navy); background: #dbe3e7;
+  border: 2px solid var(--navy); border-radius: 0; text-align: center; letter-spacing: 0.2em;
+}
+.gate__input:focus { outline: 2px solid var(--case); outline-offset: 2px; }
+.gate__button { font-family: var(--pixel); font-size: 0.45em; padding: 0.8em 1.6em; border: 2px solid var(--navy); }
+.gate__button:hover, .gate__button:focus-visible { background: var(--navy); color: var(--lcd); }
+.gate__error { font-family: var(--pixel); font-size: 0.4em; color: #b3261e; }
+.gate.is-shake { animation: shake 400ms; }
+@keyframes shake { 0%, 100% { transform: none; } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+@media (prefers-reduced-motion: reduce) { .gate.is-shake { animation: none; } }
+
+/* Project tiles */
+.tiles {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: clamp(14px, 2vw, 28px);
+}
+.tile__media {
+  position: relative; aspect-ratio: 16 / 9;
+  border: 2px solid var(--navy); background: #000; overflow: hidden;
+}
+.tile__media.is-portrait { aspect-ratio: 2 / 3; max-width: 60%; }
+.tile__media img, .tile__media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tile__placeholder {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  color: #666; font-family: var(--pixel); font-size: 0.4em;
+}
+.tile__client { font-family: var(--pixel); font-size: 0.4em; margin-top: 0.9em; text-transform: uppercase; }
+.tile__title { font-weight: normal; font-size: 1.1em; line-height: 1.1; }
+
+/* Crew */
+.crew {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(12px, 2vw, 32px);
+  margin: 1.5em auto;
+  max-width: 1300px;
+}
+.crew__member { display: flex; flex-direction: column; align-items: center; text-align: center; width: clamp(108px, 11.5vw, 160px); }
+.crew__photo {
+  width: 76%; aspect-ratio: 1 / 1; border-radius: 50%; overflow: hidden;
+  border: 2px solid var(--navy); background: #000; margin-bottom: 0.6em;
+}
+.crew__photo img { width: 100%; height: 100%; object-fit: cover; }
+.crew__tag { width: 100%; height: clamp(40px, 4.6vw, 64px); object-fit: contain; filter: invert(1); mix-blend-mode: multiply; }
+.crew__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.contact { display: flex; flex-direction: column; align-items: center; gap: 0.5em; margin-top: 1em; }
+.contact__label { font-family: var(--pixel); font-size: 0.45em; letter-spacing: 0.2em; }
+.contact__email { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ABOUT */
+.about { text-align: center; }
+.about .text p { margin-left: auto; margin-right: auto; }
+.map { display: flex; flex-direction: column; align-items: center; gap: 0.8em; margin: 2em 0 1.5em; }
+.map__title { font-family: var(--pixel); font-size: 0.45em; letter-spacing: 0.2em; }
+.map__frame { width: min(100%, 520px); border: 2px solid var(--navy); background: #d3dde2; padding: 2%; }
+.map__frame svg { display: block; width: 100%; height: auto; }
+.map__cities { font-size: 0.9em; opacity: 0.8; text-align: center; }
+@keyframes pin-pulse { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(1.6); } }
+.pin__ring { transform-box: fill-box; transform-origin: center; animation: pin-pulse 1.8s ease-out infinite; }
+
+/* BRICKS app */
+.bricks { --bricks-w: min(100%, 720px); display: flex; flex-direction: column; align-items: center; gap: 0.6em; }
+/* Photo mode: the LCD is ~0.74vh tall; keep hud + canvas + hint above the fold. */
+[data-mode="photo"] .bricks { --bricks-w: min(100%, 720px, max(280px, calc(115vh - 400px))); }
+.bricks canvas { width: 100%; aspect-ratio: 16 / 10; background: #000; border: 2px solid var(--navy); image-rendering: pixelated; cursor: none; }
+.bricks__hud { display: flex; justify-content: space-between; width: var(--bricks-w); font-family: var(--pixel); font-size: 0.45em; }
+.bricks__hint { font-family: var(--pixel); font-size: 0.35em; opacity: 0.7; }
+.bricks__wrap { position: relative; width: var(--bricks-w); }
+.bricks__over { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-family: var(--pixel); font-size: 0.5em; background: rgba(0,0,0,0.6); text-align: center; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 720px) {
+  .status__date { display: none; }
+  [data-state="home"] .icon, [data-state="app"] .icon { left: var(--mx); top: var(--my); font-size: 9px; }
+  [data-state="home"] .icon svg, [data-state="app"] .icon svg { width: 16vw; }
+  [data-state="home"] .folder, [data-state="app"] .folder { left: 50%; top: 50%; min-width: 88%; }
+  [data-state="home"] .folder__close, [data-state="app"] .folder__close { min-height: 20px; }
+  .tile__media.is-portrait { max-width: 100%; }
+  .crew__member { width: 40%; }
+  .app__content { font-size: 18px; }
+}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion: reduce) {
+  .power svg { animation: none; opacity: 1; }
+  .phone__stage { transition: opacity 150ms linear; }
+  .lcd--ghost { transition: none; }
+  [data-state="enter"] #lcd, [data-state="enter"] .frame { animation: none; }
+  .app { transition: none; }
+  [data-state="home"] .screen, [data-state="app"] .screen { animation: none; }
+  .pin__ring { animation: none; opacity: 0; }
+}
