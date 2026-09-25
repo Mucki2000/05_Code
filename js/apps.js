@@ -33,7 +33,7 @@ export const CREW = [
 const LOGOS = [
   { src: L + 'Universal-Logo-1997.png', alt: 'Universal', dark: true, large: true },
   { src: L + 'prime-video-horizontal-logo-white-dec-2024.png', alt: 'Prime Video' },
-  { src: L + 'constantin_film.jpg', alt: 'Constantin Film', xl: true },
+  { src: L + 'constantin_film_trim.png', alt: 'Constantin Film', wide: true },
   { src: L + 'mk2-films.png', alt: 'mk2 Films', dark: true },
   { src: L + 'FIFA.png', alt: 'FIFA' },
   { src: L + 'Kleine%20br%C3%BCder.jpg', alt: 'Kleine Brüder', large: true },
@@ -59,7 +59,7 @@ export const APPS = [
     id: 'home', label: 'HOME', icon: 'house',
     render: () => `
       <div class="landing">
-        <ul class="logos">${LOGOS.map((l) => `<li><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.xl && 'is-xl'].filter(Boolean).join(' ')}" src="${l.src}" alt="${l.alt}" loading="lazy" /></li>`).join('')}</ul>
+        <ul class="logos">${LOGOS.map((l) => `<li><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.wide && 'is-wide'].filter(Boolean).join(' ')}" src="${l.src}" alt="${l.alt}" loading="lazy" /></li>`).join('')}</ul>
         <img class="landing__mark" src="${A}lausebengel-logo.png" alt="Lausebengel" />
         <p class="landing__kicker">${KICKER}</p>
         <p class="landing__body">${TAGLINE}</p>
@@ -67,7 +67,7 @@ export const APPS = [
   },
   {
     id: 'filmtv', label: 'FILM/TV', icon: 'clapper',
-    render: () => intro('Film campaigns and content for cinema and streaming.') + tiles(['ailiens', 'denoche', 'euphorie', 'prime', 'kleine', 'backrooms']),
+    render: () => intro('Film campaigns and content for cinema and streaming.') + tiles(['ailiens', 'denoche', 'euphorie', 'prime', 'kleine']),
   },
   {
     id: 'unternehmen', label: 'UNTERNEHMEN', icon: 'building',
@@ -110,7 +110,7 @@ export const APPS = [
   },
   {
     id: 'bricks', label: 'BRICKS', icon: 'bricks',
-    render: () => '<div class="bricks"><div class="bricks__hud"><span id="bricks-score">SCORE 0</span><span id="bricks-lives">LIVES 3</span></div><canvas id="bricks-canvas" width="160" height="100"></canvas><p class="bricks__hint">MOVE THE MOUSE OR USE ← → · CLICK TO RESTART</p></div>',
+    render: () => '<div class="bricks"><div class="bricks__hud"><span id="bricks-score">SCORE 0</span></div><canvas id="bricks-canvas" width="160" height="100"></canvas><p class="bricks__hint">MOVE THE MOUSE OR USE ← → · CLICK TO RESTART</p></div>',
   },
 ];
 

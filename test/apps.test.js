@@ -48,6 +48,13 @@ test('CURRENT lists Ailiens before Backrooms, ABOUT renders six crew members', (
   assert.ok(about.includes('class="map"'), 'ABOUT renders the map section');
 });
 
+test('Backrooms shows only in CURRENT, not FILM/TV', () => {
+  const filmtv = APPS.find((a) => a.id === 'filmtv').render();
+  assert.ok(!filmtv.includes('Backrooms'), 'FILM/TV excludes Backrooms');
+  const current = APPS.find((a) => a.id === 'current').render();
+  assert.ok(current.includes('Backrooms'), 'CURRENT includes Backrooms');
+});
+
 test('HOME renders the logos before the wordmark', () => {
   const home = APPS.find((a) => a.id === 'home').render();
   const logosIdx = home.indexOf('class="logos"');

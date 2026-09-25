@@ -303,11 +303,9 @@ function startBricks(root) {
   wrap.appendChild(canvasEl);
 
   const scoreEl = root.querySelector('#bricks-score');
-  const livesEl = root.querySelector('#bricks-lives');
   const ctx = canvasEl.getContext ? canvasEl.getContext('2d') : null;
 
   let g = createGame(canvasEl.width, canvasEl.height);
-  let lives = 3;
   let over = false;
   let overlay = null;
   let raf = null;
@@ -324,7 +322,6 @@ function startBricks(root) {
   };
   const restart = () => {
     g = createGame(canvasEl.width, canvasEl.height);
-    lives = 3;
     over = false;
     input.paddleX = g.paddle.x + g.paddle.w / 2;
     if (overlay) { overlay.remove(); overlay = null; }
@@ -346,15 +343,13 @@ function startBricks(root) {
     last = now;
     const before = g.lost;
     step(g, dt, input);
-    if (g.lost > before) lives = Math.max(0, lives - (g.lost - before));
     if (ctx) render(ctx, g);
     scoreEl.textContent = 'SCORE ' + g.score;
-    livesEl.textContent = 'LIVES ' + lives;
-    if (lives <= 0 && !over) {
+    if (g.lost > before && !over) {
       over = true;
       overlay = document.createElement('div');
       overlay.className = 'bricks__over';
-      overlay.textContent = 'GAME OVER · CLICK TO RESTART';
+      overlay.textContent = 'GAME OVER · SCORE ' + g.score + ' · CLICK TO RESTART';
       wrap.appendChild(overlay);
     }
     if (!over) raf = requestAnimationFrame(frame);
