@@ -28,3 +28,13 @@ test('respects a custom duration', () => {
   assert.equal(progressAt(1500, 1500), 100);
   assert.equal(progressAt(900, 1500), 64);
 });
+
+test('the 64 % stall lands between 55 % and 70 % of a 4500 ms boot', () => {
+  assert.equal(progressAt(0, 4500), 0);
+  assert.equal(progressAt(4500, 4500), 100);
+  assert.ok(progressAt(2400, 4500) < 64, 'still rising just before 55 %');
+  assert.equal(progressAt(2475, 4500), 64);   // 55 %
+  assert.equal(progressAt(2800, 4500), 64);
+  assert.equal(progressAt(3149, 4500), 64);   // just under 70 %
+  assert.ok(progressAt(3200, 4500) > 64, 'rising again after 70 %');
+});

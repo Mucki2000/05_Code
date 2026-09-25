@@ -1,11 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { APPS, DESKTOP, PROJECTS, CREW } from '../js/apps.js';
+import { APPS, DESKTOP, PROJECTS, CREW, landingHtml } from '../js/apps.js';
 import { APP_IDS } from '../js/router.js';
 import { ICONS } from '../js/icons.js';
 
-test('APPS matches the router order and uses existing icons', () => {
-  assert.deepEqual(APPS.map((a) => a.id), APP_IDS);
+// 'home' stays a router id (it means the desktop) but has no app of its own.
+const PANEL_IDS = APP_IDS.filter((id) => id !== 'home');
+
+test('APPS matches the router order (minus home) and uses existing icons', () => {
+  assert.deepEqual(APPS.map((a) => a.id), PANEL_IDS);
   for (const a of APPS) {
     assert.ok(ICONS[a.icon], `icon ${a.icon} for ${a.id}`);
     assert.equal(typeof a.render, 'function');
@@ -36,7 +39,8 @@ test('DESKTOP entries reference known apps, folders reference known apps', () =>
       assert.fail(`unknown DESKTOP entry type ${entry.type}`);
     }
   }
-  assert.deepEqual([...desktopAppIds, ...folderItemIds].sort(), [...APP_IDS].sort());
+  assert.deepEqual([...desktopAppIds, ...folderItemIds].sort(), [...PANEL_IDS].sort());
+  assert.ok(!DESKTOP.some((d) => d.id === 'home'), 'no HOME icon on the desktop');
 });
 
 test('CURRENT lists Ailiens before Backrooms, ABOUT renders six crew members', () => {
@@ -55,10 +59,16 @@ test('Backrooms shows only in CURRENT, not FILM/TV', () => {
   assert.ok(current.includes('Backrooms'), 'CURRENT includes Backrooms');
 });
 
-test('HOME renders the logos before the wordmark', () => {
-  const home = APPS.find((a) => a.id === 'home').render();
-  const logosIdx = home.indexOf('class="logos"');
-  const markIdx = home.indexOf('landing__mark');
+test('landingHtml renders six logos, then the wordmark, the kicker and the body', () => {
+  const html = landingHtml();
+  assert.ok(html.includes('class="landing"'));
+  const logosIdx = html.indexOf('class="logos"');
+  const markIdx = html.indexOf('landing__mark');
   assert.ok(logosIdx > -1 && markIdx > -1, 'both logos and wordmark present');
   assert.ok(logosIdx < markIdx, 'logos come before the wordmark');
+  assert.equal((html.match(/<li><img /g) || []).length, 6, 'six logos');
+  assert.ok(html.includes('alt="Lausebengel"'), 'wordmark alt');
+  assert.ok(html.includes('class="landing__kicker"'), 'kicker');
+  assert.ok(html.includes('class="landing__body"'), 'body');
+  assert.ok(!html.includes('<button'), 'nothing interactive in the landing');
 });
