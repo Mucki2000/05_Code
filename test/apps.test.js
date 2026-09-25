@@ -59,6 +59,22 @@ test('Backrooms shows only in CURRENT, not FILM/TV', () => {
   assert.ok(current.includes('Backrooms'), 'CURRENT includes Backrooms');
 });
 
+test('GAMES folder holds BRICKS and FLAPPY; both render a canvas and a board', () => {
+  const games = DESKTOP.find((d) => d.id === 'games');
+  assert.equal(games.type, 'folder');
+  assert.deepEqual(games.items, ['bricks', 'flappy']);
+  assert.equal(games.icon, 'joystick');
+  assert.ok(!DESKTOP.some((d) => d.type === 'app' && (d.id === 'bricks' || d.id === 'flappy')), 'games only inside the folder');
+  for (const id of ['bricks', 'flappy']) {
+    const html = APPS.find((a) => a.id === id).render();
+    assert.ok(html.includes('<canvas id="bricks-canvas" width="160" height="100">'), `${id} canvas`);
+    assert.ok(html.includes('id="board-list"') && html.includes('id="board-form"'), `${id} board`);
+    assert.ok(html.includes('CLICK TO RESTART'), `${id} hint`);
+  }
+  assert.ok(APPS.find((a) => a.id === 'flappy').render().includes('PRESS SPACE TO FLAP'));
+  assert.equal(APPS.find((a) => a.id === 'flappy').icon, 'bird');
+});
+
 test('landingHtml renders six logos, then the wordmark, the kicker and the body', () => {
   const html = landingHtml();
   assert.ok(html.includes('class="landing"'));
@@ -69,6 +85,6 @@ test('landingHtml renders six logos, then the wordmark, the kicker and the body'
   assert.equal((html.match(/<li><img /g) || []).length, 6, 'six logos');
   assert.ok(html.includes('alt="Lausebengel"'), 'wordmark alt');
   assert.ok(html.includes('class="landing__kicker"'), 'kicker');
-  assert.ok(html.includes('class="landing__body"'), 'body');
+  assert.ok(!html.includes('class="landing__body"'), 'no body text on the desk (it lives in ABOUT)');
   assert.ok(!html.includes('<button'), 'nothing interactive in the landing');
 });

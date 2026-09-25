@@ -32,9 +32,9 @@ a { color: inherit; }
   width: min(94vw, calc(92vh * 1024 / 1536));
   width: min(94vw, calc(92svh * 1024 / 1536));
   aspect-ratio: 1024 / 1536;
-  background: var(--case);
   border-radius: 9% / 6%;
 }
+.no-photo .phone__device { background: var(--case); }
 .phone__img { width: 100%; height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; }
 .no-photo .phone__img { display: none; }
 .lcd {
@@ -172,6 +172,12 @@ a { color: inherit; }
 [data-mode="fill"][data-state="enter"] .phone__device { background: none; }
 [data-mode="fill"][data-state="home"] .phone__stage, [data-mode="fill"][data-state="app"] .phone__stage { transform: none !important; transition: none; }
 [data-mode="photo"][data-state="home"] .phone__stage, [data-mode="photo"][data-state="app"] .phone__stage { transition: none; }
+/* phone-cut.png has the screen cut out, so the photo sits ON TOP of the real
+   LCD (z-index 6 > 5): the bezel with its rounded corners frames the display
+   instead of the LCD rectangle lying on the photo. Clicks pass through. */
+[data-mode="photo"][data-state="enter"] .phone__stage,
+[data-mode="photo"][data-state="home"] .phone__stage,
+[data-mode="photo"][data-state="app"] .phone__stage { z-index: 6; pointer-events: none; }
 /* Scoped by id (not .lcd) so the cloned .lcd--ghost keeps its small,
    photo-embedded geometry instead of also jumping to the fixed layout. */
 [data-state="home"] #lcd, [data-state="app"] #lcd,
@@ -401,15 +407,36 @@ a { color: inherit; }
 @keyframes pin-pulse { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(1.6); } }
 .pin__ring { transform-box: fill-box; transform-origin: center; animation: pin-pulse 1.8s ease-out infinite; }
 
-/* BRICKS app */
-.bricks { --bricks-w: min(100%, 720px); display: flex; flex-direction: column; align-items: center; gap: 0.6em; }
+/* BRICKS app: game column + high-score board side by side (stacked on phones). */
+.bricks { --bricks-w: min(100%, 720px); display: flex; flex-direction: row; align-items: flex-start; justify-content: center; gap: clamp(16px, 3cqw, 40px); }
 /* Photo mode: the LCD is ~0.74vh tall; keep hud + canvas + hint above the fold. */
 [data-mode="photo"] .bricks { --bricks-w: min(100%, 720px, max(280px, calc(115vh - 400px))); }
-.bricks canvas { width: 100%; aspect-ratio: 16 / 10; background: #000; border: 2px solid var(--navy); image-rendering: pixelated; cursor: none; }
-.bricks__hud { display: flex; justify-content: space-between; width: var(--bricks-w); font-family: var(--pixel); font-size: 0.45em; }
-.bricks__hint { font-family: var(--pixel); font-size: 0.35em; opacity: 0.7; }
-.bricks__wrap { position: relative; width: var(--bricks-w); }
+.bricks__game { display: flex; flex-direction: column; align-items: center; gap: 0.6em; flex: 0 1 var(--bricks-w); min-width: 0; }
+.bricks canvas { display: block; width: 100%; aspect-ratio: 16 / 10; background: #000; border: 2px solid var(--navy); image-rendering: pixelated; cursor: none; }
+.bricks__hud { display: flex; justify-content: space-between; width: 100%; font-family: var(--pixel); font-size: 0.45em; }
+.bricks__hint { font-family: var(--pixel); font-size: 0.35em; opacity: 0.7; text-align: center; }
+.bricks__wrap { position: relative; width: 100%; }
+/* FLAPPY is played by clicking: keep a pointer instead of BRICKS' hidden cursor. */
+.bricks__wrap--flap canvas { cursor: pointer; }
 .bricks__over { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-family: var(--pixel); font-size: 0.5em; background: rgba(0,0,0,0.6); text-align: center; }
+/* The ready prompt must let pointermove reach the canvas underneath. */
+.bricks__over--ready { pointer-events: none; background: rgba(0,0,0,0.35); }
+/* High-score board */
+.board { flex: 0 0 clamp(170px, 24cqw, 300px); border: 2px solid var(--navy); padding: 0.8em 0.9em; font-family: var(--pixel); font-size: 0.42em; line-height: 1.6; background: #d3dde2; }
+.board__title { letter-spacing: 0.15em; margin-bottom: 0.8em; border-bottom: 2px solid var(--navy); padding-bottom: 0.4em; }
+.board__list { list-style: none; display: flex; flex-direction: column; gap: 0.35em; min-height: 10lh; }
+.board__list li { display: grid; grid-template-columns: 2.2em 1fr auto; gap: 0.5em; }
+.board__list li.is-new { background: var(--navy); color: var(--lcd); }
+.board__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.board__list .board__empty { display: block; opacity: 0.6; }
+.board__form { margin-top: 1em; display: flex; flex-direction: column; gap: 0.6em; }
+.board__form[hidden], .board__note[hidden] { display: none; }
+.board__label { letter-spacing: 0.15em; }
+.board__input { font: inherit; text-transform: uppercase; color: var(--navy); background: #e6ecef; border: 2px solid var(--navy); border-radius: 0; padding: 0.5em; width: 100%; }
+.board__input:focus { outline: 2px solid var(--case); outline-offset: 2px; }
+.board__save { border: 2px solid var(--navy); padding: 0.6em; align-self: flex-start; }
+.board__save:hover, .board__save:focus-visible { background: var(--navy); color: var(--lcd); }
+.board__note { margin-top: 1em; letter-spacing: 0.1em; }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 720px) {
@@ -434,6 +461,8 @@ a { color: inherit; }
   .tile__media.is-portrait { max-width: 100%; }
   .crew__member { width: 40%; }
   .app__content { font-size: 18px; }
+  #lcd .bricks { flex-direction: column; align-items: stretch; }
+  #lcd .board { flex: none; width: 100%; }
 }
 /* Narrow phones: the six logos stay on one row. */
 @media (max-width: 420px) {
