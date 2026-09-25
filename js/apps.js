@@ -54,6 +54,29 @@ const tiles = (ids) => `<ul class="tiles">${ids.map(tile).join('')}</ul>`;
 
 const intro = (text) => `<p class="intro">${text}</p>`;
 
+// BRICKS and FLAPPY share one arcade panel (startArcade in main.js): HUD,
+// canvas in a wrap that also holds the overlays, a hint line, and the
+// high-score board. Only one panel is open at a time, so the ids are shared.
+const arcade = (hint) => `
+      <div class="bricks">
+        <div class="bricks__game">
+          <div class="bricks__hud"><span id="bricks-score">SCORE 0</span></div>
+          <div class="bricks__wrap"><canvas id="bricks-canvas" width="160" height="100"></canvas></div>
+          <p class="bricks__hint">${hint}</p>
+        </div>
+        <aside class="board" aria-label="High scores">
+          <p class="board__title">HIGH SCORES</p>
+          <ol class="board__list" id="board-list"></ol>
+          <form class="board__form" id="board-form" hidden>
+            <p class="board__prompt" id="board-prompt">GAME OVER · SCORE 0</p>
+            <label class="board__label" for="board-name">YOUR NAME</label>
+            <input class="board__input" id="board-name" type="text" maxlength="12" autocomplete="off" spellcheck="false" />
+            <button class="board__save" type="submit">SAVE</button>
+          </form>
+          <p class="board__note" id="board-note" hidden></p>
+        </aside>
+      </div>`;
+
 // Landing: the centre piece of the desktop (renderHome in main.js), logos on
 // top, then the wordmark, the kicker and the tagline. No app of its own.
 // The images load eagerly: the desktop is rendered while the boot screen is
@@ -65,7 +88,6 @@ export function landingHtml() {
         <ul class="logos">${LOGOS.map((l) => `<li><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.wide && 'is-wide'].filter(Boolean).join(' ')}" src="${l.src}" alt="${l.alt}" /></li>`).join('')}</ul>
         <img class="landing__mark" src="${A}lausebengel-logo.png" alt="Lausebengel" />
         <p class="landing__kicker">${KICKER}</p>
-        <p class="landing__body">${TAGLINE}</p>
       </div>`;
 }
 
@@ -87,11 +109,14 @@ export const APPS = [
     render: () => intro('Current projects.') + tiles(['ailiens', 'backrooms', 'fifa']),
   },
   {
-    id: 'career', label: 'CAREER', icon: 'briefcase',
+    id: 'contact', label: 'CONTACT', icon: 'mail',
     render: () => `
-      <div class="text">
-        <p>We are a small crew and always curious about new people who love film, editing and social media.</p>
-        <p>Write to us: <a href="mailto:${EMAIL}">${EMAIL}</a></p>
+      <div class="about">
+        <div class="text">
+          <p class="kicker">GET IN TOUCH</p>
+          <p><a href="mailto:${EMAIL}">${EMAIL}</a></p>
+          <p>We are a small crew and always curious about new people who love film, editing and social media.</p>
+        </div>
       </div>`,
   },
   {
@@ -115,7 +140,11 @@ export const APPS = [
   },
   {
     id: 'bricks', label: 'BRICKS', icon: 'bricks',
-    render: () => '<div class="bricks"><div class="bricks__hud"><span id="bricks-score">SCORE 0</span></div><canvas id="bricks-canvas" width="160" height="100"></canvas><p class="bricks__hint">MOVE THE MOUSE OR USE THE ARROW KEYS · CLICK TO RESTART</p></div>',
+    render: () => arcade('MOVE THE MOUSE OR USE THE ARROW KEYS · CLICK TO RESTART'),
+  },
+  {
+    id: 'flappy', label: 'FLAPPY', icon: 'bird',
+    render: () => arcade('TAP, CLICK OR PRESS SPACE TO FLAP · CLICK TO RESTART'),
   },
 ];
 
@@ -125,9 +154,10 @@ export const APPS = [
 // the sides (desktop) or the bottom (phone). Fixed so nothing overlaps.
 export const DESKTOP = [
   { type: 'folder', id: 'smp', label: 'SOCIAL MEDIA PRODUCTION', icon: 'folder',
-    items: ['filmtv', 'unternehmen', 'musik'], x: 13, y: 82, mx: 30, my: 68 },
-  { type: 'app',    id: 'current', x: 90, y: 67, mx: 74, my: 68 },
-  { type: 'app',    id: 'career',  x: 70, y: 81, mx: 50, my: 88 },
-  { type: 'app',    id: 'about',   x: 35, y: 71, mx: 22, my: 88 },
-  { type: 'app',    id: 'bricks',  x: 50, y: 90, mx: 80, my: 88 },
+    items: ['filmtv', 'unternehmen', 'musik'], x: 13, y: 74, mx: 30, my: 68 },
+  { type: 'app',    id: 'current', x: 90, y: 58, mx: 74, my: 68 },
+  { type: 'app',    id: 'contact', x: 70, y: 70, mx: 50, my: 88 },
+  { type: 'app',    id: 'about',   x: 35, y: 60, mx: 22, my: 88 },
+  { type: 'folder', id: 'games', label: 'GAMES', icon: 'joystick',
+    items: ['bricks', 'flappy'], x: 50, y: 84, mx: 80, my: 88 },
 ];

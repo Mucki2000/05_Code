@@ -11,7 +11,7 @@ test('pixelSvg turns a 2x2 map into rects', () => {
 });
 
 test('every app icon is a 16x16 map', () => {
-  const keys = ['house', 'clapper', 'building', 'reel', 'briefcase', 'face', 'folder', 'note', 'bricks'];
+  const keys = ['house', 'clapper', 'building', 'reel', 'briefcase', 'face', 'folder', 'note', 'bricks', 'mail', 'joystick', 'bird'];
   for (const k of keys) {
     assert.ok(ICONS[k], `missing icon ${k}`);
     assert.match(ICONS[k], /viewBox="0 0 16 16"/);

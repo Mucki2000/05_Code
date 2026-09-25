@@ -1,4 +1,4 @@
-export const APP_IDS = ['home', 'filmtv', 'unternehmen', 'musik', 'current', 'career', 'about', 'bricks'];
+export const APP_IDS = ['home', 'filmtv', 'unternehmen', 'musik', 'current', 'contact', 'about', 'bricks', 'flappy'];
 
 export function parseHash(hash) {
   const id = String(hash || '').replace(/^#/, '').toLowerCase();

@@ -1,10 +1,12 @@
 import { POWER, SIGNAL, BATTERY, ANTENNA, ICONS } from './icons.js';
 import { progressAt } from './loader.js';
 import { createGame, step, render } from './game.js';
+import { createFlappy, stepFlappy, renderFlappy } from './flappy.js';
 import { formatStatus } from './clock.js';
 import { APPS, DESKTOP, CURRENT_PASSWORD_HASH, landingHtml } from './apps.js';
 import { parseHash } from './router.js';
 import { sha256Hex, isUnlocked, markUnlocked } from './gate.js';
+import { createStore, cleanName } from './scores.js';
 
 const $ = (id) => document.getElementById(id);
 const phone = $('phone'), stage = $('stage'), photo = $('photo'), lcd = $('lcd'), frame = $('frame');
@@ -340,7 +342,7 @@ window.addEventListener('keydown', (e) => {
 /* ---------- APPS ---------- */
 let pushedHash = false;
 let hideTimer = null;
-let stopBricks = null;
+let stopArcade = null;
 
 function openApp(id) {
   if (parseHash(location.hash) === id) showApp(id);
@@ -348,7 +350,7 @@ function openApp(id) {
 }
 
 function closeApp() {
-  if (stopBricks) { stopBricks(); stopBricks = null; }
+  if (stopArcade) { stopArcade(); stopArcade = null; }
   if (pushedHash) {
     pushedHash = false;
     history.back();
@@ -362,7 +364,7 @@ function closeApp() {
 
 // 'home' is a known hash (router.js) but has no panel: it means the desktop.
 function showApp(id) {
-  if (stopBricks) { stopBricks(); stopBricks = null; }
+  if (stopArcade) { stopArcade(); stopArcade = null; }
   if (id === 'home') id = null;
   if (!id) {
     app.classList.remove('is-open');
@@ -386,7 +388,7 @@ function showApp(id) {
   app.hidden = false;
   if (!locked) {
     initVideos(app);
-    if (id === 'bricks') startBricks(app);
+    if (ENGINES[id]) startArcade(app, ENGINES[id]);
   }
   $('back').addEventListener('click', closeApp);
   requestAnimationFrame(() => app.classList.add('is-open'));
@@ -397,75 +399,204 @@ function showApp(id) {
   else $('back').focus({ preventScroll: true });
 }
 
-/* ---------- BRICKS (playable app) ---------- */
-function startBricks(root) {
+/* ---------- ARCADE (BRICKS and FLAPPY share one runner) ---------- */
+// An engine is the pure game module plus what the runner needs to know:
+// create/step/render (js/game.js, js/flappy.js), isOver(g, prev) with `prev`
+// a shallow copy of the state before this frame's step, the localStorage key
+// of its high-score list, the ready prompt and the control scheme.
+const NAME_KEY = 'lb-bricks-scores';          // one remembered name for all games
+const ENGINES = {
+  bricks: {
+    create: createGame, step, render,
+    isOver: (g, prev) => g.lost > prev.lost,
+    storeKey: 'lb-bricks-scores',
+    readyText: 'MOVE THE MOUSE OR TAP TO START',
+    controls: 'paddle',                        // pointermove / ArrowLeft / ArrowRight
+  },
+  flappy: {
+    create: createFlappy, step: stepFlappy, render: renderFlappy,
+    isOver: (g) => g.dead,
+    storeKey: 'lb-flappy-scores',
+    readyText: 'TAP OR PRESS SPACE TO START',
+    controls: 'flap',                          // click / tap / Space / ArrowUp
+  },
+};
+
+function startArcade(root, engine) {
   const canvasEl = root.querySelector('#bricks-canvas');
   if (!canvasEl) return;
-  const wrap = document.createElement('div');
-  wrap.className = 'bricks__wrap';
-  canvasEl.replaceWith(wrap);
-  wrap.appendChild(canvasEl);
+  // The wrap comes from the markup (apps.js) and holds canvas + overlay.
+  const wrap = canvasEl.closest('.bricks__wrap') || canvasEl.parentElement;
+  const paddle = engine.controls === 'paddle';
+  wrap.classList.toggle('bricks__wrap--flap', !paddle);
 
   const scoreEl = root.querySelector('#bricks-score');
   const ctx = canvasEl.getContext ? canvasEl.getContext('2d') : null;
 
-  let g = createGame(canvasEl.width, canvasEl.height);
+  // High-score board (localStorage behind js/scores.js). One store per open;
+  // the list is per game, the remembered name is shared through the BRICKS key.
+  const store = createStore(undefined, engine.storeKey);
+  const names = engine.storeKey === NAME_KEY ? store : createStore(undefined, NAME_KEY);
+  const listEl = root.querySelector('#board-list');
+  const formEl = root.querySelector('#board-form');
+  const promptEl = root.querySelector('#board-prompt');
+  const nameEl = root.querySelector('#board-name');
+  const noteEl = root.querySelector('#board-note');
+  const renderBoard = (list, newEntry = null) => {
+    if (!listEl) return;
+    listEl.replaceChildren();
+    if (!list.length) {
+      const li = document.createElement('li');
+      li.className = 'board__empty';
+      li.textContent = 'NO SCORES YET';
+      listEl.appendChild(li);
+      return;
+    }
+    list.forEach((e, i) => {
+      const li = document.createElement('li');
+      if (e === newEntry) li.classList.add('is-new');
+      for (const [cls, text] of [['board__rank', (i + 1) + '.'], ['board__name', e.name], ['board__score', String(e.score)]]) {
+        const span = document.createElement('span');
+        span.className = cls;
+        span.textContent = text;
+        li.appendChild(span);
+      }
+      listEl.appendChild(li);
+    });
+  };
+  renderBoard(store.load());
+  const hideBoardUi = () => {
+    if (formEl) formEl.hidden = true;
+    if (noteEl) { noteEl.hidden = true; noteEl.textContent = ''; }
+  };
+  const typing = () => !!nameEl && document.activeElement === nameEl;
+
+  let g = engine.create(canvasEl.width, canvasEl.height);
   let over = false;
   let overlay = null;
   let raf = null;
   let last = performance.now();
-  const input = { paddleX: g.paddle.x + g.paddle.w / 2 };
+  const input = {};
+  const resetInput = () => {
+    if (paddle) input.paddleX = g.paddle.x + g.paddle.w / 2;
+    else input.flap = false;
+  };
+  resetInput();
+
+  // The game waits for the first input so a visitor who has just opened the
+  // panel is not handed a game over (and the name form) within a second.
+  let armed = false;
+  let ready = null;
+  const showReady = () => {
+    ready = document.createElement('div');
+    ready.className = 'bricks__over bricks__over--ready';
+    ready.textContent = engine.readyText;
+    wrap.appendChild(ready);
+  };
+  const arm = () => {
+    if (armed || over) return;
+    armed = true;
+    if (ready) { ready.remove(); ready = null; }
+    last = performance.now();
+  };
 
   const onMove = (e) => {
     const r = canvasEl.getBoundingClientRect();
     input.paddleX = ((e.clientX - r.left) / r.width) * g.w;
+    arm();
   };
+  const isFlapKey = (e) => e.key === ' ' || e.key === 'Spacebar' || e.key === 'ArrowUp';
   const onKey = (e) => {
-    if (e.key === 'ArrowLeft') input.paddleX = Math.max(0, input.paddleX - 8);
-    else if (e.key === 'ArrowRight') input.paddleX = Math.min(g.w, input.paddleX + 8);
+    if (typing()) return;                       // Space types a space, arrows move the caret
+    if (paddle) {
+      if (e.key === 'ArrowLeft') input.paddleX = Math.max(0, input.paddleX - 8);
+      else if (e.key === 'ArrowRight') input.paddleX = Math.min(g.w, input.paddleX + 8);
+      else return;
+    } else {
+      if (!isFlapKey(e)) return;
+      e.preventDefault();                       // no page scroll, no BACK activation
+      if (e.repeat || over) return;             // one flap per press
+      input.flap = true;
+    }
+    arm();
   };
+  // Space activates the focused BACK button on keyup: swallow that too.
+  const onKeyUp = (e) => { if (isFlapKey(e) && !typing()) e.preventDefault(); };
   const restart = () => {
-    g = createGame(canvasEl.width, canvasEl.height);
+    g = engine.create(canvasEl.width, canvasEl.height);
     over = false;
-    input.paddleX = g.paddle.x + g.paddle.w / 2;
+    armed = false;
+    resetInput();
     if (overlay) { overlay.remove(); overlay = null; }
+    hideBoardUi();                       // a restart without saving discards that score
+    showReady();
     last = performance.now();
     raf = requestAnimationFrame(frame);
   };
-  const onClick = () => { if (over) restart(); };
+  const onClick = () => {
+    if (over) { restart(); return; }
+    if (!paddle) input.flap = true;
+    arm();
+  };
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (!over || !formEl) return;
+    const score = g.score;
+    const { list, rank } = store.add({ name: nameEl.value, score });
+    names.rememberName(cleanName(nameEl.value));
+    renderBoard(list, rank > 0 ? list[rank - 1] : null);
+    formEl.hidden = true;
+    if (noteEl) {
+      noteEl.textContent = rank > 0 ? 'SAVED · #' + rank : 'NOT IN TOP 10';
+      noteEl.hidden = false;
+    }
+  };
 
-  canvasEl.addEventListener('pointermove', onMove);
+  if (paddle) canvasEl.addEventListener('pointermove', onMove);
   // Bound to the wrap, not the canvas: the game-over overlay (.bricks__over)
   // is stacked on top of the canvas with inset:0 and intentionally intercepts
   // pointer events (no pointer-events:none) so its own text stays hit-testable;
-  // a listener on the canvas would never see the restart click.
+  // a listener on the canvas would never see the restart click. The ready
+  // overlay has pointer-events:none, so the first tap/click reaches it too.
   wrap.addEventListener('click', onClick);
   window.addEventListener('keydown', onKey);
+  if (!paddle) window.addEventListener('keyup', onKeyUp);
+  if (formEl) formEl.addEventListener('submit', onSubmit);
 
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
-    const before = g.lost;
-    step(g, dt, input);
-    if (ctx) render(ctx, g);
+    const prev = { ...g };
+    if (armed) engine.step(g, dt, input);
+    if (!paddle) input.flap = false;            // a flap is a single impulse
+    if (ctx) engine.render(ctx, g);
     scoreEl.textContent = 'SCORE ' + g.score;
-    if (g.lost > before && !over) {
+    if (!over && engine.isOver(g, prev)) {
       over = true;
       overlay = document.createElement('div');
       overlay.className = 'bricks__over';
       overlay.textContent = 'GAME OVER · SCORE ' + g.score + ' · CLICK TO RESTART';
       wrap.appendChild(overlay);
+      if (g.score > 0 && formEl) {
+        promptEl.textContent = 'GAME OVER · SCORE ' + g.score;
+        nameEl.value = names.lastName();
+        formEl.hidden = false;
+        nameEl.focus({ preventScroll: true });
+      }
     }
     if (!over) raf = requestAnimationFrame(frame);
   }
+  showReady();
   raf = requestAnimationFrame(frame);
 
-  stopBricks = () => {
+  stopArcade = () => {
     if (raf) cancelAnimationFrame(raf);
     raf = null;
     canvasEl.removeEventListener('pointermove', onMove);
     wrap.removeEventListener('click', onClick);
     window.removeEventListener('keydown', onKey);
+    window.removeEventListener('keyup', onKeyUp);
+    if (formEl) formEl.removeEventListener('submit', onSubmit);
   };
 }
 
