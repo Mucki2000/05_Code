@@ -6,7 +6,8 @@ import { formatStatus } from './clock.js';
 import { APPS, DESKTOP, CURRENT_PASSWORD_HASH, landingHtml } from './apps.js';
 import { parseHash } from './router.js';
 import { sha256Hex, isUnlocked, markUnlocked } from './gate.js';
-import { createStore, cleanName } from './scores.js';
+import { createStore, createRemoteStore, cleanName } from './scores.js';
+import { SCORES_ENDPOINT } from './config.js';
 
 const $ = (id) => document.getElementById(id);
 const phone = $('phone'), stage = $('stage'), photo = $('photo'), lcd = $('lcd'), frame = $('frame');
@@ -435,8 +436,14 @@ function startArcade(root, engine) {
 
   // High-score board (localStorage behind js/scores.js). One store per open;
   // the list is per game, the remembered name is shared through the BRICKS key.
-  const store = createStore(undefined, engine.storeKey);
-  const names = engine.storeKey === NAME_KEY ? store : createStore(undefined, NAME_KEY);
+  const local = createStore(undefined, engine.storeKey);
+  const names = engine.storeKey === NAME_KEY ? local : createStore(undefined, NAME_KEY);
+  // With a configured service the board is shared by all visitors; the local
+  // list paints first and stands in when the network fails.
+  const store = SCORES_ENDPOINT
+    ? createRemoteStore({ endpoint: SCORES_ENDPOINT, game: engine.storeKey.replace(/^lb-|-scores$/g, ''), local })
+    : local;
+  let closed = false;                          // set by stopArcade: ignore late responses
   const listEl = root.querySelector('#board-list');
   const formEl = root.querySelector('#board-form');
   const promptEl = root.querySelector('#board-prompt');
@@ -465,6 +472,9 @@ function startArcade(root, engine) {
     });
   };
   renderBoard(store.load());
+  if (store.fetchAll) {
+    store.fetchAll().then((list) => { if (!closed) renderBoard(list); }).catch(() => { /* local list stays */ });
+  }
   const hideBoardUi = () => {
     if (formEl) formEl.hidden = true;
     if (noteEl) { noteEl.hidden = true; noteEl.textContent = ''; }
@@ -538,17 +548,20 @@ function startArcade(root, engine) {
     if (!paddle) input.flap = true;
     arm();
   };
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     if (!over || !formEl) return;
     const score = g.score;
-    const { list, rank } = store.add({ name: nameEl.value, score });
     names.rememberName(cleanName(nameEl.value));
-    renderBoard(list, rank > 0 ? list[rank - 1] : null);
     formEl.hidden = true;
+    if (noteEl) { noteEl.textContent = 'SAVING...'; noteEl.hidden = false; }
+    const result = await store.add({ name: nameEl.value, score });   // sync for the local store
+    if (closed) return;
+    const { list, rank } = result;
+    renderBoard(list, rank > 0 ? list[rank - 1] : null);
     if (noteEl) {
-      noteEl.textContent = rank > 0 ? 'SAVED · #' + rank : 'NOT IN TOP 10';
-      noteEl.hidden = false;
+      const where = result.remote === false ? ' (OFFLINE)' : '';
+      noteEl.textContent = (rank > 0 ? 'SAVED · #' + rank : 'NOT IN TOP 10') + where;
     }
   };
 
@@ -590,6 +603,7 @@ function startArcade(root, engine) {
   raf = requestAnimationFrame(frame);
 
   stopArcade = () => {
+    closed = true;
     if (raf) cancelAnimationFrame(raf);
     raf = null;
     canvasEl.removeEventListener('pointermove', onMove);

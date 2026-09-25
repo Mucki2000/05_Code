@@ -100,3 +100,45 @@ test('createStore without storage works in memory', () => {
   s.rememberName('M');
   assert.equal(s.lastName(), 'M');
 });
+
+// ---- remote store (shared board) ----
+import { createRemoteStore, normaliseList } from '../js/scores.js';
+
+const ok = (data) => ({ ok: true, status: 200, json: async () => data });
+
+test('normaliseList cleans, sorts and caps what a server sends', () => {
+  const list = normaliseList([{ name: 'b', score: 5, at: 2 }, { name: 'a', score: 5, at: 1 }, { name: 'x', score: 'nope' }, ...Array.from({ length: 12 }, (_, i) => ({ name: 'n' + i, score: i, at: i }))]);
+  assert.equal(list.length, 10);
+  assert.deepEqual(list.slice(0, 3).map((e) => e.name), ['N11', 'N10', 'N9']);
+  assert.equal(normaliseList('garbage').length, 0);
+});
+
+test('remote store fetches the shared list and posts new scores as text/plain JSON', async () => {
+  const calls = [];
+  const fetchFn = async (url, init) => {
+    calls.push({ url, init });
+    if (init.method === 'GET') return ok({ scores: [{ name: 'CARL', score: 100, at: 1 }] });
+    return ok({ scores: [{ name: 'CARL', score: 100, at: 1 }, { name: 'MUCKI', score: 40, at: 2 }], rank: 2 });
+  };
+  const local = createStore(fakeStorage(), 'lb-bricks-scores');
+  const store = createRemoteStore({ endpoint: 'https://example.test/exec', game: 'bricks', local, fetchFn });
+  assert.deepEqual(store.load(), []);
+  const list = await store.fetchAll();
+  assert.equal(calls[0].url, 'https://example.test/exec?game=bricks');
+  assert.deepEqual(list.map((e) => e.name), ['CARL']);
+  const res = await store.add({ name: 'mucki', score: 40 });
+  assert.equal(calls[1].init.method, 'POST');
+  assert.deepEqual(JSON.parse(calls[1].init.body), { game: 'bricks', name: 'MUCKI', score: 40 });
+  assert.equal(calls[1].init.headers, undefined, 'no content-type header, so no CORS preflight');
+  assert.deepEqual({ rank: res.rank, remote: res.remote, names: res.list.map((e) => e.name) }, { rank: 2, remote: true, names: ['CARL', 'MUCKI'] });
+  assert.equal(local.load().length, 1, 'mirrored locally');
+});
+
+test('remote store falls back to the local list when the service fails', async () => {
+  const fetchFn = async () => { throw new Error('offline'); };
+  const local = createStore(fakeStorage(), 'lb-flappy-scores');
+  const store = createRemoteStore({ endpoint: 'https://example.test/exec', game: 'flappy', local, fetchFn });
+  await assert.rejects(store.fetchAll());
+  const res = await store.add({ name: 'x', score: 3 });
+  assert.deepEqual({ rank: res.rank, remote: res.remote, n: res.list.length }, { rank: 1, remote: false, n: 1 });
+});
