@@ -7,7 +7,8 @@ import { APPS, DESKTOP, CURRENT_PASSWORD_HASH, landingHtml } from './apps.js';
 import { parseHash } from './router.js';
 import { sha256Hex, isUnlocked, markUnlocked } from './gate.js';
 import { createStore, createRemoteStore, cleanName } from './scores.js';
-import { SCORES_ENDPOINT } from './config.js';
+import { SCORES_ENDPOINT, GOATCOUNTER } from './config.js';
+import { initAnalytics, trackView } from './analytics.js';
 
 const $ = (id) => document.getElementById(id);
 const phone = $('phone'), stage = $('stage'), photo = $('photo'), lcd = $('lcd'), frame = $('frame');
@@ -396,6 +397,7 @@ function showApp(id) {
   setState('app');
   home.inert = true;
   label.textContent = a.label;
+  trackView(id, a.label);                      // one GoatCounter view per opened app
   if (locked) initGate(id);
   else $('back').focus({ preventScroll: true });
 }
@@ -687,6 +689,7 @@ tickClock();
 setInterval(tickClock, 30000);
 
 /* ---------- START ---------- */
+initAnalytics(GOATCOUNTER);                     // no-op while the code is empty
 const startParams = new URLSearchParams(location.search);
 const requested = startParams.get('state');
 const requestedFolder = startParams.get('folder');
