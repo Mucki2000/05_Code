@@ -7,4 +7,4 @@ export const SCORES_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwgR3BK5
 
 // GOATCOUNTER: site code of the GoatCounter account (the part before
 // .goatcounter.com), e.g. 'lausebengel'. Empty string = no visitor counting.
-export const GOATCOUNTER = '';
+export const GOATCOUNTER = 'lausebengel';
