@@ -39,7 +39,7 @@ const LOGOS = [
   { src: L + 'Kleine%20br%C3%BCder.jpg', alt: 'Kleine Brüder', large: true },
 ];
 
-const TAGLINE = 'Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Rooted in a distinctly Gen&nbsp;Z sensibility, we champion original voices and ambitious stories built to travel.';
+const TAGLINE = 'Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Here to bring a changed world to cinemas and to your brands, we speak the language of our time and capture it in pictures.';
 const KICKER = 'On-Set Content Production. Social Media Strategy. Editing.';
 const EMAIL = 'info@lausebengel.studio';
 
