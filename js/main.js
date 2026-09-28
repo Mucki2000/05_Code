@@ -37,7 +37,7 @@ glyph.innerHTML = ANTENNA + SIGNAL;
 photo.addEventListener('error', () => phone.classList.add('no-photo'));
 power.addEventListener('click', startSplash);
 
-/* ---------- SPLASH (logo jumps in, then the boot) ---------- */
+/* ---------- SPLASH (logo jumps in, then the zoom) ---------- */
 function startSplash() {
   if (phone.dataset.state === 'splash') return;
   splash.classList.remove('is-out');
@@ -52,7 +52,7 @@ function startSplash() {
     window.removeEventListener('keydown', onKey);
     splash.removeEventListener('click', onClick);
     splash.classList.remove('is-out');          // a later dev-aid run starts clean
-    startBoot();
+    zoomIn();                                    // straight into the phone; the Brick-Breaker boot lives on as the ?state=boot dev aid and the BRICKS app
   };
   // Escape or a click on the splash skips straight to the boot. Listeners added
   // to the same target during dispatch do not see the current event, so the
