@@ -170,7 +170,7 @@ export const DESKTOP = [
   { type: 'app',    id: 'about',   x: 35, y: 60, mx: 20, my: 76 },
   { type: 'folder', id: 'games', label: 'GAMES', icon: 'joystick',
     items: ['bricks', 'flappy'], x: 50, y: 84, mx: 80, my: 76 },
-  // External link with an image instead of a pixel icon (opens a new tab).
-  { type: 'link', id: 'instagram', label: 'INSTAGRAM', img: L + 'instagram.png', href: INSTAGRAM,
+  // External link (opens a new tab).
+  { type: 'link', id: 'instagram', label: 'INSTAGRAM', icon: 'camera', href: INSTAGRAM,
     x: 88, y: 82, mx: 50, my: 52 },
 ];

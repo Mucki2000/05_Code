@@ -246,6 +246,25 @@ const MAPS = {
     '................',
     '................',
   ],
+  // INSTAGRAM: pink camera glyph (rounded frame, lens ring), orange flash dot.
+  camera: [
+    '................',
+    '..pppppppppppp..',
+    '.pppppppppppppp.',
+    '.pp........oopp.',
+    '.pp........oopp.',
+    '.pp...pppp...pp.',
+    '.pp..pp..pp..pp.',
+    '.pp.pp....pp.pp.',
+    '.pp.pp....pp.pp.',
+    '.pp.pp....pp.pp.',
+    '.pp..pp..pp..pp.',
+    '.pp...pppp...pp.',
+    '.pp..........pp.',
+    '.pppppppppppppp.',
+    '..pppppppppppp..',
+    '................',
+  ],
 };
 
 export const ICONS = Object.fromEntries(

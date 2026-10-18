@@ -245,7 +245,7 @@ function renderHome() {
       return `<button class="icon" type="button" data-folder="${entry.id}" aria-haspopup="dialog" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}">${ICONS[entry.icon]}<span>${entry.label}</span></button>`;
     }
     if (entry.type === 'link') {
-      return `<a class="icon icon--link" data-link="${entry.id}" href="${entry.href}" target="_blank" rel="noopener" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}"><img src="${entry.img}" alt="" draggable="false" /><span>${entry.label}</span></a>`;
+      return `<a class="icon icon--link" data-link="${entry.id}" href="${entry.href}" target="_blank" rel="noopener" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}">${ICONS[entry.icon]}<span>${entry.label}</span></a>`;
     }
     const a = APP_LIST.find((x) => x.id === entry.id);
     return `<button class="icon" type="button" data-app="${a.id}" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}">${ICONS[a.icon]}<span>${a.label}</span></button>`;
