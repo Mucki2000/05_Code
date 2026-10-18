@@ -19,6 +19,7 @@ export const PROJECTS = {
   boris:     { title: 'Boris Brejcha', client: 'Music', still: P + 'Boris.jpeg' },
   audi:      { title: 'Audi Sport', client: 'Social Media', video: P + 'Audi_Sport_Website.mp4' },
   kleine:    { title: 'Kleine Brüder', client: 'Short Form', video: P + 'Michael%20Short%20%28KF%29_KLEINE_DA.mp4' },
+  piote:     { title: 'Café Lockenwickler', client: 'Pioté · Brand', video: P + 'Piote_Cafe_Lockenwickler_Website.mp4', portrait: true },
 };
 
 export const CREW = [
@@ -37,7 +38,13 @@ const LOGOS = [
   { src: L + 'mk2-films.png', alt: 'mk2 Films', dark: true },
   { src: L + 'FIFA.png', alt: 'FIFA' },
   { src: L + 'Kleine%20br%C3%BCder.jpg', alt: 'Kleine Brüder', large: true },
+  { src: L + 'piote.png', alt: 'Pioté', small: true },
+  { src: L + 'high-view.png', alt: 'High View', thin: true },
 ];
+
+// The logo row runs as a ticker: the set is rendered twice (the copy hidden
+// from screen readers) and the strip slides by exactly one set, so it loops.
+const logoItem = (l, hidden) => `<li${hidden ? ' aria-hidden="true"' : ''}><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.wide && 'is-wide', l.thin && 'is-thin', l.small && 'is-small'].filter(Boolean).join(' ')}" src="${l.src}" alt="${hidden ? '' : l.alt}" /></li>`;
 
 const TAGLINE = 'Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Here to bring a changed world to cinemas and to your brands, we speak the language of our time and capture it in pictures.';
 const KICKER = 'On-Set Content Production. Social Media Strategy. Editing.';
@@ -85,8 +92,8 @@ const arcade = (hint) => `
 export function landingHtml() {
   return `
       <div class="landing">
-        <ul class="logos">${LOGOS.map((l) => `<li><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.wide && 'is-wide'].filter(Boolean).join(' ')}" src="${l.src}" alt="${l.alt}" /></li>`).join('')}</ul>
-        <img class="landing__mark" src="${A}lausebengel-logo.png" alt="Lausebengel" />
+        <div class="marquee"><ul class="logos">${LOGOS.map((l) => logoItem(l, false)).join('')}${LOGOS.map((l) => logoItem(l, true)).join('')}</ul></div>
+        <img class="landing__mark" src="${A}lausebengel-schriftzug.png" alt="Lausebengel" />
         <p class="landing__kicker">${KICKER}</p>
       </div>`;
 }
@@ -98,7 +105,7 @@ export const APPS = [
   },
   {
     id: 'unternehmen', label: 'UNTERNEHMEN', icon: 'building',
-    render: () => intro('Corporate content and brand films.') + tiles(['koechert', 'audi', 'fifa']),
+    render: () => intro('Corporate content and brand films.') + tiles(['piote', 'koechert', 'audi', 'fifa']),
   },
   {
     id: 'musik', label: 'MUSIK', icon: 'note',
