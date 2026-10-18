@@ -307,9 +307,9 @@ a { color: inherit; }
 
 /* Landing (HOME app) */
 .landing { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.2em; }
-/* aspect-ratio (1200x306 png): the desk's height is known before the image arrives.
+/* aspect-ratio (1200x307 png): the desk's height is known before the image arrives.
    Black lines on transparent: no invert, it sits on the LCD as it is. */
-.landing__mark { width: min(70%, 560px); aspect-ratio: auto 1200 / 306; }
+.landing__mark { width: min(70%, 560px); aspect-ratio: auto 1200 / 307; }
 .landing__kicker { font-family: var(--pixel); font-size: 0.45em; letter-spacing: 0.12em; }
 .landing__body { max-width: 60ch; }
 .logos { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5em 2.5em; margin-top: 1em; }
