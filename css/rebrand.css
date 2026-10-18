@@ -124,6 +124,10 @@ a { color: inherit; }
 .status__glyph { display: inline-flex; gap: 0.3em; align-items: center; }
 .status svg { height: 1em; width: auto; }
 .status__battery svg { height: 0.75em; }
+/* Music toggle in the status bar: a bare pixel speaker, a comfortable hit area. */
+.sound { display: inline-flex; align-items: center; padding: 0.4em; margin: -0.4em 0.2em -0.4em 0; background: none; border: 0; color: inherit; cursor: pointer; }
+.sound svg { height: 1.1em; }
+.sound:focus-visible { outline: 2px dashed var(--navy); outline-offset: 1px; }
 .body { position: relative; flex: 1; overflow: hidden; }
 .label {
   font-family: var(--pixel); font-size: min(1cqw, 12px);
@@ -307,9 +311,9 @@ a { color: inherit; }
 
 /* Landing (HOME app) */
 .landing { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.2em; }
-/* aspect-ratio (1200x306 png): the desk's height is known before the image arrives.
+/* aspect-ratio (1200x307 png): the desk's height is known before the image arrives.
    Black lines on transparent: no invert, it sits on the LCD as it is. */
-.landing__mark { width: min(70%, 560px); aspect-ratio: auto 1200 / 306; }
+.landing__mark { width: min(70%, 560px); aspect-ratio: auto 1200 / 307; }
 .landing__kicker { font-family: var(--pixel); font-size: 0.45em; letter-spacing: 0.12em; }
 .landing__body { max-width: 60ch; }
 .logos { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5em 2.5em; margin-top: 1em; }

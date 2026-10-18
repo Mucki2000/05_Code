@@ -1,4 +1,4 @@
-import { POWER, SIGNAL, BATTERY, ANTENNA, ICONS } from './icons.js';
+import { POWER, SIGNAL, BATTERY, ANTENNA, ICONS, SOUND_ON, SOUND_OFF } from './icons.js';
 import { progressAt } from './loader.js';
 import { createGame, step, render } from './game.js';
 import { createFlappy, stepFlappy, renderFlappy } from './flappy.js';
@@ -35,7 +35,44 @@ signal.insertAdjacentHTML('afterbegin', SIGNAL);
 battery.innerHTML = BATTERY;
 glyph.innerHTML = ANTENNA + SIGNAL;
 photo.addEventListener('error', () => phone.classList.add('no-photo'));
-power.addEventListener('click', startSplash);
+power.addEventListener('click', () => { playMusic(); startSplash(); });
+
+/* ---------- MUSIC ---------- */
+// Browsers only allow sound after a click: the power button is that click.
+// On by default; the speaker in the status bar toggles it and the choice is
+// remembered. A returning visitor (no power click) starts it via the speaker.
+const sound = $('sound');
+const music = new Audio('assets/audio/8bit-samba.mp3');
+music.loop = true;
+music.volume = 0.35;
+music.preload = 'none';
+let musicOn = true;
+try { musicOn = localStorage.getItem('lb-music') !== 'off'; } catch (_) { /* private mode */ }
+
+// The speaker shows what is audible: a returning visitor sees it off until a click.
+function renderSound() {
+  const playing = musicOn && !music.paused;
+  sound.innerHTML = playing ? SOUND_ON : SOUND_OFF;
+  sound.setAttribute('aria-pressed', String(playing));
+  sound.setAttribute('aria-label', playing ? 'Musik aus' : 'Musik an');
+}
+music.addEventListener('play', renderSound);
+music.addEventListener('pause', renderSound);
+function playMusic() {
+  if (musicOn) music.play().catch(() => {});
+}
+sound.addEventListener('click', () => {
+  musicOn = !musicOn || music.paused;          // muted-by-browser counts as off: the click turns it on
+  try { localStorage.setItem('lb-music', musicOn ? 'on' : 'off'); } catch (_) { /* private mode */ }
+  if (musicOn) music.play().catch(() => {}); else music.pause();
+  renderSound();
+});
+// Silent while the tab is in the background.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) music.pause();
+  else if (musicOn && music.currentTime > 0) playMusic();
+});
+renderSound();
 
 /* ---------- SPLASH (logo jumps in, then the zoom) ---------- */
 function startSplash() {
@@ -245,7 +282,7 @@ function renderHome() {
       return `<button class="icon" type="button" data-folder="${entry.id}" aria-haspopup="dialog" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}">${ICONS[entry.icon]}<span>${entry.label}</span></button>`;
     }
     if (entry.type === 'link') {
-      return `<a class="icon icon--link" data-link="${entry.id}" href="${entry.href}" target="_blank" rel="noopener" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}"><img src="${entry.img}" alt="" draggable="false" /><span>${entry.label}</span></a>`;
+      return `<a class="icon icon--link" data-link="${entry.id}" href="${entry.href}" target="_blank" rel="noopener" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}">${ICONS[entry.icon]}<span>${entry.label}</span></a>`;
     }
     const a = APP_LIST.find((x) => x.id === entry.id);
     return `<button class="icon" type="button" data-app="${a.id}" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}">${ICONS[a.icon]}<span>${a.label}</span></button>`;
@@ -339,6 +376,7 @@ home.addEventListener('click', (e) => {
 
 window.addEventListener('keydown', (e) => {
   if (phone.dataset.state !== 'home') return;
+  if (e.target.closest?.('.sound')) return;     // Enter/Space on the speaker is its own click
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') select(selected + 1);
   else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') select(selected - 1);
   else if (e.key === 'Enter') activate(icons[selected]);
