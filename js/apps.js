@@ -115,7 +115,7 @@ export const APPS = [
   },
   {
     id: 'current', label: 'CURRENT', icon: 'reel', locked: true,
-    render: () => intro('Current projects.') + tiles(['ailiens', 'backrooms', 'fifa']),
+    render: () => intro('Current projects.') + tiles(['piote', 'ailiens', 'backrooms', 'fifa']),
   },
   {
     id: 'contact', label: 'CONTACT', icon: 'mail',
