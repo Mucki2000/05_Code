@@ -35,6 +35,9 @@ test('DESKTOP entries reference known apps, folders reference known apps', () =>
         assert.ok(APP_IDS.includes(item), `folder item ${item}`);
         folderItemIds.push(item);
       }
+    } else if (entry.type === 'link') {
+      assert.match(entry.href, /^https:\/\//, `link ${entry.id} is an external https URL`);
+      assert.ok(entry.img && entry.label, `link ${entry.id} has an image and a label`);
     } else {
       assert.fail(`unknown DESKTOP entry type ${entry.type}`);
     }

@@ -164,10 +164,13 @@ export const APPS = [
 // the sides (desktop) or the bottom (phone). Fixed so nothing overlaps.
 export const DESKTOP = [
   { type: 'folder', id: 'smp', label: 'SOCIAL MEDIA PRODUCTION', icon: 'folder',
-    items: ['filmtv', 'unternehmen', 'musik'], x: 13, y: 74, mx: 30, my: 52 },
-  { type: 'app',    id: 'current', x: 90, y: 58, mx: 74, my: 52 },
+    items: ['filmtv', 'unternehmen', 'musik'], x: 13, y: 74, mx: 20, my: 52 },
+  { type: 'app',    id: 'current', x: 90, y: 58, mx: 80, my: 52 },
   { type: 'app',    id: 'contact', x: 70, y: 70, mx: 50, my: 76 },
-  { type: 'app',    id: 'about',   x: 35, y: 60, mx: 22, my: 76 },
+  { type: 'app',    id: 'about',   x: 35, y: 60, mx: 20, my: 76 },
   { type: 'folder', id: 'games', label: 'GAMES', icon: 'joystick',
     items: ['bricks', 'flappy'], x: 50, y: 84, mx: 80, my: 76 },
+  // External link with an image instead of a pixel icon (opens a new tab).
+  { type: 'link', id: 'instagram', label: 'INSTAGRAM', img: L + 'instagram.png', href: INSTAGRAM,
+    x: 88, y: 82, mx: 50, my: 52 },
 ];

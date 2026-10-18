@@ -141,7 +141,7 @@ a { color: inherit; }
    caps, so the zoom miniature (ghost) and the real layout share one scale;
    the 8px floors only bite on small windows. */
 [data-mode="photo"] .icon { font-size: 0.85cqw; }
-[data-mode="photo"] .icon svg { width: 6cqw; }
+[data-mode="photo"] .icon svg, [data-mode="photo"] .icon img { width: 6cqw; }
 [data-mode="photo"] .status, [data-mode="photo"] .label { font-size: 1cqw; }
 /* 2px at the 1440x900 window. A px border is 2.7x taller in the zoom miniature,
    which would shift the centred desk against the real layer at the hand-over. */
@@ -243,7 +243,9 @@ a { color: inherit; }
   font-family: var(--pixel); font-size: min(0.85cqw, 11px);
   color: var(--navy); text-transform: uppercase; white-space: nowrap;
 }
-.icon svg { width: min(6cqw, 72px); height: auto; }
+.icon svg, .icon img { width: min(6cqw, 72px); height: auto; }
+.icon img { -webkit-user-drag: none; }
+.icon--link { text-decoration: none; }
 /* The folder label is long and its icon sits at the LCD edge: two lines. */
 .icon[data-folder] span { white-space: normal; max-width: 13ch; text-align: center; }
 .icon.is-selected { border-color: var(--navy); }
@@ -468,7 +470,7 @@ a { color: inherit; }
      clone (no id) keeps the proportional desktop layout in its miniature, and
      the real layer already has the mobile layout while it fades in. */
   :is([data-state="enter"], [data-state="home"], [data-state="app"]) #lcd .icon { left: var(--mx); top: var(--my); font-size: 9px; }
-  :is([data-state="enter"], [data-state="home"], [data-state="app"]) #lcd .icon svg { width: 16vw; }
+  :is([data-state="enter"], [data-state="home"], [data-state="app"]) #lcd :is(.icon svg, .icon img) { width: 16vw; }
   :is([data-state="home"], [data-state="app"]) #lcd .folder { left: 50%; top: 50%; min-width: 88%; }
   :is([data-state="home"], [data-state="app"]) #lcd .folder__close { min-height: 20px; }
   /* Landing in the top part, icons (my 68/88 %) in the bottom part. */

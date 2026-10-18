@@ -244,6 +244,9 @@ function renderHome() {
     if (entry.type === 'folder') {
       return `<button class="icon" type="button" data-folder="${entry.id}" aria-haspopup="dialog" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}">${ICONS[entry.icon]}<span>${entry.label}</span></button>`;
     }
+    if (entry.type === 'link') {
+      return `<a class="icon icon--link" data-link="${entry.id}" href="${entry.href}" target="_blank" rel="noopener" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}"><img src="${entry.img}" alt="" draggable="false" /><span>${entry.label}</span></a>`;
+    }
     const a = APP_LIST.find((x) => x.id === entry.id);
     return `<button class="icon" type="button" data-app="${a.id}" style="${iconStyle(entry.x, entry.y, entry.mx, entry.my)}">${ICONS[a.icon]}<span>${a.label}</span></button>`;
   }).join('');
@@ -259,11 +262,13 @@ function refreshIcons() {
 function labelFor(el) {
   if (!el) return '';
   if (el.dataset.folder) return DESKTOP.find((d) => d.id === el.dataset.folder)?.label ?? '';
+  if (el.dataset.link) return DESKTOP.find((d) => d.id === el.dataset.link)?.label ?? '';
   return APP_LIST.find((x) => x.id === el.dataset.app)?.label ?? '';
 }
 
 function activate(el) {
-  if (el.dataset.folder) toggleFolder(el.dataset.folder);
+  if (el.dataset.link) window.open(el.href, '_blank', 'noopener');
+  else if (el.dataset.folder) toggleFolder(el.dataset.folder);
   else openApp(el.dataset.app);
 }
 
@@ -327,6 +332,7 @@ home.addEventListener('focusin', (e) => {
 home.addEventListener('click', (e) => {
   if (e.target.closest('.folder__close')) { closeFolder(); return; }
   const el = e.target.closest('.icon');
+  if (el?.dataset.link) return;                 // a real link: the browser opens it
   if (el) { activate(el); return; }
   if (!e.target.closest('.folder')) closeFolder();
 });
