@@ -124,6 +124,10 @@ a { color: inherit; }
 .status__glyph { display: inline-flex; gap: 0.3em; align-items: center; }
 .status svg { height: 1em; width: auto; }
 .status__battery svg { height: 0.75em; }
+/* Music toggle in the status bar: a bare pixel speaker, a comfortable hit area. */
+.sound { display: inline-flex; align-items: center; padding: 0.4em; margin: -0.4em 0.2em -0.4em 0; background: none; border: 0; color: inherit; cursor: pointer; }
+.sound svg { height: 1.1em; }
+.sound:focus-visible { outline: 2px dashed var(--navy); outline-offset: 1px; }
 .body { position: relative; flex: 1; overflow: hidden; }
 .label {
   font-family: var(--pixel); font-size: min(1cqw, 12px);

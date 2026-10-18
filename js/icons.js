@@ -299,6 +299,36 @@ export const SIGNAL =
   '<rect x="8" y="0" width="1" height="6" fill="currentColor"/>' +
   '</svg>';
 
+// Status glyph from a pixel map, drawn in currentColor like the others.
+function glyphSvg(rows) {
+  const w = Math.max(...rows.map((r) => r.length));
+  let out = '';
+  rows.forEach((row, y) => [...row].forEach((ch, x) => {
+    if (ch === '#') out += `<rect x="${x}" y="${y}" width="1" height="1" fill="currentColor"/>`;
+  }));
+  return `<svg viewBox="0 0 ${w} ${rows.length}" shape-rendering="crispEdges" aria-hidden="true">${out}</svg>`;
+}
+
+// Music toggle: speaker with sound waves (on) or with an X (off).
+export const SOUND_ON = glyphSvg([
+  '...#.....',
+  '..##..#..',
+  '####...#.',
+  '####...#.',
+  '####...#.',
+  '..##..#..',
+  '...#.....',
+]);
+export const SOUND_OFF = glyphSvg([
+  '...#.....',
+  '..##.....',
+  '####.#.#.',
+  '####..#..',
+  '####.#.#.',
+  '..##.....',
+  '...#.....',
+]);
+
 // Battery: outline with a 1-px nub on the right, three filled cells inside.
 export const BATTERY =
   '<svg viewBox="0 0 10 6" shape-rendering="crispEdges" aria-hidden="true">' +
