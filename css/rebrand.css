@@ -69,7 +69,8 @@ a { color: inherit; }
 
 /* Splash (logo jumps in before the boot) */
 .splash { position: absolute; inset: 0; background: #000; display: grid; place-items: center; overflow: hidden; }
-.splash__mark { width: min(72%, 720px); height: auto; user-select: none; -webkit-user-drag: none; transform-origin: 50% 100%; }
+/* Absolutely centred: as a grid item the % height let the row grow and the face sat low. */
+.splash__mark { position: absolute; inset: 0; margin: auto; width: auto; height: min(54%, 320px); aspect-ratio: 800 / 604; user-select: none; -webkit-user-drag: none; transform-origin: 50% 100%; }
 [data-state="splash"] .splash__mark { animation: splash-jump 1100ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 @keyframes splash-jump {
   0%   { transform: translateY(215%) scale(0.85, 1.15); }   /* fully below the LCD edge */
@@ -140,7 +141,7 @@ a { color: inherit; }
    caps, so the zoom miniature (ghost) and the real layout share one scale;
    the 8px floors only bite on small windows. */
 [data-mode="photo"] .icon { font-size: 0.85cqw; }
-[data-mode="photo"] .icon svg { width: 6cqw; }
+[data-mode="photo"] .icon svg, [data-mode="photo"] .icon img { width: 6cqw; }
 [data-mode="photo"] .status, [data-mode="photo"] .label { font-size: 1cqw; }
 /* 2px at the 1440x900 window. A px border is 2.7x taller in the zoom miniature,
    which would shift the centred desk against the real layer at the hand-over. */
@@ -242,7 +243,9 @@ a { color: inherit; }
   font-family: var(--pixel); font-size: min(0.85cqw, 11px);
   color: var(--navy); text-transform: uppercase; white-space: nowrap;
 }
-.icon svg { width: min(6cqw, 72px); height: auto; }
+.icon svg, .icon img { width: min(6cqw, 72px); height: auto; }
+.icon img { -webkit-user-drag: none; }
+.icon--link { text-decoration: none; }
 /* The folder label is long and its icon sits at the LCD edge: two lines. */
 .icon[data-folder] span { white-space: normal; max-width: 13ch; text-align: center; }
 .icon.is-selected { border-color: var(--navy); }
@@ -304,8 +307,9 @@ a { color: inherit; }
 
 /* Landing (HOME app) */
 .landing { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.2em; }
-/* aspect-ratio (510x154 png): the desk's height is known before the image arrives. */
-.landing__mark { width: min(70%, 520px); aspect-ratio: auto 510 / 154; filter: invert(1); mix-blend-mode: multiply; }
+/* aspect-ratio (1200x306 png): the desk's height is known before the image arrives.
+   Black lines on transparent: no invert, it sits on the LCD as it is. */
+.landing__mark { width: min(70%, 560px); aspect-ratio: auto 1200 / 306; }
 .landing__kicker { font-family: var(--pixel); font-size: 0.45em; letter-spacing: 0.12em; }
 .landing__body { max-width: 60ch; }
 .logos { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.5em 2.5em; margin-top: 1em; }
@@ -314,7 +318,24 @@ a { color: inherit; }
 .logos img.is-dark { filter: grayscale(1); }
 .logos img.is-large { height: clamp(34px, 4vw, 66px); }
 .logos img.is-wide { height: clamp(30px, 3.6vw, 58px); }
+.logos img.is-thin { height: clamp(8px, 0.9vw, 15px); }
+.logos img.is-small { height: clamp(15px, 1.8vw, 30px); }
 .landing > .logos { margin-top: 0; margin-bottom: 1.5em; }
+
+/* Logo ticker: the strip holds the set twice and slides by one set (-50%).
+   Spacing is padding on the items (not gap) so both halves are equally wide.
+   The strip paints the LCD colour itself: the transform makes it its own
+   blend group, and the multiply on the logos needs a backdrop inside it.
+   The edges fade out under two LCD-coloured gradients. */
+/* contain: the strip's own width must not widen the shrink-wrapped landing. */
+.marquee { position: relative; width: 100%; overflow: hidden; contain: inline-size; }
+.marquee::before, .marquee::after { content: ""; position: absolute; top: 0; bottom: 0; width: 10%; z-index: 1; pointer-events: none; }
+.marquee::before { left: 0; background: linear-gradient(90deg, var(--lcd), transparent); }
+.marquee::after { right: 0; background: linear-gradient(-90deg, var(--lcd), transparent); }
+.marquee .logos { width: max-content; flex-wrap: nowrap; justify-content: flex-start; gap: 0; margin: 0; background: var(--lcd); animation: marquee 22s linear infinite; }
+.marquee .logos li { padding: 0 1.5em; }
+@keyframes marquee { from { transform: translateX(-50%); } to { transform: translateX(0); } }   /* left to right (owner) */
+.landing > .marquee { margin-bottom: 1.5em; }
 
 /* Landing on the desktop (increment 9): the centre piece of #home, the app
    icons around it. Everything in cqw (no px caps) so the zoom miniature and
@@ -327,12 +348,16 @@ a { color: inherit; }
   text-align: center;
   pointer-events: none; user-select: none;
 }
-.desk .logos { margin: 0; width: 84cqw; flex-wrap: nowrap; justify-content: space-between; gap: 1.2cqw 2cqw; }   /* spread over the whole width (cqw: the landing box is shrink-wrapped) */
+.desk .marquee { width: 84cqw; }   /* the whole width (cqw: the landing box is shrink-wrapped) */
+.desk .marquee .logos { width: max-content; }
+.desk .marquee .logos li { padding: 0 2.2cqw; }
 .desk .logos img { height: 3.1cqw; }
 .desk .logos img.is-large { height: 4.7cqw; }
 .desk .logos img.is-wide { height: 2.8cqw; }
+.desk .logos img.is-thin { height: 1.1cqw; }
+.desk .logos img.is-small { height: 2.2cqw; }
 .desk .landing { gap: 1.6cqw; }
-.desk .landing__mark { width: 34cqw; }
+.desk .landing__mark { width: 42cqw; }
 .desk .landing__kicker { font-size: 0.95cqw; line-height: 1.6; }   /* explicit: 'normal' rounds at miniature sizes */
 .desk .landing__body { font-family: var(--body); font-size: 2cqw; line-height: 1.25; max-width: 44cqw; }
 
@@ -445,17 +470,20 @@ a { color: inherit; }
      clone (no id) keeps the proportional desktop layout in its miniature, and
      the real layer already has the mobile layout while it fades in. */
   :is([data-state="enter"], [data-state="home"], [data-state="app"]) #lcd .icon { left: var(--mx); top: var(--my); font-size: 9px; }
-  :is([data-state="enter"], [data-state="home"], [data-state="app"]) #lcd .icon svg { width: 16vw; }
+  :is([data-state="enter"], [data-state="home"], [data-state="app"]) #lcd :is(.icon svg, .icon img) { width: 16vw; }
   :is([data-state="home"], [data-state="app"]) #lcd .folder { left: 50%; top: 50%; min-width: 88%; }
   :is([data-state="home"], [data-state="app"]) #lcd .folder__close { min-height: 20px; }
   /* Landing in the top part, icons (my 68/88 %) in the bottom part. */
   #lcd .desk { justify-content: flex-start; padding: 5% 6% 0; gap: 14px; height: 56%; }
   #lcd .desk .landing { gap: 14px; }
-  #lcd .desk .logos { width: 100%; flex-wrap: wrap; justify-content: center; gap: 8px 18px; }
+  #lcd .desk .marquee { width: 100%; }
+  #lcd .desk .marquee .logos li { padding: 0 10px; }
   #lcd .desk .logos img { height: 16px; }
   #lcd .desk .logos img.is-large { height: 24px; }
   #lcd .desk .logos img.is-wide { height: 22px; }
-  #lcd .desk .landing__mark { width: 62%; }
+  #lcd .desk .logos img.is-thin { height: 6px; }
+  #lcd .desk .logos img.is-small { height: 11px; }
+  #lcd .desk .landing__mark { width: 84%; }
   #lcd .desk .landing__kicker { font-size: 7px; line-height: 1.6; }
   #lcd .desk .landing__body { font-size: 17px; max-width: 34ch; }
   .tile__media.is-portrait { max-width: 100%; }
@@ -464,9 +492,9 @@ a { color: inherit; }
   #lcd .bricks { flex-direction: column; align-items: stretch; }
   #lcd .board { flex: none; width: 100%; }
 }
-/* Narrow phones: the six logos stay on one row. */
+/* Narrow phones: smaller logos in the ticker. */
 @media (max-width: 420px) {
-  #lcd .desk .logos { gap: 8px 12px; }
+  #lcd .desk .marquee .logos li { padding: 0 8px; }
   #lcd .desk .logos img { height: 14px; }
   #lcd .desk .logos img.is-large { height: 21px; }
   #lcd .desk .logos img.is-wide { height: 19px; }
@@ -476,6 +504,7 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .power svg { animation: none; opacity: 1; }
   [data-state="splash"] .splash__mark, .splash.is-out .splash__mark { animation: none; }
+  .marquee .logos { animation: none; }
   .phone__stage { transition: opacity 150ms linear; }
   .lcd--ghost { transition: none; }
   [data-state="enter"] #lcd, [data-state="enter"] .frame { animation: none; }

@@ -19,6 +19,7 @@ export const PROJECTS = {
   boris:     { title: 'Boris Brejcha', client: 'Music', still: P + 'Boris.jpeg' },
   audi:      { title: 'Audi Sport', client: 'Social Media', video: P + 'Audi_Sport_Website.mp4' },
   kleine:    { title: 'Kleine Brüder', client: 'Short Form', video: P + 'Michael%20Short%20%28KF%29_KLEINE_DA.mp4' },
+  piote:     { title: 'Café Lockenwickler', client: 'Pioté · Brand', video: P + 'Piote_Cafe_Lockenwickler_Website.mp4', portrait: true },
 };
 
 export const CREW = [
@@ -37,11 +38,19 @@ const LOGOS = [
   { src: L + 'mk2-films.png', alt: 'mk2 Films', dark: true },
   { src: L + 'FIFA.png', alt: 'FIFA' },
   { src: L + 'Kleine%20br%C3%BCder.jpg', alt: 'Kleine Brüder', large: true },
+  { src: L + 'piote.png', alt: 'Pioté', small: true },
+  { src: L + 'high-view.png', alt: 'High View', thin: true },
 ];
+
+// The logo row runs as a ticker: the set is rendered twice (the copy hidden
+// from screen readers) and the strip slides by exactly one set, so it loops.
+const logoItem = (l, hidden) => `<li${hidden ? ' aria-hidden="true"' : ''}><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.wide && 'is-wide', l.thin && 'is-thin', l.small && 'is-small'].filter(Boolean).join(' ')}" src="${l.src}" alt="${hidden ? '' : l.alt}" /></li>`;
 
 const TAGLINE = 'Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Here to bring a changed world to cinemas and to your brands, we speak the language of our time and capture it in pictures.';
 const KICKER = 'On-Set Content Production. Social Media Strategy. Editing.';
 const EMAIL = 'info@lausebengel.studio';
+const INSTAGRAM = 'https://www.instagram.com/lausebengalo/';
+const igLink = (cls) => `<a${cls ? ` class="${cls}"` : ''} href="${INSTAGRAM}" target="_blank" rel="noopener">Instagram @lausebengalo</a>`;
 
 function tile(id) {
   const p = PROJECTS[id];
@@ -85,8 +94,8 @@ const arcade = (hint) => `
 export function landingHtml() {
   return `
       <div class="landing">
-        <ul class="logos">${LOGOS.map((l) => `<li><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.wide && 'is-wide'].filter(Boolean).join(' ')}" src="${l.src}" alt="${l.alt}" /></li>`).join('')}</ul>
-        <img class="landing__mark" src="${A}lausebengel-logo.png" alt="Lausebengel" />
+        <div class="marquee"><ul class="logos">${LOGOS.map((l) => logoItem(l, false)).join('')}${LOGOS.map((l) => logoItem(l, true)).join('')}</ul></div>
+        <img class="landing__mark" src="${A}lausebengel-schriftzug.png" alt="Lausebengel" />
         <p class="landing__kicker">${KICKER}</p>
       </div>`;
 }
@@ -98,7 +107,7 @@ export const APPS = [
   },
   {
     id: 'unternehmen', label: 'UNTERNEHMEN', icon: 'building',
-    render: () => intro('Corporate content and brand films.') + tiles(['koechert', 'audi', 'fifa']),
+    render: () => intro('Corporate content and brand films.') + tiles(['piote', 'koechert', 'audi', 'fifa']),
   },
   {
     id: 'musik', label: 'MUSIK', icon: 'note',
@@ -115,6 +124,7 @@ export const APPS = [
         <div class="text">
           <p class="kicker">GET IN TOUCH</p>
           <p><a href="mailto:${EMAIL}">${EMAIL}</a></p>
+          <p>${igLink()}</p>
           <p>We are a small crew and always curious about new people who love film, editing and social media.</p>
         </div>
       </div>`,
@@ -135,7 +145,7 @@ export const APPS = [
           <div class="map__frame">${mapSvg()}</div>
           <p class="map__cities">Lissabon · Madrid · Paris · London · Nizza · Genf · Zürich · München · Berlin · Wien</p>
         </section>
-        <div class="contact"><span class="contact__label">CONTACT</span><a class="contact__email" href="mailto:${EMAIL}">${EMAIL}</a></div>
+        <div class="contact"><span class="contact__label">CONTACT</span><a class="contact__email" href="mailto:${EMAIL}">${EMAIL}</a>${igLink('contact__email')}</div>
       </div>`,
   },
   {
@@ -154,10 +164,13 @@ export const APPS = [
 // the sides (desktop) or the bottom (phone). Fixed so nothing overlaps.
 export const DESKTOP = [
   { type: 'folder', id: 'smp', label: 'SOCIAL MEDIA PRODUCTION', icon: 'folder',
-    items: ['filmtv', 'unternehmen', 'musik'], x: 13, y: 74, mx: 30, my: 52 },
-  { type: 'app',    id: 'current', x: 90, y: 58, mx: 74, my: 52 },
+    items: ['filmtv', 'unternehmen', 'musik'], x: 13, y: 74, mx: 20, my: 52 },
+  { type: 'app',    id: 'current', x: 90, y: 58, mx: 80, my: 52 },
   { type: 'app',    id: 'contact', x: 70, y: 70, mx: 50, my: 76 },
-  { type: 'app',    id: 'about',   x: 35, y: 60, mx: 22, my: 76 },
+  { type: 'app',    id: 'about',   x: 35, y: 60, mx: 20, my: 76 },
   { type: 'folder', id: 'games', label: 'GAMES', icon: 'joystick',
     items: ['bricks', 'flappy'], x: 50, y: 84, mx: 80, my: 76 },
+  // External link with an image instead of a pixel icon (opens a new tab).
+  { type: 'link', id: 'instagram', label: 'INSTAGRAM', img: L + 'instagram.png', href: INSTAGRAM,
+    x: 88, y: 82, mx: 50, my: 52 },
 ];
