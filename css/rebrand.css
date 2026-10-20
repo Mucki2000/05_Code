@@ -496,6 +496,8 @@ a { color: inherit; }
   animation: cue 1.6s ease-in-out infinite;
 }
 .scrollcue.is-hidden { opacity: 0; pointer-events: none; }
+/* Only once the phone is on (desktop or an app): before that nothing to scroll to. */
+#phone:not([data-state="home"]):not([data-state="app"]) ~ :is(.scrollcue, .work) { display: none; }
 /* Phones (fill mode): sit above the LCD's label bar instead of on it. */
 @media (max-width: 720px) { .scrollcue { bottom: 72px; } }
 @keyframes cue { 0%, 100% { translate: 0 0; } 50% { translate: 0 4px; } }
