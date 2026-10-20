@@ -27,7 +27,6 @@ const RAW_PROJECTS = {
   boris:     { title: 'Boris Brejcha', client: MUSIC_VIDEO, still: P + 'Boris.jpeg', link: 'https://www.youtube.com/watch?v=i3tfCXGuLhk' },
   philippa:  { title: 'Philippa Kinsky', client: MUSIC_VIDEO, video: P + 'Philippa_Kinsky_Unabh%C3%A4ngige%20K%C3%BCnstlerin.mp4', link: 'https://www.youtube.com/watch?v=ROt23bU_YTo' },
   audi:      { title: 'Audi Sport', client: { de: 'Kampagnenfilm', en: 'Campaign film' }, video: P + 'Audi_Sport_Website.mp4' },
-  kleine:    { title: 'Kleine Brüder', client: 'Short Form', video: P + 'Michael%20Short%20%28KF%29_KLEINE_DA.mp4' },
   piote:     { title: 'Café Lockenwickler', client: 'Pioté', video: P + 'Piote_Cafe_Lockenwickler_Website.mp4', portrait: true,
     role: { de: 'Werbekampagne für Schmuck · Werbe-Reels', en: 'Jewellery ad campaign · ad reels' } },
 };
@@ -39,7 +38,7 @@ export const PROJECTS = Object.fromEntries(Object.entries(RAW_PROJECTS).map(([id
 export const CATEGORIES = [
   { id: 'filmtv', label: 'FILM/TV',
     intro: t({ de: 'Kampagnen und Content für Kino und Streaming.', en: 'Campaigns and content for cinema and streaming.' }),
-    items: ['ailiens', 'denoche', 'euphorie', 'prime', 'kleine'] },
+    items: ['ailiens', 'denoche', 'euphorie', 'prime'] },
   { id: 'unternehmen', label: t({ de: 'UNTERNEHMEN', en: 'BRANDS' }),
     intro: t({ de: 'Wir drehen Social-Media-Werbekampagnen für Unternehmen: Sie kosten weniger als klassische Werbekampagnen und erreichen deutlich mehr Menschen.',
                en: 'We shoot social media ad campaigns for companies: they cost less than classic advertising and reach far more people.' }),
@@ -60,19 +59,21 @@ export const CREW = [
 ];
 
 const LOGOS = [
-  { src: L + 'Universal-Logo-1997.png', alt: 'Universal', dark: true, large: true },
-  { src: L + 'prime-video-horizontal-logo-white-dec-2024.png', alt: 'Prime Video' },
-  { src: L + 'constantin_film_trim.png', alt: 'Constantin Film', wide: true },
-  { src: L + 'mk2-films.png', alt: 'mk2 Films', dark: true },
-  { src: L + 'FIFA.png', alt: 'FIFA' },
-  { src: L + 'Kleine%20br%C3%BCder.jpg', alt: 'Kleine Brüder', large: true },
-  { src: L + 'piote.png', alt: 'Pioté', small: true },
-  { src: L + 'high-view.png', alt: 'High View', thin: true },
+  // goto: where a click on the logo scrolls to on the ALL WORK page.
+  { src: L + 'Universal-Logo-1997.png', alt: 'Universal', dark: true, large: true, goto: 'p-universal' },
+  { src: L + 'prime-video-horizontal-logo-white-dec-2024.png', alt: 'Prime Video', goto: 'p-prime' },
+  { src: L + 'constantin_film_trim.png', alt: 'Constantin Film', wide: true, goto: 'p-ailiens' },
+  { src: L + 'mk2-films.png', alt: 'mk2 Films', dark: true, goto: 'p-denoche' },
+  { src: L + 'FIFA.png', alt: 'FIFA', goto: 'p-fifa' },
+  { src: L + 'Kleine%20br%C3%BCder.jpg', alt: 'Kleine Brüder', large: true, goto: 'work-filmtv' },
+  { src: L + 'piote.png', alt: 'Pioté', small: true, goto: 'p-piote' },
+  { src: L + 'high-view.png', alt: 'High View', thin: true, goto: 'work-unternehmen' },
 ];
 
 // The logo row runs as a ticker: the set is rendered twice (the copy hidden
-// from screen readers) and the strip slides by exactly one set, so it loops.
-const logoItem = (l, hidden) => `<li${hidden ? ' aria-hidden="true"' : ''}><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.wide && 'is-wide', l.thin && 'is-thin', l.small && 'is-small'].filter(Boolean).join(' ')}" src="${l.src}" alt="${hidden ? '' : l.alt}" /></li>`;
+// from screen readers and the tab order) and the strip slides by exactly one
+// set, so it loops. Each logo is a button to its project on the ALL WORK page.
+const logoItem = (l, hidden) => `<li${hidden ? ' aria-hidden="true"' : ''}><button class="logo-btn" type="button" data-goto="${l.goto}"${hidden ? ' tabindex="-1"' : ''}><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.wide && 'is-wide', l.thin && 'is-thin', l.small && 'is-small'].filter(Boolean).join(' ')}" src="${l.src}" alt="${hidden ? '' : l.alt}" /></button></li>`;
 
 const TAGLINE = t({
   de: 'Lausebengel ist ein Produktions- und High-End-Editing-Studio, von und für eine neue Generation von Filmemacher:innen. Wir bringen eine veränderte Welt ins Kino und zu euren Marken: Wir sprechen die Sprache unserer Zeit und halten sie in Bildern fest.',
@@ -130,7 +131,7 @@ export function landingHtml() {
   return `
       <div class="landing">
         <div class="marquee"><ul class="logos">${LOGOS.map((l) => logoItem(l, false)).join('')}${LOGOS.map((l) => logoItem(l, true)).join('')}</ul></div>
-        <img class="landing__mark" src="${A}lausebengel-schriftzug.png" alt="Lausebengel" />
+        <button class="landing__markbtn" type="button" data-goto="work" aria-label="${t({ de: 'Alle Arbeiten', en: 'All work' })}"><img class="landing__mark" src="${A}lausebengel-schriftzug.png" alt="Lausebengel" /></button>
         <p class="landing__kicker">${KICKER}</p>
       </div>`;
 }

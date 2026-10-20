@@ -105,7 +105,18 @@ work.addEventListener('click', (e) => {
 });
 initVideos(work);
 scrollCue.innerHTML = `<span>${t({ de: 'ALLE ARBEITEN', en: 'ALL WORK' })}</span><span aria-hidden="true">&#9660;</span>`;
-scrollCue.addEventListener('click', () => work.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }));
+scrollCue.addEventListener('click', () => goToWork('work'));
+// Wordmark and logos on the desktop: scroll to ALL WORK or to one project there
+// (scoped to #work: an open app panel may hold a tile with the same id).
+function goToWork(target) {
+  const el = target === 'work' ? work : work.querySelector(`#${CSS.escape(target)}`);
+  if (!el) return;
+  el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: target === 'work' ? 'start' : 'center' });
+  if (target === 'work') return;
+  el.classList.remove('is-flash');
+  void el.offsetWidth;                          // restart the highlight on repeated clicks
+  el.classList.add('is-flash');
+}
 const onScroll = () => scrollCue.classList.toggle('is-hidden', scrollY > 40);
 addEventListener('scroll', onScroll, { passive: true });
 onScroll();
@@ -403,6 +414,8 @@ home.addEventListener('focusin', (e) => {
   if (el) select(icons.indexOf(el));
 });
 home.addEventListener('click', (e) => {
+  const go = e.target.closest('[data-goto]');
+  if (go) { goToWork(go.dataset.goto); return; }
   if (e.target.closest('.folder__close')) { closeFolder(); return; }
   const el = e.target.closest('.icon');
   if (el?.dataset.link) return;                 // a real link: the browser opens it
