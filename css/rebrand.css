@@ -487,14 +487,17 @@ a { color: inherit; }
 /* ============ ALL WORK (scroll down) ============ */
 /* #phone stays fixed; this section starts one screen down and slides over it. */
 .scrollcue {
-  position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 20;
-  display: inline-flex; align-items: center; gap: 0.8em;
-  padding: 0.7em 1em; background: var(--navy); color: var(--lcd); border: 2px solid var(--lcd);
-  font-family: var(--pixel); font-size: 10px; letter-spacing: 0.08em;
+  position: fixed; left: 50%; bottom: max(14px, 2.5vh); transform: translateX(-50%); z-index: 20;
+  display: inline-flex; align-items: center; gap: 1em;
+  padding: 1em 1.6em; background: var(--navy); color: var(--lcd); border: 3px solid var(--lcd);
+  box-shadow: 0.35em 0.35em 0 rgba(0, 0, 0, 0.45);
+  font-family: var(--pixel); font-size: clamp(13px, 1.4vw, 20px); letter-spacing: 0.08em; white-space: nowrap;
   transition: opacity 200ms linear;
   animation: cue 1.6s ease-in-out infinite;
 }
 .scrollcue.is-hidden { opacity: 0; pointer-events: none; }
+/* Phones (fill mode): sit above the LCD's label bar instead of on it. */
+@media (max-width: 720px) { .scrollcue { bottom: 72px; } }
 @keyframes cue { 0%, 100% { translate: 0 0; } 50% { translate: 0 4px; } }
 .work {
   position: relative; z-index: 10;
