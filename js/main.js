@@ -3,12 +3,13 @@ import { progressAt } from './loader.js';
 import { createGame, step, render } from './game.js';
 import { createFlappy, stepFlappy, renderFlappy } from './flappy.js';
 import { formatStatus } from './clock.js';
-import { APPS, DESKTOP, CURRENT_PASSWORD_HASH, landingHtml } from './apps.js';
+import { APPS, DESKTOP, CURRENT_PASSWORD_HASH, landingHtml, workHtml } from './apps.js';
 import { parseHash } from './router.js';
 import { sha256Hex, isUnlocked, markUnlocked } from './gate.js';
 import { createStore, createRemoteStore, cleanName } from './scores.js';
 import { SCORES_ENDPOINT, GOATCOUNTER } from './config.js';
 import { initAnalytics, trackView } from './analytics.js';
+import { LANG, LANGS, t, switchLang } from './i18n.js';
 
 const $ = (id) => document.getElementById(id);
 const phone = $('phone'), stage = $('stage'), photo = $('photo'), lcd = $('lcd'), frame = $('frame');
@@ -38,41 +39,76 @@ photo.addEventListener('error', () => phone.classList.add('no-photo'));
 power.addEventListener('click', () => { playMusic(); startSplash(); });
 
 /* ---------- MUSIC ---------- */
-// Browsers only allow sound after a click: the power button is that click.
-// On by default; the speaker in the status bar toggles it and the choice is
-// remembered. A returning visitor (no power click) starts it via the speaker.
-const sound = $('sound');
+// Off by default. The big button above the power symbol (and the speaker in
+// the status bar later on) switches it; the choice is remembered. Browsers
+// only allow sound after a click, and both switches are that click.
+const sound = $('sound'), musicBig = $('musicbig');
 const music = new Audio('assets/audio/8bit-samba.mp3');
 music.loop = true;
 music.volume = 0.35;
 music.preload = 'none';
-let musicOn = true;
-try { musicOn = localStorage.getItem('lb-music') !== 'off'; } catch (_) { /* private mode */ }
+let musicOn = false;
+try { musicOn = localStorage.getItem('lb-music') === 'on'; } catch (_) { /* private mode */ }
 
-// The speaker shows what is audible: a returning visitor sees it off until a click.
+// Both switches show what is audible: a returning visitor sees "off" until a click.
 function renderSound() {
   const playing = musicOn && !music.paused;
+  const action = playing ? t({ de: 'Musik aus', en: 'Music off' }) : t({ de: 'Musik an', en: 'Music on' });
   sound.innerHTML = playing ? SOUND_ON : SOUND_OFF;
   sound.setAttribute('aria-pressed', String(playing));
-  sound.setAttribute('aria-label', playing ? 'Musik aus' : 'Musik an');
+  sound.setAttribute('aria-label', action);
+  musicBig.innerHTML = `${playing ? SOUND_ON : SOUND_OFF}<span>${action.toUpperCase()}</span>`;
+  musicBig.setAttribute('aria-pressed', String(playing));
 }
 music.addEventListener('play', renderSound);
 music.addEventListener('pause', renderSound);
 function playMusic() {
   if (musicOn) music.play().catch(() => {});
 }
-sound.addEventListener('click', () => {
+function toggleMusic() {
   musicOn = !musicOn || music.paused;          // muted-by-browser counts as off: the click turns it on
   try { localStorage.setItem('lb-music', musicOn ? 'on' : 'off'); } catch (_) { /* private mode */ }
   if (musicOn) music.play().catch(() => {}); else music.pause();
   renderSound();
-});
+}
+sound.addEventListener('click', toggleMusic);
+musicBig.addEventListener('click', toggleMusic);
 // Silent while the tab is in the background.
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) music.pause();
   else if (musicOn && music.currentTime > 0) playMusic();
 });
 renderSound();
+
+/* ---------- LANGUAGE ---------- */
+document.documentElement.lang = LANG;
+const OTHER_LANG = LANG === 'de' ? 'en' : 'de';
+const langBtn = $('langbtn');
+langBtn.textContent = OTHER_LANG.toUpperCase();
+langBtn.setAttribute('aria-label', OTHER_LANG === 'en' ? 'English' : 'Deutsch');
+langBtn.addEventListener('click', () => switchLang(OTHER_LANG));
+power.setAttribute('aria-label', t({ de: 'Handy einschalten', en: 'Switch the phone on' }));
+
+/* ---------- ALL WORK (scroll down) ---------- */
+// The page scrolls: #phone stays fixed and the work section slides up over it.
+const work = $('work'), scrollCue = $('scrollcue');
+work.setAttribute('aria-label', t({ de: 'Alle Arbeiten', en: 'All work' }));
+work.innerHTML = workHtml();
+work.querySelectorAll('[data-lang-switch]').forEach((el) => {
+  el.innerHTML = LANGS.map((l) => l === LANG
+    ? `<span aria-current="true">${l.toUpperCase()}</span>`
+    : `<button type="button" data-lang="${l}">${l.toUpperCase()}</button>`).join(' · ');
+});
+work.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-lang]');
+  if (b) switchLang(b.dataset.lang);
+});
+initVideos(work);
+scrollCue.innerHTML = `<span>${t({ de: 'ALLE ARBEITEN', en: 'ALL WORK' })}</span><span aria-hidden="true">&#9660;</span>`;
+scrollCue.addEventListener('click', () => work.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }));
+const onScroll = () => scrollCue.classList.toggle('is-hidden', scrollY > 40);
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
 
 /* ---------- SPLASH (logo jumps in, then the zoom) ---------- */
 function startSplash() {
@@ -427,7 +463,7 @@ function showApp(id) {
   const locked = a.locked && !isUnlocked(id, sessionStorage);
   app.innerHTML = `
     <header class="app__bar">
-      <button class="app__back" type="button" id="back">&lt; BACK</button>
+      <button class="app__back" type="button" id="back">&lt; ${t({ de: 'ZURÜCK', en: 'BACK' })}</button>
       <h2>${a.label}</h2>
     </header>
     <div class="app__content">${locked ? gateMarkup() : a.render()}</div>`;
@@ -663,12 +699,12 @@ function startArcade(root, engine) {
 function gateMarkup() {
   return `
   <form class="gate" id="gate">
-    <p class="gate__title">CURRENT PROJECTS</p>
-    <p class="gate__text">This area is for clients and partners. Enter the password.</p>
-    <label class="gate__label" for="gate-input">PASSWORD</label>
+    <p class="gate__title">${t({ de: 'AKTUELLE PROJEKTE', en: 'CURRENT PROJECTS' })}</p>
+    <p class="gate__text">${t({ de: 'Dieser Bereich ist für Kund:innen und Partner. Bitte Passwort eingeben.', en: 'This area is for clients and partners. Enter the password.' })}</p>
+    <label class="gate__label" for="gate-input">${t({ de: 'PASSWORT', en: 'PASSWORD' })}</label>
     <input class="gate__input" id="gate-input" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" />
     <button class="gate__button" type="submit">OK</button>
-    <p class="gate__error" id="gate-error" hidden>WRONG PASSWORD</p>
+    <p class="gate__error" id="gate-error" hidden>${t({ de: 'FALSCHES PASSWORT', en: 'WRONG PASSWORD' })}</p>
   </form>`;
 }
 
