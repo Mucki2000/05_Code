@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { APPS, DESKTOP, PROJECTS, CREW, landingHtml } from '../js/apps.js';
+import { APPS, DESKTOP, PROJECTS, CREW, landingHtml, workHtml } from '../js/apps.js';
 import { APP_IDS } from '../js/router.js';
 import { ICONS } from '../js/icons.js';
 
@@ -85,10 +85,15 @@ test('landingHtml renders eight logos as a looping ticker, then the wordmark, th
   const markIdx = html.indexOf('landing__mark');
   assert.ok(logosIdx > -1 && markIdx > -1, 'both logos and wordmark present');
   assert.ok(logosIdx < markIdx, 'logos come before the wordmark');
-  assert.equal((html.match(/<li><img /g) || []).length, 8, 'eight logos');
-  assert.equal((html.match(/<li aria-hidden="true"><img /g) || []).length, 8, 'hidden copy for the loop');
+  assert.equal((html.match(/<li><button class="logo-btn"/g) || []).length, 8, 'eight logos');
+  assert.equal((html.match(/<li aria-hidden="true"><button class="logo-btn"[^>]*tabindex="-1"/g) || []).length, 8, 'hidden copy for the loop, out of the tab order');
   assert.ok(html.includes('alt="Lausebengel"'), 'wordmark alt');
   assert.ok(html.includes('class="landing__kicker"'), 'kicker');
   assert.ok(!html.includes('class="landing__body"'), 'no body text on the desk (it lives in ABOUT)');
-  assert.ok(!html.includes('<button'), 'nothing interactive in the landing');
+  // The only buttons: the logos and the wordmark, all jumping to the ALL WORK page.
+  const gotos = [...html.matchAll(/data-goto="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal((html.match(/<button/g) || []).length, gotos.length, 'every button has a target');
+  assert.ok(gotos.includes('work'), 'the wordmark goes to ALL WORK');
+  const workIds = new Set([...workHtml().matchAll(/id="([^"]+)"/g)].map((m) => m[1]));
+  for (const g of gotos) if (g !== 'work') assert.ok(workIds.has(g), `logo target ${g} exists on the ALL WORK page`);
 });

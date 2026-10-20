@@ -375,7 +375,8 @@ a { color: inherit; }
 .desk .logos img.is-thin { height: 1.1cqw; }
 .desk .logos img.is-small { height: 2.2cqw; }
 .desk .landing { gap: 1.6cqw; }
-.desk .landing__mark { width: 42cqw; }
+.desk .landing__markbtn { width: 42cqw; }
+.desk .landing__mark { width: 100%; }
 .desk .landing__kicker { font-size: 0.95cqw; line-height: 1.6; }   /* explicit: 'normal' rounds at miniature sizes */
 .desk .landing__body { font-family: var(--body); font-size: 2cqw; line-height: 1.25; max-width: 44cqw; }
 
@@ -485,16 +486,26 @@ a { color: inherit; }
 .board__note { margin-top: 1em; letter-spacing: 0.1em; }
 
 /* ============ ALL WORK (scroll down) ============ */
+/* Desktop wordmark and logos jump there (the rest of .desk ignores the pointer). */
+.desk [data-goto] { pointer-events: auto; cursor: pointer; display: block; padding: 0; }
+.desk .landing__markbtn { transition: transform 150ms ease-out; }
+.desk .landing__markbtn:hover { transform: scale(1.03) rotate(-1deg); }
+.desk .logo-btn:hover img { opacity: 0.6; }
+.desk [data-goto]:focus-visible { outline: 2px dashed var(--navy); outline-offset: 4px; }
+/* The tile a logo jumped to blinks pink twice. */
+.tile.is-flash .tile__media { animation: flash 1.4s steps(2, jump-none) 1; }
+@keyframes flash { 0%, 50% { box-shadow: 0 0 0 6px var(--pink); } 25%, 75%, 100% { box-shadow: none; } }
 /* #phone stays fixed; this section starts one screen down and slides over it. */
 .scrollcue {
   position: fixed; left: 50%; bottom: max(14px, 2.5vh); transform: translateX(-50%); z-index: 20;
   display: inline-flex; align-items: center; gap: 1em;
-  padding: 1em 1.6em; background: var(--navy); color: var(--lcd); border: 3px solid var(--lcd);
+  padding: 1em 1.6em; background: var(--pink); color: #fff; border: 3px solid #fff;
   box-shadow: 0.35em 0.35em 0 rgba(0, 0, 0, 0.45);
   font-family: var(--pixel); font-size: clamp(13px, 1.4vw, 20px); letter-spacing: 0.08em; white-space: nowrap;
   transition: opacity 200ms linear;
   animation: cue 1.6s ease-in-out infinite;
 }
+.scrollcue:hover, .scrollcue:focus-visible { background: #fff; color: var(--pink); border-color: var(--pink); outline: none; }
 .scrollcue.is-hidden { opacity: 0; pointer-events: none; }
 /* Only once the phone is on (desktop or an app): before that nothing to scroll to. */
 #phone:not([data-state="home"]):not([data-state="app"]) ~ :is(.scrollcue, .work) { display: none; }
@@ -544,7 +555,7 @@ a { color: inherit; }
   #lcd .desk .logos img.is-wide { height: 22px; }
   #lcd .desk .logos img.is-thin { height: 6px; }
   #lcd .desk .logos img.is-small { height: 11px; }
-  #lcd .desk .landing__mark { width: 84%; }
+  #lcd .desk .landing__markbtn { width: 84%; }
   #lcd .desk .landing__kicker { font-size: 7px; line-height: 1.6; }
   #lcd .desk .landing__body { font-size: 17px; max-width: 34ch; }
   .tile__media.is-portrait { max-width: 100%; }
