@@ -67,6 +67,17 @@ a { color: inherit; }
 .power:hover svg, .power:focus-visible svg { animation-duration: 0.9s; }
 @keyframes pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
 
+/* Big music switch above the power symbol (OFF state only). */
+.musicbig {
+  position: absolute; top: 9%; left: 50%; transform: translateX(-50%); z-index: 2;
+  display: inline-flex; align-items: center; gap: 0.8em;
+  padding: 0.7em 1.1em; border: 2px solid var(--case); background: rgba(0, 0, 0, 0.6);
+  color: var(--case); font-family: var(--pixel); font-size: clamp(9px, 2.1cqw, 18px); white-space: nowrap;
+}
+.musicbig svg { height: 1.3em; width: auto; }
+.musicbig:hover, .musicbig:focus-visible { background: var(--case); color: #000; outline: none; }
+#phone:not([data-state="off"]) .musicbig { display: none; }
+
 /* Splash (logo jumps in before the boot) */
 .splash { position: absolute; inset: 0; background: #000; display: grid; place-items: center; overflow: hidden; }
 /* Absolutely centred: as a grid item the % height let the row grow and the face sat low. */
@@ -124,6 +135,9 @@ a { color: inherit; }
 .status__glyph { display: inline-flex; gap: 0.3em; align-items: center; }
 .status svg { height: 1em; width: auto; }
 .status__battery svg { height: 0.75em; }
+/* Language switch (DE/EN) in the status bar, next to the speaker. */
+.langbtn { padding: 0.4em; margin: -0.4em 0.1em -0.4em 0; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.langbtn:focus-visible { outline: 2px dashed var(--navy); outline-offset: 1px; }
 /* Music toggle in the status bar: a bare pixel speaker, a comfortable hit area. */
 .sound { display: inline-flex; align-items: center; padding: 0.4em; margin: -0.4em 0.2em -0.4em 0; background: none; border: 0; color: inherit; cursor: pointer; }
 .sound svg { height: 1.1em; }
@@ -299,7 +313,7 @@ a { color: inherit; }
 .app__back:hover { background: var(--navy); color: var(--lcd); }
 .app__bar h2 { font-size: inherit; font-weight: normal; }
 .app__content {
-  flex: 1; overflow-y: auto;
+  flex: 1; overflow-y: auto; overscroll-behavior: contain;   /* the page behind scrolls too (ALL WORK) */
   padding: clamp(14px, 2.5vw, 40px);
   font-size: clamp(18px, 1.6vw, 24px); line-height: 1.25;
 }
@@ -401,6 +415,9 @@ a { color: inherit; }
 }
 .tile__client { font-family: var(--pixel); font-size: 0.4em; margin-top: 0.9em; text-transform: uppercase; }
 .tile__title { font-weight: normal; font-size: 1.1em; line-height: 1.1; }
+.tile__role { font-size: 0.85em; line-height: 1.2; margin-top: 0.25em; opacity: 0.85; }
+.tile__link { display: inline-block; margin-top: 0.6em; font-family: var(--pixel); font-size: 0.4em; text-decoration: underline; text-underline-offset: 3px; }
+.tile__link:hover { background: var(--navy); color: var(--lcd); }
 
 /* Crew */
 .crew {
@@ -467,6 +484,41 @@ a { color: inherit; }
 .board__save:hover, .board__save:focus-visible { background: var(--navy); color: var(--lcd); }
 .board__note { margin-top: 1em; letter-spacing: 0.1em; }
 
+/* ============ ALL WORK (scroll down) ============ */
+/* #phone stays fixed; this section starts one screen down and slides over it. */
+.scrollcue {
+  position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 20;
+  display: inline-flex; align-items: center; gap: 0.8em;
+  padding: 0.7em 1em; background: var(--navy); color: var(--lcd); border: 2px solid var(--lcd);
+  font-family: var(--pixel); font-size: 10px; letter-spacing: 0.08em;
+  transition: opacity 200ms linear;
+  animation: cue 1.6s ease-in-out infinite;
+}
+.scrollcue.is-hidden { opacity: 0; pointer-events: none; }
+@keyframes cue { 0%, 100% { translate: 0 0; } 50% { translate: 0 4px; } }
+.work {
+  position: relative; z-index: 10;
+  margin-top: 100vh; margin-top: 100svh;
+  background-color: var(--lcd);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 3px 3px;
+  color: var(--navy);
+  font-size: clamp(18px, 1.6vw, 22px); line-height: 1.25;
+  box-shadow: 0 -24px 48px rgba(0, 0, 0, 0.7);
+}
+.work__inner { max-width: 1200px; margin: 0 auto; padding: clamp(40px, 6vw, 88px) 16px clamp(32px, 4vw, 56px); }
+.work__title { font-family: var(--pixel); font-weight: normal; font-size: clamp(16px, 2.4vw, 28px); letter-spacing: 0.08em; text-align: center; margin-bottom: 1.6em; }
+.work__group { border-top: 3px solid var(--navy); padding-top: 1.2em; margin-bottom: 3em; }
+.work__heading { font-family: var(--pixel); font-weight: normal; font-size: clamp(12px, 1.3vw, 16px); margin-bottom: 0.8em; }
+.work__footer {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8em 2em;
+  border-top: 3px solid var(--navy); padding-top: 1.5em;
+}
+.work__footer a, .lang-switch button { text-decoration: underline; text-underline-offset: 3px; }
+.lang-switch [aria-current] { font-weight: bold; }
+
 /* ============ RESPONSIVE ============ */
 @media (max-width: 720px) {
   .status__date { display: none; }
@@ -508,6 +560,7 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .power svg { animation: none; opacity: 1; }
   [data-state="splash"] .splash__mark, .splash.is-out .splash__mark { animation: none; }
+  .scrollcue { animation: none; }
   .marquee .logos { animation: none; }
   .phone__stage { transition: opacity 150ms linear; }
   .lcd--ghost { transition: none; }

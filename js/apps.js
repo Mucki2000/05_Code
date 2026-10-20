@@ -1,4 +1,5 @@
 import { mapSvg } from './map.js';
+import { t } from './i18n.js';
 
 const P = 'assets/projects/';
 const A = 'assets/';
@@ -7,20 +8,47 @@ const L = 'Logos/';
 // SHA-256 hex of the CURRENT password; set by the owner
 export const CURRENT_PASSWORD_HASH = '2638b0b33909bd647264eb703f05ba6fe7953a59e216ead5976abdfb30f40bb8';
 
-export const PROJECTS = {
-  ailiens:   { title: 'Ailiens in Lebin', client: 'Constantin Film · Social Media Production', still: P + 'Ailiens%20in%20Lebin.jpg' },
-  backrooms: { title: 'Backrooms', client: 'A24 · German Market Social Media Campaign', still: P + 'Backrooms.jpg', portrait: true },
-  fifa:      { title: 'FIFA Opening Banquet', client: 'FIFA · Social Media', still: P + 'FIFA%20Opening%20Banquet.avif' },
-  denoche:   { title: 'De Noche', client: 'mk2 Films · Social Media Production', still: P + 'mk2%20social%20media%20campaign.webp' },
-  euphorie:  { title: 'Euphorie', client: 'RTL+ · Social Media and Content Production', still: P + 'Euphorie_RTL%2B.jpeg' },
-  prime:     { title: 'Gerry Star', client: 'Amazon Prime · Social Media', video: P + 'Amazon_Prime_Website.mp4' },
-  universal: { title: 'Universal Music', client: 'Music', still: P + 'Universal.jpeg' },
-  koechert:  { title: 'A.E. Köchert', client: 'Brand', video: P + 'A.E.Koechert_Website.mp4' },
-  boris:     { title: 'Boris Brejcha', client: 'Music', still: P + 'Boris.jpeg' },
-  audi:      { title: 'Audi Sport', client: 'Social Media', video: P + 'Audi_Sport_Website.mp4' },
+// client: the small pixel line above the title; role: what we did (credits).
+// Texts are { de, en } and resolved once, so the rest of the code sees strings.
+const ROLE_FULL = { de: 'Konzept, On-Set-Produktion & Schnitt', en: 'Concept, on-set production & editing' };
+const MUSIC_VIDEO = { de: 'Musikvideo', en: 'Music video' };
+const RAW_PROJECTS = {
+  ailiens:   { title: 'Ailiens in Lebin', client: 'Constantin Film', still: P + 'Ailiens%20in%20Lebin.jpg',
+    role: { de: 'In-Character Social Media · Konzeptberatung, Umsetzung & Schnitt', en: 'In-character social media · concept consulting, execution & editing' } },
+  backrooms: { title: 'Backrooms', client: 'A24', still: P + 'Backrooms.jpg', portrait: true,
+    role: { de: 'Social-Media-Kampagne für den deutschen Markt', en: 'German market social media campaign' } },
+  fifa:      { title: 'FIFA Opening Banquet', client: { de: 'FIFA · Kampagnenfilm', en: 'FIFA · Campaign film' }, still: P + 'FIFA%20Opening%20Banquet.avif' },
+  denoche:   { title: 'De Noche', client: 'mk2 Films', still: P + 'mk2%20social%20media%20campaign.webp',
+    role: { de: 'Social Media Production · Konzept & On-Set-Produktion', en: 'Social media production · concept & on-set production' } },
+  euphorie:  { title: 'Euphorie', client: 'RTL+', still: P + 'Euphorie_RTL%2B.jpeg', role: ROLE_FULL },
+  prime:     { title: 'Gerry Star', client: 'Amazon Prime', video: P + 'Amazon_Prime_Website.mp4', role: ROLE_FULL },
+  universal: { title: 'Universal Music', client: MUSIC_VIDEO, still: P + 'Universal.jpeg' },
+  koechert:  { title: 'A.E. Köchert', client: { de: 'Imagefilm', en: 'Image film' }, video: P + 'A.E.Koechert_Website.mp4' },
+  boris:     { title: 'Boris Brejcha', client: MUSIC_VIDEO, still: P + 'Boris.jpeg', link: 'https://www.youtube.com/watch?v=i3tfCXGuLhk' },
+  philippa:  { title: 'Philippa Kinsky', client: MUSIC_VIDEO, video: P + 'Philippa_Kinsky_Unabh%C3%A4ngige%20K%C3%BCnstlerin.mp4', link: 'https://www.youtube.com/watch?v=ROt23bU_YTo' },
+  audi:      { title: 'Audi Sport', client: { de: 'Kampagnenfilm', en: 'Campaign film' }, video: P + 'Audi_Sport_Website.mp4' },
   kleine:    { title: 'Kleine Brüder', client: 'Short Form', video: P + 'Michael%20Short%20%28KF%29_KLEINE_DA.mp4' },
-  piote:     { title: 'Café Lockenwickler', client: 'Pioté · Brand', video: P + 'Piote_Cafe_Lockenwickler_Website.mp4', portrait: true },
+  piote:     { title: 'Café Lockenwickler', client: 'Pioté', video: P + 'Piote_Cafe_Lockenwickler_Website.mp4', portrait: true,
+    role: { de: 'Werbekampagne für Schmuck · Werbe-Reels', en: 'Jewellery ad campaign · ad reels' } },
 };
+export const PROJECTS = Object.fromEntries(Object.entries(RAW_PROJECTS).map(([id, p]) =>
+  [id, { ...p, client: t(p.client), role: p.role ? t(p.role) : '' }]));
+
+// Category pages: the apps inside SOCIAL MEDIA PRODUCTION and the sections of
+// the scrollable "all work" page below the phone use the same lists.
+export const CATEGORIES = [
+  { id: 'filmtv', label: 'FILM/TV',
+    intro: t({ de: 'Kampagnen und Content für Kino und Streaming.', en: 'Campaigns and content for cinema and streaming.' }),
+    items: ['ailiens', 'denoche', 'euphorie', 'prime', 'kleine'] },
+  { id: 'unternehmen', label: t({ de: 'UNTERNEHMEN', en: 'BRANDS' }),
+    intro: t({ de: 'Wir drehen Social-Media-Werbekampagnen für Unternehmen: Sie kosten weniger als klassische Werbekampagnen und erreichen deutlich mehr Menschen.',
+               en: 'We shoot social media ad campaigns for companies: they cost less than classic advertising and reach far more people.' }),
+    items: ['piote', 'koechert', 'audi', 'fifa'] },
+  { id: 'musik', label: t({ de: 'MUSIK', en: 'MUSIC' }),
+    intro: t({ de: 'Musikvideos für Labels und Artists.', en: 'Music videos for labels and artists.' }),
+    items: ['boris', 'philippa', 'universal'] },
+];
+const category = (id) => CATEGORIES.find((c) => c.id === id);
 
 export const CREW = [
   { name: 'Damian Aschenbrenner', photo: A + 'Damian.jpeg', tag: A + 'projects/STICKERS/Damian_Tag_Neu.png' },
@@ -46,18 +74,25 @@ const LOGOS = [
 // from screen readers) and the strip slides by exactly one set, so it loops.
 const logoItem = (l, hidden) => `<li${hidden ? ' aria-hidden="true"' : ''}><img class="${[l.dark && 'is-dark', l.large && 'is-large', l.wide && 'is-wide', l.thin && 'is-thin', l.small && 'is-small'].filter(Boolean).join(' ')}" src="${l.src}" alt="${hidden ? '' : l.alt}" /></li>`;
 
-const TAGLINE = 'Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Here to bring a changed world to cinemas and to your brands, we speak the language of our time and capture it in pictures.';
-const KICKER = 'On-Set Content Production. Social Media Strategy. Editing.';
-const EMAIL = 'info@lausebengel.studio';
-const INSTAGRAM = 'https://www.instagram.com/lausebengalo/';
+const TAGLINE = t({
+  de: 'Lausebengel ist ein Produktions- und High-End-Editing-Studio, von und für eine neue Generation von Filmemacher:innen. Wir bringen eine veränderte Welt ins Kino und zu euren Marken: Wir sprechen die Sprache unserer Zeit und halten sie in Bildern fest.',
+  en: 'Lausebengel is a production and high-end editing studio built by and for a new generation of filmmakers. Here to bring a changed world to cinemas and to your brands, we speak the language of our time and capture it in pictures.',
+});
+const KICKER = t({ de: 'On-Set-Content-Produktion. Social-Media-Strategie. Schnitt.', en: 'On-Set Content Production. Social Media Strategy. Editing.' });
+export const EMAIL = 'info@lausebengel.studio';
+export const INSTAGRAM = 'https://www.instagram.com/lausebengalo/';
 const igLink = (cls) => `<a${cls ? ` class="${cls}"` : ''} href="${INSTAGRAM}" target="_blank" rel="noopener">Instagram @lausebengalo</a>`;
+export const IMPRESSUM_URL = 'impressum.html';
+const IMPRESSUM = t({ de: 'Impressum', en: 'Legal notice' });
 
 function tile(id) {
   const p = PROJECTS[id];
   const media = p.video
     ? `<div class="tile__media${p.portrait ? ' is-portrait' : ''}" data-video="${p.video}"><span class="tile__placeholder">${p.title}</span></div>`
     : `<div class="tile__media${p.portrait ? ' is-portrait' : ''}"><img src="${p.still}" alt="${p.title}" loading="lazy" /></div>`;
-  return `<li class="tile" id="p-${id}">${media}<p class="tile__client">${p.client}</p><h3 class="tile__title">${p.title}</h3></li>`;
+  const role = p.role ? `<p class="tile__role">${p.role}</p>` : '';
+  const link = p.link ? `<a class="tile__link" href="${p.link}" target="_blank" rel="noopener">${t({ de: 'Auf YouTube ansehen', en: 'Watch on YouTube' })} &#8599;</a>` : '';
+  return `<li class="tile" id="p-${id}">${media}<p class="tile__client">${p.client}</p><h3 class="tile__title">${p.title}</h3>${role}${link}</li>`;
 }
 const tiles = (ids) => `<ul class="tiles">${ids.map(tile).join('')}</ul>`;
 
@@ -100,37 +135,34 @@ export function landingHtml() {
       </div>`;
 }
 
+const categoryApp = (id, icon) => {
+  const c = category(id);
+  return { id, label: c.label, icon, render: () => intro(c.intro) + tiles(c.items) };
+};
+
 export const APPS = [
+  categoryApp('filmtv', 'clapper'),
+  categoryApp('unternehmen', 'building'),
+  categoryApp('musik', 'note'),
   {
-    id: 'filmtv', label: 'FILM/TV', icon: 'clapper',
-    render: () => intro('Film campaigns and content for cinema and streaming.') + tiles(['ailiens', 'denoche', 'euphorie', 'prime', 'kleine']),
+    id: 'current', label: t({ de: 'AKTUELL', en: 'CURRENT' }), icon: 'reel', locked: true,
+    render: () => intro(t({ de: 'Aktuelle Projekte.', en: 'Current projects.' })) + tiles(['piote', 'ailiens', 'backrooms', 'fifa']),
   },
   {
-    id: 'unternehmen', label: 'UNTERNEHMEN', icon: 'building',
-    render: () => intro('Corporate content and brand films.') + tiles(['piote', 'koechert', 'audi', 'fifa']),
-  },
-  {
-    id: 'musik', label: 'MUSIK', icon: 'note',
-    render: () => intro('Content for labels and artists.') + tiles(['universal', 'boris']),
-  },
-  {
-    id: 'current', label: 'CURRENT', icon: 'reel', locked: true,
-    render: () => intro('Current projects.') + tiles(['piote', 'ailiens', 'backrooms', 'fifa']),
-  },
-  {
-    id: 'contact', label: 'CONTACT', icon: 'mail',
+    id: 'contact', label: t({ de: 'KONTAKT', en: 'CONTACT' }), icon: 'mail',
     render: () => `
       <div class="about">
         <div class="text">
-          <p class="kicker">GET IN TOUCH</p>
+          <p class="kicker">${t({ de: 'SCHREIB UNS', en: 'GET IN TOUCH' })}</p>
           <p><a href="mailto:${EMAIL}">${EMAIL}</a></p>
           <p>${igLink()}</p>
-          <p>We are a small crew and always curious about new people who love film, editing and social media.</p>
+          <p>${t({ de: 'Wir sind eine kleine Crew und immer neugierig auf neue Leute, die Film, Schnitt und Social Media lieben.', en: 'We are a small crew and always curious about new people who love film, editing and social media.' })}</p>
+          <p><a href="${IMPRESSUM_URL}">${IMPRESSUM}</a></p>
         </div>
       </div>`,
   },
   {
-    id: 'about', label: 'ABOUT', icon: 'face',
+    id: 'about', label: t({ de: 'ÜBER UNS', en: 'ABOUT' }), icon: 'face',
     render: () => `
       <div class="about">
         <div class="text"><p>${TAGLINE}</p><p class="kicker">${KICKER}</p></div>
@@ -143,20 +175,41 @@ export const APPS = [
         <section class="map">
           <p class="map__title">ON LOCATION</p>
           <div class="map__frame">${mapSvg()}</div>
-          <p class="map__cities">Lissabon · Madrid · Paris · London · Nizza · Genf · Zürich · München · Berlin · Wien</p>
+          <p class="map__cities">${t({ de: 'Lissabon · Madrid · Paris · London · Nizza · Genf · Zürich · München · Berlin · Wien', en: 'Lisbon · Madrid · Paris · London · Nice · Geneva · Zurich · Munich · Berlin · Vienna' })}</p>
         </section>
-        <div class="contact"><span class="contact__label">CONTACT</span><a class="contact__email" href="mailto:${EMAIL}">${EMAIL}</a>${igLink('contact__email')}</div>
+        <div class="contact"><span class="contact__label">${t({ de: 'KONTAKT', en: 'CONTACT' })}</span><a class="contact__email" href="mailto:${EMAIL}">${EMAIL}</a>${igLink('contact__email')}</div>
       </div>`,
   },
   {
     id: 'bricks', label: 'BRICKS', icon: 'bricks',
-    render: () => arcade('MOVE THE MOUSE OR USE THE ARROW KEYS · CLICK TO RESTART'),
+    render: () => arcade(t({ de: 'MAUS ODER PFEILTASTEN · KLICK ZUM NEUSTART', en: 'MOVE THE MOUSE OR USE THE ARROW KEYS · CLICK TO RESTART' })),
   },
   {
     id: 'flappy', label: 'FLAPPY', icon: 'bird',
-    render: () => arcade('TAP, CLICK OR PRESS SPACE TO FLAP · CLICK TO RESTART'),
+    render: () => arcade(t({ de: 'TIPPEN, KLICKEN ODER LEERTASTE · KLICK ZUM NEUSTART', en: 'TAP, CLICK OR PRESS SPACE TO FLAP · CLICK TO RESTART' })),
   },
 ];
+
+// "All work": the page section below the phone (scroll down). Every public
+// project with its credits, by category, then contact and the legal notice.
+export function workHtml() {
+  return `
+    <div class="work__inner">
+      <h2 class="work__title">${t({ de: 'ALLE ARBEITEN', en: 'ALL WORK' })}</h2>
+      ${CATEGORIES.map((c) => `
+      <section class="work__group" id="work-${c.id}">
+        <h3 class="work__heading">${c.label}</h3>
+        ${intro(c.intro)}
+        ${tiles(c.items)}
+      </section>`).join('')}
+      <footer class="work__footer">
+        <a href="mailto:${EMAIL}">${EMAIL}</a>
+        ${igLink()}
+        <a href="${IMPRESSUM_URL}">${IMPRESSUM}</a>
+        <span class="lang-switch" data-lang-switch></span>
+      </footer>
+    </div>`;
+}
 
 // Home desktop. x/y are percentages of the home area for the icon centre on
 // desktop, mx/my the same for phones (max-width 720px). The landing content
