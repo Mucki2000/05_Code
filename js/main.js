@@ -378,7 +378,7 @@ function openFolder(id) {
   win.setAttribute('aria-label', entry.label);
   win.style.cssText = '--x: 50%; --y: 50%';                  // centred over the landing
   win.innerHTML = `
-    <div class="folder__bar"><span>${entry.label}</span><button class="folder__close" type="button" aria-label="Schließen">X</button></div>
+    <div class="folder__bar"><span>${entry.label}</span><button class="folder__close" type="button" aria-label="${t({ de: 'Schliessen', en: 'Close' })}">X</button></div>
     <div class="folder__items">${entry.items.map((appId) => {
       const a = APP_LIST.find((x) => x.id === appId);
       return `<button class="icon" type="button" data-app="${a.id}">${ICONS[a.icon]}<span>${a.label}</span></button>`;
