@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { pickLang, t, LANG } from '../js/i18n.js';
 
-test('pickLang: ?lang wins, then the stored choice, then the browser language', () => {
+test('pickLang: the /de/ or /en/ page wins, then ?lang, then the stored choice, then the browser language', () => {
+  assert.equal(pickLang({ page: 'de', search: '?lang=en', stored: 'en', nav: 'en-US' }), 'de');
   assert.equal(pickLang({ search: '?lang=en', stored: 'de', nav: 'de-AT' }), 'en');
   assert.equal(pickLang({ search: '?lang=xx', stored: 'de', nav: 'en-US' }), 'de');
   assert.equal(pickLang({ search: '', stored: null, nav: 'de-AT' }), 'de');
