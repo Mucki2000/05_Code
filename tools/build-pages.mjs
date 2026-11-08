@@ -10,23 +10,23 @@ export const SITE = 'https://lausebengel.studio';
 const PAGES = {
   root: {
     path: '/', lang: 'de', dataLang: null,
-    title: 'Lausebengel Studio – Social Media Production, On-Set Content & Schnitt',
-    description: 'Lausebengel ist ein Produktions- und High-End-Editing-Studio: Social-Media-Kampagnen, On-Set-Content und Schnitt für Film, Marken und Musik – u. a. für Constantin Film, Amazon Prime, RTL+, FIFA und Audi.',
-    h1: 'Lausebengel Studio – Social Media Production, On-Set Content & Schnitt',
-    locale: 'de_AT',
+    title: 'Lausebengel Studio Zürich – Social Media Production, On-Set Content & Schnitt',
+    description: 'Lausebengel ist ein Produktions- und High-End-Editing-Studio aus Zürich: Social-Media-Kampagnen, On-Set-Content und Schnitt für Film, Marken und Musik – u. a. für Constantin Film, Amazon Prime, RTL+, FIFA und Audi.',
+    h1: 'Lausebengel Studio Zürich – Social Media Production, On-Set Content & Schnitt',
+    locale: 'de_CH',
   },
   de: {
     path: '/de/', lang: 'de', dataLang: 'de',
-    title: 'Lausebengel Studio – Social Media Production, On-Set Content & Schnitt',
-    description: 'Lausebengel ist ein Produktions- und High-End-Editing-Studio: Social-Media-Kampagnen, On-Set-Content und Schnitt für Film, Marken und Musik – u. a. für Constantin Film, Amazon Prime, RTL+, FIFA und Audi.',
-    h1: 'Lausebengel Studio – Social Media Production, On-Set Content & Schnitt',
-    locale: 'de_AT',
+    title: 'Lausebengel Studio Zürich – Social Media Production, On-Set Content & Schnitt',
+    description: 'Lausebengel ist ein Produktions- und High-End-Editing-Studio aus Zürich: Social-Media-Kampagnen, On-Set-Content und Schnitt für Film, Marken und Musik – u. a. für Constantin Film, Amazon Prime, RTL+, FIFA und Audi.',
+    h1: 'Lausebengel Studio Zürich – Social Media Production, On-Set Content & Schnitt',
+    locale: 'de_CH',
   },
   en: {
     path: '/en/', lang: 'en', dataLang: 'en',
-    title: 'Lausebengel Studio – Social Media Production, On-Set Content & Editing',
-    description: 'Lausebengel is a production and high-end editing studio: social media campaigns, on-set content and editing for film, brands and music – for Constantin Film, Amazon Prime, RTL+, FIFA, Audi and more.',
-    h1: 'Lausebengel Studio – Social Media Production, On-Set Content & Editing',
+    title: 'Lausebengel Studio Zurich – Social Media Production, On-Set Content & Editing',
+    description: 'Lausebengel is a production and high-end editing studio based in Zurich: social media campaigns, on-set content and editing for film, brands and music – for Constantin Film, Amazon Prime, RTL+, FIFA, Audi and more.',
+    h1: 'Lausebengel Studio Zurich – Social Media Production, On-Set Content & Editing',
     locale: 'en_US',
   },
 };
@@ -41,6 +41,8 @@ const ORG = {
   image: `${SITE}/assets/og-image.jpg`,
   email: 'info@lausebengel.studio',
   sameAs: ['https://www.instagram.com/lausebengalo/'],
+  address: { '@type': 'PostalAddress', streetAddress: 'Kirchgasse 3', postalCode: '8001', addressLocality: 'Zürich', addressCountry: 'CH' },
+  areaServed: ['CH', 'DE', 'AT'],
   description: PAGES.en.description,
   knowsAbout: ['Social media production', 'On-set content production', 'Social media strategy', 'Video editing', 'Music videos', 'Brand films'],
 };
