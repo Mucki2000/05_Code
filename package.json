@@ -1,1 +1,1 @@
-{ "name": "lausebengel-rebrand", "private": true, "type": "module", "scripts": { "test": "node --test \"test/**/*.test.js\"" } }
+{ "name": "lausebengel-rebrand", "private": true, "type": "module", "scripts": { "build": "node tools/build-pages.mjs", "test": "node --test \"test/**/*.test.js\"" } }

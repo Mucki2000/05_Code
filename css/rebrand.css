@@ -17,6 +17,8 @@
 html, body { height: 100%; background: #000; color: var(--navy); font-family: var(--body); }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 img { display: block; max-width: 100%; }
+/* Read by search engines and screen readers, not shown. */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 a { color: inherit; }
 
 /* ============ PHONE (OFF / BOOT / ZOOM) ============ */
@@ -191,7 +193,7 @@ a { color: inherit; }
 [data-mode="fill"][data-state="enter"] .phone__device { background: none; }
 [data-mode="fill"][data-state="home"] .phone__stage, [data-mode="fill"][data-state="app"] .phone__stage { transform: none !important; transition: none; }
 [data-mode="photo"][data-state="home"] .phone__stage, [data-mode="photo"][data-state="app"] .phone__stage { transition: none; }
-/* phone-cut.png has the screen cut out, so the photo sits ON TOP of the real
+/* phone-cut.webp has the screen cut out, so the photo sits ON TOP of the real
    LCD (z-index 6 > 5): the bezel with its rounded corners frames the display
    instead of the LCD rectangle lying on the photo. Clicks pass through. */
 [data-mode="photo"][data-state="enter"] .phone__stage,
