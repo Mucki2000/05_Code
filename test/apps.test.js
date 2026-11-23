@@ -78,15 +78,15 @@ test('GAMES folder holds BRICKS and FLAPPY; both render a canvas and a board', (
   assert.equal(APPS.find((a) => a.id === 'flappy').icon, 'bird');
 });
 
-test('landingHtml renders eight logos as a looping ticker, then the wordmark, the kicker and the body', () => {
+test('landingHtml renders ten logos as a looping ticker, then the wordmark, the kicker and the body', () => {
   const html = landingHtml();
   assert.ok(html.includes('class="landing"'));
   const logosIdx = html.indexOf('class="logos"');
   const markIdx = html.indexOf('landing__mark');
   assert.ok(logosIdx > -1 && markIdx > -1, 'both logos and wordmark present');
   assert.ok(logosIdx < markIdx, 'logos come before the wordmark');
-  assert.equal((html.match(/<li><button class="logo-btn"/g) || []).length, 8, 'eight logos');
-  assert.equal((html.match(/<li aria-hidden="true"><button class="logo-btn"[^>]*tabindex="-1"/g) || []).length, 8, 'hidden copy for the loop, out of the tab order');
+  assert.equal((html.match(/<li><button class="logo-btn"/g) || []).length, 10, 'ten logos');
+  assert.equal((html.match(/<li aria-hidden="true"><button class="logo-btn"[^>]*tabindex="-1"/g) || []).length, 10, 'hidden copy for the loop, out of the tab order');
   assert.ok(html.includes('alt="Lausebengel"'), 'wordmark alt');
   assert.ok(html.includes('class="landing__kicker"'), 'kicker');
   assert.ok(!html.includes('class="landing__body"'), 'no body text on the desk (it lives in ABOUT)');
