@@ -68,6 +68,8 @@ const LOGOS = [
   { src: L + 'Kleine%20br%C3%BCder.jpg', alt: 'Kleine Brüder', large: true, goto: 'work-filmtv' },
   { src: L + 'piote.png', alt: 'Pioté', small: true, goto: 'p-piote' },
   { src: L + 'high-view.png', alt: 'High View', thin: true, goto: 'work-unternehmen' },
+  { src: L + 'logo-stiegl-sw.png', alt: 'Stiegl', large: true, goto: 'work-unternehmen' },
+  { src: L + 'xxxlutz-sw.png', alt: 'XXXLutz', dark: true, small: true, goto: 'work-unternehmen' },
 ];
 
 // The logo row runs as a ticker: the set is rendered twice (the copy hidden
